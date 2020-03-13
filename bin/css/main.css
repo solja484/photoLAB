@@ -1,0 +1,40 @@
+*{
+    font-size: 17px!important;
+
+}
+
+#menu a, button{
+    color: #efefef;
+}
+.menu button{
+    margin-right: 10px;
+}
+.green{
+    background:#ade00f !important;
+}
+.black, .black:active, .black:hover, .black:focus{
+    color:black!important;
+}
+.non-bold{
+    font-weight: normal;!important;
+}
+
+#brand{
+    font-size:20px!important;
+}
+
+#collapsibleNavbar a {
+    padding: 5px 15px;
+}
+#collapsibleNavbar a:hover{
+    border-bottom:2px solid #ffc107;
+    color: #ade00f !important;
+}
+
+#collapsibleNavbar  a:focus,a:active {
+    color: #ade00f !important;
+}
+
+.mg-0{
+    margin:0!important;
+}
