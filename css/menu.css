@@ -1,0 +1,26 @@
+.menu a, button{
+    color: #efefef;
+}
+.menu button{
+    margin-right: 10px;
+}
+.brand{
+    font-size:20px!important;
+
+}
+.menu{
+    height: 13vh;
+}
+
+.my-navbar a {
+    padding: 5px 15px;
+}
+.my-navbar a:hover{
+    border-bottom:2px solid #34a99c;
+    color:   #ffc107!important;
+}
+
+.my-navbar  a:focus,a:active {
+    color: #34a99c !important;
+}
+

@@ -1,16 +1,13 @@
 *{
     font-size: 17px!important;
-
 }
 
-#menu a, button{
-    color: #efefef;
+body{
+    background: #1e1e1e;!important;
 }
-.menu button{
-    margin-right: 10px;
-}
+
 .green{
-    background:#ade00f !important;
+    background: #34a99c !important;
 }
 .black, .black:active, .black:hover, .black:focus{
     color:black!important;
@@ -19,22 +16,44 @@
     font-weight: normal;!important;
 }
 
-#brand{
-    font-size:20px!important;
-}
-
-#collapsibleNavbar a {
-    padding: 5px 15px;
-}
-#collapsibleNavbar a:hover{
-    border-bottom:2px solid #ffc107;
-    color: #ade00f !important;
-}
-
-#collapsibleNavbar  a:focus,a:active {
-    color: #ade00f !important;
-}
-
 .mg-0{
     margin:0!important;
 }
+
+.pd-0{
+    padding: 0!important;
+}
+.pd-25{
+    padding: 25px!important;
+}
+.pd-r-25{
+    padding-right: 25px!important;
+}
+.expand{
+    width:100%;
+}
+
+.text-20{
+    font-size: 20px!important;
+}
+
+.text-24{
+    font-size: 24px!important;
+}
+.text-14{
+    font-size: 14px!important;
+}
+
+
+.float-rightt{
+    float:right;
+}
+
+@media(max-height:765px){
+    .float-rightt{
+        float: left;!important;
+    }
+}
+
+
+
