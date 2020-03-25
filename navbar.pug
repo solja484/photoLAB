@@ -7,8 +7,8 @@ html
         link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css")
 
         style
-            include ./css/main.css
-            include ./css/menu.css
+            include public/stylesheets/main.css
+            include public/stylesheets/menu.css
     body
         nav(id='menu' class="navbar navbar-expand-md rounded-0 menu mg-0 font-17 navbar-fixed" style="background: #1e1e1e")
             button(class="navbar-toggler btn btn-outline-light mr-auto" type="button" data-toggle="collapse" data-target="#mynavbar")
@@ -31,9 +31,10 @@ div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="tru
         div(class="modal-content" )
             div(class="modal-body")
                 button(type="button" class="close" data-dismiss="modal") &times;
-                p(class="text-24 text-center") Ви впевнені, що хочете вийти?
-                button(class="btn btn-md btn-danger ") Вийти
-                button(class="btn btn-md btn-default ") Повернутись
+                form(action="/exit", method="GET" class="row")
+                    p(class="text-24 text-center col-md-12") Ви впевнені, що хочете вийти?
+                    button(class="btn btn-md btn-danger col-md-6" type=submit) Вийти
+                    button(class="btn btn-md btn-default col-md-6" type="button" data-dismiss="modal") Повернутись
 
 
 

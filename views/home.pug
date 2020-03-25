@@ -2,18 +2,18 @@ html
     head
         title=title
         style
-            include ../css/home.css
+            include ../public/stylesheets/home.css
 body
     include ../navbar
     .row(class="mg-0 let-menu")
         div(class="carousel slide col-md-12 mg-0 pd-0 slider" data-ride="carousel")
             div(class="carousel-inner")
                 div(class="carousel-item active mg-0")
-                    img(class="d-block w-100 mg-0", src="/files/slider1.jpg", alt="First slide")
+                    img(class="d-block w-100 mg-0", src="/public/images/slider1.jpg", alt="First slide")
                 div(class="carousel-item mg-0")
-                    img(class="d-block w-100", src="/files/slider2.jpg", alt="Second slide")
+                    img(class="d-block w-100", src="/public/images/slider2.jpg", alt="Second slide")
                 div(class="carousel-item mg-0")
-                    img(class="d-block w-100 mg-0", src="/files/slider3.jpg", alt="Third slide")
+                    img(class="d-block w-100 mg-0", src="/public/images/slider3.jpg", alt="Third slide")
             form(method="POST",action="/search" class="search-form")
                 div(class="input-group mb-3")
                     input(type="search" class="form-control " placeholder="Моя ідеальна фотосесія" )
@@ -29,7 +29,7 @@ body
                         select(class="form-control", id="filter_type")
                             option Будь-яка зйомка
                             each t in types
-                                option= t
+                                option= t.name
                         br
 
                         br
@@ -46,7 +46,7 @@ body
                 .row(class="mg-0 pd-0")
                     .col-md-3
                         div(class="avatar")
-                            div(class="circle-avatar" style="background-image:url(../files/slider2.jpg)")
+                            div(class="circle-avatar" style="background-image:url(../public/images/slider2.jpg)")
                     .col-md-6
                         .h1(class="text-24") Прізвище Ім'я
                         .h5
@@ -68,23 +68,23 @@ body
                                 div(class="carousel-item active")
                                     .row
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider4.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider5.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider1.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider1.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider3.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider3.jpg)")
                                 div(class="carousel-item ")
                                     .row
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider6.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider6.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider7.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider7.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider5.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
                                         .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../files/slider4.jpg)")
+                                            div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
 
                             a(class="carousel-control-prev" href="#blogCarousel" role="button" data-slide="prev")
                                 span(class="carousel-control-prev-icon" aria-hidden="true")
