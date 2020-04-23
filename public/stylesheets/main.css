@@ -6,9 +6,15 @@ body{
     background: #1e1e1e;!important;
 }
 
-.green{
+.bg-green{
     background: #34a99c !important;
 }
+
+.bg-white{
+    background: white;
+}
+
+
 .black, .black:active, .black:hover, .black:focus{
     color:black!important;
 }
@@ -20,14 +26,24 @@ body{
     margin:0!important;
 }
 
+.mg-0{
+    margin:10px;
+}
+
 .pd-0{
     padding: 0!important;
+}
+.pd-10{
+    padding: 10px!important;
 }
 .pd-25{
     padding: 25px!important;
 }
 .pd-r-25{
     padding-right: 25px!important;
+}
+.mg-l-15{
+    margin-left:15px!important;
 }
 .expand{
     width:100%;
@@ -48,6 +64,53 @@ body{
 .float-rightt{
     float:right;
 }
+
+
+
+
+
+
+
+.avatar{
+    width: 160px;
+    height: 160px;
+    overflow: hidden;
+    vertical-align: middle;
+    /* make it a circle */
+    border-radius:50%;
+}
+
+
+
+.circle-avatar{
+    /* make it responsive */
+    max-width: 100%;
+    width:100%;!important;
+    height:100%;
+    display:block;
+    /* div height to be the same as width*/
+    padding-top:100%;!important;
+
+
+
+    /* Centering on image`s center*/
+    background-position-y: center;
+    background-position-x: center;
+    background-repeat: no-repeat;
+
+    /* it makes the clue thing, takes smaller dimension to fill div */
+    background-size: cover;
+
+    margin: 0 auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+
+
 
 @media(max-height:765px){
     .float-rightt{

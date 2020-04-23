@@ -2,81 +2,118 @@ let express = require('express');
 let server = express();
 let bodyParser = require('body-parser');
 
-
-
+let types;
+let authentification = false;
+let role = "";
 
 server.set("view engine", "pug");
 server.set('views', './');
 
 server.use(express.static(__dirname));
 server.use(bodyParser.urlencoded({extended: true}));
-server.listen(3000, () => {
-    console.log('listening on 3000')
+server.listen(2606, () => {
+    console.log('listening on 2606')
 });
 
 
-
 const mysql = require("mysql2");
-
 const connection = mysql.createConnection({
     host: "127.0.0.1",
     user: "photoLAB",
     database: "photolab",
     password: "mysql"
 });
-connection.connect(function(err){
+connection.connect(function (err) {
     if (err) {
-        return console.error("Ошибка: " + err.message);
+        return console.error("Error: " + err.message);
     }
-    else{
+    else {
         console.log("MySQL server connection established ");
     }
 });
 
 
-server.get('/', (req, res) => {
-    connection.query("SELECT name FROM types",
-        function(err, results, fields) {
+connection.query("SELECT name FROM types", function (err, results, fields) {
+    types = results;
+});
 
-            res.render( __dirname +'/views/home.pug',{types:results});
 
-        });
+
+server.get('/', function (req, res) {
+    let logins;
+    connection.query("SELECT login FROM users", function (err, results, fields) {
+        logins = results;
+    });
+    res.render(__dirname + '/views/home.pug', {types: types,logins:logins,auth:authentification});
+});
+
+
+
+
+server.get('/:username', (req, res) => {
+
+    let username = 'gingermias';
+    connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
+     //   console.log(results);//results[0].user_id
+        res.render(__dirname + '/views/home.pug', {types: types,info:results[0],auth:authentification});
+    });
+
+});
+
+server.get('/photoalbum/:username', function (req, res) {
+res.render(__dirname + "/views/photoalbum.pug");
+});
+
+server.get('/profile/:username', function (req, res) {
+
+
+   let username = "gingermias";
+    connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
+
+
+        res.render(__dirname + "/views/profile.pug", {types: types, info: results[0]});
+
+
+    });
+
+});
+
+server.post('/register', (req, res) => {
+
+
+});
+
+server.post('/registerph', (req, res) => {
+
+
+});
+
+server.post('/login', (req, res) => {
+
+    const login = req.body.login;
+    connection.query("SELECT * FROM users WHERE  user_login=?", [login], function (err, results, fields) {
+
+        if(err){
+            console.log('no user with this login');
+        }
+
+            if (hashing(req.body.pass) === results[0].user_pass) {
+                authentification = true;
+                res.redirect('/' + results[0].username);
+            } else console.log("incorrect password");
+
+    });
 
 });
 
 
-server.get('/exit',function(req,res){
-    connection.query("SELECT name FROM types",
-        function(err, results, fields) {
+function hashing(raw) {
+    let hash = require("crypto").createHmac("sha256", "password")
+        .update("salt" + raw).digest("hex");
+    for (let i = 0; i < 5; i++) {
+        hash = require("crypto").createHmac("sha256", "password")
+            .update("salt" + hash).digest("hex");
+    }
+    return hash;
+}
 
-            res.render( __dirname +'/views/home_unsign.pug',{types:results});
-
-        });
-
-});
-
-server.get('/help',function(req,res){
-    res.render(__dirname + "/views/help.pug",{types:types});
-});
-
-server.get('/settings',function(req,res){
-        res.render(__dirname + "/views/settings.pug",{types:types});
-});
-
-server.get('/profile',function(req,res){
-    //if(!req.session.id)
-        //res.redirect('/');
-    res.render(__dirname + "/views/profile.pug",{types:types});
-});
-
-server.post('/register',(req,res) => {
-    //з body взяти параметри і запихнути в базу, потім з бази взяти ід юзера записати в сесію і відправити
-    //sess = req.session;
-    //sess.email = req.body.email;
-    res.redirect('/exit');});
-
-server.post('/registerph',(req,res) => {
-    res.redirect('/exit');});
-
-server.post('/login',(req,res) => {
-    res.redirect('/exit');});

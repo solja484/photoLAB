@@ -50,77 +50,98 @@ html
                     div(class="tab-content" id="nav-tabContent")
                         div(class="tab-pane show active" id="client_reg" role="tabpanel" aria-labelledby="client_reg_tab")
                             form(id="registry_form", method="POST", class="mx-auto needs-validation", action="/register" onsubmit="return validateRegistry()")
-                                div(class="form-group")
-                                    label(for="reg_username")
-                                    input(type="text", id="reg_username", class="form-control", placeholder="Ім'я користувача", name="reg_username")
-                                    small(class="text-muted") Використовуйте літери та цифри для введення імені
-                                    div(class="invalid-feedback") Некоректно введене ім'я користувача
-                                div(class="form-group")
-                                    label(for="reg_email") Електронна пошта
+                                div(class="form-group" class="non-bold")
+                                    label(for="reg_email") Електронна пошта:
                                     input(type="text", id="reg_email", class="form-control", placeholder="Електронна пошта", name="reg_email")
-                                    div(class="invalid-feedback") Некоректно введена електронна пошта
+                                    div(class="invalid-feedback text-14 mg-l-15") Некоректно введена електронна пошта
                                 div(class="form-group")
-                                    label(for="reg_city") Місто
+                                    label(for="reg_username" class="non-bold") Ім'я користувача:
+                                    input(type="text", id="reg_username", class="form-control", placeholder="Ім'я користувача", name="reg_username")
+                                    small(class="text-muted text-14 mg-l-15") Використовуйте літери, цифри, ' та - для введення імені
+                                    div(class="invalid-feedback text-14 mg-l-15") Некоректно введене ім'я користувача
+                                div(class="form-group")
+                                    label(for="reg_city" class="non-bold") Місто:
                                     input(type="text", id="reg_city", class="form-control", placeholder="Місто", name='reg_city')
-                                    div(class="invalid-feedback") Некоректно вказана назва міста
-                                +input("password","reg_password","","Пароль", 'reg_password')
-                                +input("password","reg_password2","","Повторіть пароль:", 'reg_password2')
+                                    div(class="invalid-feedback text-14 mg-l-15") Некоректно вказана назва міста
+                                div(class="form-group")
+                                    label(for="reg_password" class="non-bold") Пароль:
+                                    input(type="password", id="reg_password", class="form-control", name= 'reg_password')
+                                    small(class="text-muted text-14 mg-l-15") Пароль мусть містити літери та цифри і бути довжиною не менше 6 символів
+                                    div(class="invalid-feedback text-14 mg-l-15") Пароль не відповідає вимогам
+                                div(class="form-group")
+                                    label(for="reg_password2" class="non-bold") Повторіть пароль:
+                                    input(type="password", id="reg_password2", class="form-control", name= 'reg_password2')
+                                    div(class="invalid-feedback text-14 mg-l-15") Паролі не збігаються
                                 input(type="submit" class="btn btn-info btn-block" value="Зареєструватись!")
 
 
                         div(class="tab-pane fade" id="ph_reg" role="tabpanel" aria-labelledby="ph_reg_tab")
-                            form(method="POST", class="mx-auto ", action="/registerph")
+                            form(method="POST", class="mx-auto ", action="/registerph", onsubmit="return phValidateRegistry()")
                                 div(class="row")
                                     div(class="form-group col")
-                                        label(for="input_email" class="non-bold") Електронна пошта
-                                        input(type="email" id="input_email" class="form-control " )
+                                        label(for="ph_reg_email" class="non-bold") Електронна пошта:
+                                        input(type="email" id="ph_reg_email" class="form-control")
+                                        div(class="invalid-feedback text-14 mg-l-15") Некоректно введена електронна пошта
                                     div(class="form-group col")
-                                        label(for="input_username" class="non-bold") Ім'я користувача (нікнейм)
-                                        input(type="text" class="form-control" id="input_username"  )
+                                        label(for="ph_reg_username" class="non-bold") Ім'я користувача (нікнейм):
+                                        input(type="text" class="form-control" id="ph_reg_username")
+                                        div(class="invalid-feedback text-14 mg-l-15") Це поле не може бути порожнім
                                 div(class="row")
                                     div(class="form-group col")
-                                        label(for="input_name" class="non-bold") Прізвище
-                                        input(type="text" class="form-control" id="input_surname"  )
+                                        label(for="ph_reg_surname" class="non-bold") Прізвище:
+                                        input(type="text" class="form-control" id="ph_reg_surname")
+                                        small(class="text-muted text-14") Використовуйте літери, цифри, ' та - для введення імен
+                                        div(class="invalid-feedback text-14 mg-l-15") Некоректно введене прізвище
                                     div(class="form-group col")
-                                        label(for="input_name" class="non-bold") Ім'я
-                                        input(type="text" class="form-control" id="input_name"  )
+                                        label(for="ph_reg_name" class="non-bold") Ім'я:
+                                        input(type="text" class="form-control" id="ph_reg_name")
+                                        div(class="invalid-feedback text-14 mg-l-15") Некоректно введене ім'я
                                 div(class="row")
                                     div(class="form-group col" )
-                                        label(for="input_name" class="non-bold") По-батькові
-                                        input(type="text" class="form-control" id="input_fathername"  )
+                                        label(for="ph_reg_fathername" class="non-bold") По-батькові:
+                                        input(type="text" class="form-control" id="ph_reg_fathername")
+                                        div(class="invalid-feedback text-14 mg-l-15") Некоректно введене по-батькові
                                     div(class="form-group col")
-                                        label(for="input_name" class="non-bold") Місто
-                                        input(type="text" class="form-control" id="input_city" )
+                                        label(for="ph_reg_city" class="non-bold") Місто:
+                                        input(type="text" class="form-control" id="ph_reg_city" )
+                                        div(class="invalid-feedback text-14 mg-l-15") Некоректно вказана назва міста
 
-                                .panel.panel-default()
+                                .panel.panel-default(class="form-group")
                                     .panel-heading Вкажіть все, чим займаєтесь:
-                                    .panel-body(style="padding-left:30px!important")
+                                    .panel-body(style="padding-left:30px!important;" class="row")
                                         each t in types
-                                            div(class="form-group custom-checkbox ")
+                                            div(class="form-group custom-checkbox col-md-6")
                                                 input(type='checkbox',id="check"+t.name,class="custom-control-input " )
                                                 label(for="check"+t.name, class="custom-control-label non-bold")=t.name
                                 div(class="row")
                                     div(class="form-group col")
-                                        label(for="input_price" class="non-bold") Середня ціна зйомки($)
-                                        input(type="number" class="form-control" id="input_price" )
+                                        label(for="ph_reg_price" class="non-bold") Середня ціна зйомки($):
+                                        input(type="number" class="form-control" id="ph_reg_price" min='1' max='10000' value='100')
+                                        div(class="invalid-feedback text-14 mg-l-15") Вкажіть реальне число
                                     div(class="form-group col")
-                                        label(for="input_years", class="non-bold") Стаж
-                                            select(class="form-control" id="input_years")
+                                        label(for="ph_reg_experience", class="non-bold") Стаж:
+                                            select(class="form-control" id="ph_reg_experience")
                                                 option до 1 року
                                                 option 2 роки
                                                 option 3 роки
                                                 option 4+ роки
                                 div(class="form-group")
-                                    label(for="input_job" class="non-bold") Місце роботи (організація)
-                                    input(type="text" class="form-control" id="input_job" )
+                                    label(for="ph_reg_job" class="non-bold") Місце роботи (організація)
+                                    input(type="text" class="form-control" id="ph_reg_job" )
+                                    div(class="invalid-feedback text-14 mg-l-15") Це поле не може бути порожнім
                                 div(class="form-group")
-                                    label(for="input_password" class="non-bold") Пароль
-                                    input(type="password" class="form-control text-muted" id="input_password"  )
+                                    label(class="non-bold") Про себе:
+                                    textarea(type="text", class="form-control", id="ph_reg_about")
                                 div(class="form-group")
-                                    label(for="input2_password" class="non-bold") Повторіть пароль
-                                    input(type="password" class="form-control text-muted" id="input2_password"  )
-
-                                button(type="submit" class="btn btn-info btn-block ") Зареєструватись!
+                                    label(for="ph_reg_password" class="non-bold") Пароль
+                                    input(type="password" class="form-control text-muted" id="ph_reg_password"  )
+                                    small(class="text-muted text-14 mg-l-15") Мароль мусть містити літери та цифри і бути довжиною не менше 6 символів
+                                    div(class="invalid-feedback text-14 mg-l-15") Пароль не відповідає вимогам
+                                div(class="form-group")
+                                    label(for="ph_reg_password2" class="non-bold") Повторіть пароль:
+                                    input(type="password" class="form-control text-muted" id="ph_reg_password2"  )
+                                    div(class="invalid-feedback text-14 mg-l-15") Паролі не збігаються
+                                input(type="submit" class="btn btn-info btn-block ", value=" Зареєструватись!")
 
     script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js", integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js", integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous")

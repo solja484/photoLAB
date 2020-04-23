@@ -17,11 +17,10 @@ html
 
             div(class="collapse navbar-collapse my-navbar ", id="mynavbar")
                 div(class="navbar-nav expand font-17")
-                    a(class="nav-item nav-link" style="color: #efefef" href="/") головна
+                    a(class="nav-item nav-link " active style="color: #efefef" href="/"+info.username) головна
                     span(class="sr-only") (current)
-                    a(class="nav-item nav-link" style="color: #efefef" href="/profile") профіль
-                    a(class="nav-item nav-link" style="color: #efefef" href="/saved") закладки
-                    a(class="nav-item nav-link" style="color: #efefef" href="/portfolio") фотоальбом
+                    a(class="nav-item nav-link" style="color: #efefef" href="/profile/"+info.username) профіль
+                    a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+info.username) фотоальбом
                     a(class="nav-item nav-link" style="color: #efefef" href='/help') про нас
                 button(class="btn btn-outline-warning float-rightt", type='button', data-toggle="modal", data-target='#exit_modal') Вихід
 
@@ -31,7 +30,7 @@ div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="tru
         div(class="modal-content" )
             div(class="modal-body")
                 button(type="button" class="close" data-dismiss="modal") &times;
-                form(action="/exit", method="GET" class="row")
+                form(action="/", method="GET" class="row")
                     p(class="text-24 text-center col-md-12") Ви впевнені, що хочете вийти?
                     button(class="btn btn-md btn-danger col-md-6" type=submit) Вийти
                     button(class="btn btn-md btn-default col-md-6" type="button" data-dismiss="modal") Повернутись
