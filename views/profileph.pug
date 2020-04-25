@@ -1,0 +1,77 @@
+html
+    head
+        title=title
+    style
+        include ../public/stylesheets/profile.css
+body
+    include ../navbar
+    .row(class='mg-0 pd-0 bg-white ')
+        .col-md-2
+        .col-md-8
+            .row(class='mg-0 pd-10  ')
+                .col-md-4
+                    div(class="avatar mg-10")
+                        div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                .col-md-8
+                    .row
+                        .col-md-8
+                            if(info.fathername===undefined)
+                                .h1(class="text-24")= info.lastname +' ' +info.firstname
+                            else
+                                .h1(class="text-24")= info.lastname +' ' +info.firstname +' '+info.fathername
+
+                            .h5
+                                p(class='text-muted')= '@'+info.username
+                                span(class="text-muted pd-r-25")= '$'+info.price
+                                i(class="material-icons text-20 ") &#xe55f;
+                                span(class="text-20")= info.city
+                            p(class="text-14")= 'Стаж: '+info.exp+' роки'
+                            if(info.organization!=undefined)
+                                p(class="text-14")= info.organization
+                            p(class="text-14 text-break")= info.about
+                        .col-md-4
+                            a(class="btn btn-info bg-green" href='/edit/'+info.username) Редагувати
+                            br
+                            br
+                            span(class="text-20")= info.ave +'/10⭐️'
+                        .col-md-12
+                            p
+                                each t in mytypes
+                                    a(class='link1' href='/home/?subj='+t )= '#' + t.name+' '
+                .col-md-12
+                    ul(class='nav nav-tabs')
+                        li(class="active")
+                            a(data-toggle="tab" href="#favorites" class='link1') Збережено
+                        li
+                            a(data-toggle="tab" href="#calendar" class='link1') Календар
+                        li
+                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
+                        li
+                            a( class='link1' href='/photoalbum/'+info.username) Фото
+        .col-md-12
+            div(class="tab-content minh")
+                div(id="favorites" class="tab-pane row fade in active show")
+                    .col-md-1
+                    .col-md-10
+                        p favorites
+                div(id="calendar" class="tab-pane  row fade")
+                    .col-md-1
+                    .col-md-10
+                        p calendar
+                div(id="contacts" class="tab-pane  row fade")
+                    .col-md-1
+                    .col-md-10
+                        .row
+                            each con in contacts
+
+                                .col-md-3
+                                    if(con.site_name=='gmail')
+                                        a(class='link1 btn ' href="")
+                                            span(class=`${con.icon}`)
+                                            = ' ' + con.account_link
+                                    else
+                                        a(class='link1 btn ' href=con.account_link)
+                                            span(class=`${con.icon}`)
+                                            = ' ' +con.site_name
+
+        .col-md-2

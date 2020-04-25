@@ -1,10 +1,13 @@
 let express = require('express');
 let server = express();
 let bodyParser = require('body-parser');
-
-let types;
-let authentification = false;
+let config = require('./config.json');
+let types = [];
+let cities = [];
+let authentication = false;
 let role = "";
+let username = 'no';
+let active = "home";
 
 server.set("view engine", "pug");
 server.set('views', './');
@@ -15,14 +18,13 @@ server.listen(2606, () => {
     console.log('listening on 2606')
 });
 
-
 const mysql = require("mysql2");
 const connection = mysql.createConnection({
     host: "127.0.0.1",
     user: "photoLAB",
     database: "photolab",
     password: "mysql"
-});
+}).promise();
 connection.connect(function (err) {
     if (err) {
         return console.error("Error: " + err.message);
@@ -36,54 +38,158 @@ connection.connect(function (err) {
 connection.query("SELECT name FROM types", function (err, results, fields) {
     types = results;
 });
-
-
-let cities=[];
 connection.query("SELECT city FROM users Group By city", function (err, results, fields) {
     cities = results;
 });
 
 
+server.get('/reg', function (req, res) {
+    active = 'reg';
+    res.render(__dirname + "/views/registration.pug", {types: types, active: active,config:config});
+
+});
+
+server.get('/help', function (req, res) {
+    active = 'help';
+    res.render(__dirname + "/views/help.pug", {active: active, auth: authentication,config:config});
+});
 
 server.get('/', function (req, res) {
+    active = 'home';
+    authentication = false;
     connection.query(
-        "SELECT ph_id,photographers.user_id, username,avatar_link,city,price " +
-        "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;",
-        function (err, results, fields) {
-            if (err) return console.log(err);
-            console.log( results);
-            res.render(__dirname + '/views/home.pug', {types: types, phinfo:results,cities:cities,auth: authentification});
+        "SELECT ph_id,photographers.user_id, organization,username,avatar_link,city,price " +
+        "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;")
+        .then(([results, fields]) => {
+            //console.log(results);
+            let noun = "";
+            res.render(__dirname + '/views/home.pug',
+                {
+                    types: types,
+                    phinfo: results,
+                    info: {username: noun},
+                    cities: cities,
+                    auth: authentication,
+                    active: active,
+                    config:config
+                });
+
+        })
+        .catch(err => {
+            console.log(err);
         });
+
 });
 
 
 server.get('/:username', (req, res) => {
 
-    let username = 'gingermias';
-    connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
-        //   console.log(results);//results[0].user_id
-        res.render(__dirname + '/views/home.pug', {types: types, info: results[0], auth: authentification});
-    });
 
+    if (!authentication) res.redirect('/');
+    active = 'home';
+    connection.query("SELECT * FROM users WHERE  username=?", [username])
+        .then(([results, fields]) => {
+            connection.query(
+                "SELECT ph_id,photographers.user_id, username,avatar_link,city,price " +
+                "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;"
+            ).then(([results2, fields2]) => {
+                //console.log(results);
+                res.render(__dirname + '/views/home.pug',
+                    {
+                        types: types,
+                        phinfo: results2,
+                        info: results[0],
+                        cities: cities,
+                        auth: authentication,
+                        active: active,
+                        config:config
+                    });
+
+            })
+                .catch(err => {
+                    console.log(err);
+                });
+
+        })
+        .catch(err => {
+
+            console.log(err);
+        });
+
+});
+
+
+server.get('/edit/:username', (req, res) => {
+    res.render(__dirname + "/views/edit.pug", {active: active, info: {username: username,config:config}});
 });
 
 server.get('/photoalbum/:username', function (req, res) {
-    res.render(__dirname + "/views/photoalbum.pug");
+    active = 'album';
+    res.render(__dirname + "/views/photoalbum.pug",{config:config});
 });
 
 server.get('/profile/:username', function (req, res) {
+    active = 'profile';
+    if (!authentication) res.redirect('/');
+
+    //let username = "gingermias";
+    if (role === 'photographer') {
+        connection.query("SELECT photographers.ph_id,photographers.user_id,email,avatar_link,city,organization,username,lastname,firstname," +
+            "fathername,price,exp,organization,about,ROUND(AVG(mark)) AS ave" +
+            " FROM (photographers" +
+            "  INNER JOIN users ON photographers.user_id=users.user_id)" +
+            " INNER JOIN ratings ON photographers.ph_id=ratings.ph_id" +
+            "  WHERE  username=?", [username])
+            .then(([results, fields]) => {
+                let ph_id = results[0].ph_id;
+                connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
+                    .then(([results2, fields2]) => {
+
+                        connection.query("SELECT account_link,site_name,icon FROM accounts INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=?", [ph_id])
+                            .then(([results3, fields3]) => {
+                                console.log(results3);
+                                res.render(__dirname + "/views/profileph.pug",
+                                    {
+                                        mytypes: results2,
+                                        contacts: results3,
+                                        info: results[0],
+                                        username: username,
+                                        active: active,
+                                        config: config
+                                    });
+
+                            })
+                            .catch(err => {
+
+                                console.log(err);
+                            });
 
 
-    let username = "gingermias";
-    connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
+                    })
+                    .catch(err => {
 
+                        console.log(err);
+                    });
 
-        res.render(__dirname + "/views/profile.pug", {types: types, info: results[0]});
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+    else if (role === 'client') {
+        connection.query("SELECT * FROM users WHERE  username=?", [username])
+            .then(([results, fields]) => {
 
+                res.render(__dirname + "/views/profile.pug", {types: types, info: results, active: active,config:config});
 
-    });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
 });
+
 
 server.post('/register', (req, res) => {
 
@@ -98,28 +204,37 @@ server.post('/registerph', (req, res) => {
 server.post('/login', (req, res) => {
 
     const login = req.body.login;
-    connection.query("SELECT * FROM users WHERE  user_login=?", [login], function (err, results, fields) {
+    pass = req.body.pass;
+    connection.query("SELECT * FROM users INNER JOIN roles on users.role_id = roles.role_id WHERE  email=?", [login])
+        .then(([results, fields]) => {
 
-        if (err) {
+            if (hashing(pass) === results[0].user_pass) {
+
+                authentication = true;
+                username = results[0].username;
+                role = results[0].role;
+                console.log("Username: " + username);
+                res.redirect('/' + username);
+            } else {
+
+                console.log("incorrect password");
+            }
+
+        })
+        .catch(err => {
             console.log('no user with this login');
-        }
-
-        if (hashing(req.body.pass) === results[0].user_pass) {
-            authentification = true;
-            res.redirect('/' + results[0].username);
-        } else console.log("incorrect password");
-
-    });
+            console.log(err);
+        });
 
 });
 
 
 function hashing(raw) {
     let hash = require("crypto").createHmac("sha256", "password")
-        .update("salt" + raw).digest("hex");
+        .update(config.salt + raw).digest("hex");
     for (let i = 0; i < 5; i++) {
         hash = require("crypto").createHmac("sha256", "password")
-            .update("salt" + hash).digest("hex");
+            .update(config.salt + hash).digest("hex");
     }
     return hash;
 }
