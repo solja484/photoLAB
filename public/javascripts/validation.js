@@ -1,8 +1,10 @@
 function validateRegistry() {
+    //  let a=validEmail("reg_email");
+    let b = validEmpty("reg_username");
+    let c = validNamesF("reg_city");
+    let d = validPassword("reg_password");
 
-
-    if (//validEmail("reg_email") &&
-        validEmpty("reg_username") && validNamesF("reg_city") && validPassword("reg_password")) {
+    if (b && c && d) {
         pass = $("#reg_password").val();
         pass2 = $("#reg_password2").val();
         if (pass == pass2) {
@@ -16,13 +18,16 @@ function validateRegistry() {
 }
 
 function phValidateRegistry() {
-    if (validEmail("ph_reg_email") &&
-        validEmpty("ph_reg_username") &&
-        validNames("ph_reg_surname") &&
-        validNames("ph_reg_name") &&
-        validNamesF("ph_reg_fathername") &&
-        validNamesF("ph_reg_city") &&
-        validEmpty("ph_reg_job") && validPassword("ph_reg_password")) {
+
+    let a = validEmail("ph_reg_email");
+    let b = validEmpty("ph_reg_username");
+    let c = validNames("ph_reg_surname");
+    let d = validNames("ph_reg_name");
+    let e = validNamesF("ph_reg_fathername");
+    let f = validNamesF("ph_reg_city");
+    let g = validEmpty("ph_reg_job");
+    let h = validPassword("ph_reg_password");
+    if (a && b && c && d && e && f && g && h) {
         if ($("#ph_reg_password").val() == $("#ph_reg_password2").val()) {
             validPassword("ph_reg_password2");
             return true;

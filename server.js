@@ -38,36 +38,43 @@ connection.query("SELECT name FROM types", function (err, results, fields) {
 });
 
 
-
-server.get('/', function (req, res) {
-    let logins;
-    connection.query("SELECT login FROM users", function (err, results, fields) {
-        logins = results;
-    });
-    res.render(__dirname + '/views/home.pug', {types: types,logins:logins,auth:authentification});
+let cities=[];
+connection.query("SELECT city FROM users Group By city", function (err, results, fields) {
+    cities = results;
 });
 
 
+
+server.get('/', function (req, res) {
+    connection.query(
+        "SELECT ph_id,photographers.user_id, username,avatar_link,city,price " +
+        "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;",
+        function (err, results, fields) {
+            if (err) return console.log(err);
+            console.log( results);
+            res.render(__dirname + '/views/home.pug', {types: types, phinfo:results,cities:cities,auth: authentification});
+        });
+});
 
 
 server.get('/:username', (req, res) => {
 
     let username = 'gingermias';
     connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
-     //   console.log(results);//results[0].user_id
-        res.render(__dirname + '/views/home.pug', {types: types,info:results[0],auth:authentification});
+        //   console.log(results);//results[0].user_id
+        res.render(__dirname + '/views/home.pug', {types: types, info: results[0], auth: authentification});
     });
 
 });
 
 server.get('/photoalbum/:username', function (req, res) {
-res.render(__dirname + "/views/photoalbum.pug");
+    res.render(__dirname + "/views/photoalbum.pug");
 });
 
 server.get('/profile/:username', function (req, res) {
 
 
-   let username = "gingermias";
+    let username = "gingermias";
     connection.query("SELECT * FROM users WHERE  username=?", [username], function (err, results, fields) {
 
 
@@ -93,14 +100,14 @@ server.post('/login', (req, res) => {
     const login = req.body.login;
     connection.query("SELECT * FROM users WHERE  user_login=?", [login], function (err, results, fields) {
 
-        if(err){
+        if (err) {
             console.log('no user with this login');
         }
 
-            if (hashing(req.body.pass) === results[0].user_pass) {
-                authentification = true;
-                res.redirect('/' + results[0].username);
-            } else console.log("incorrect password");
+        if (hashing(req.body.pass) === results[0].user_pass) {
+            authentification = true;
+            res.redirect('/' + results[0].username);
+        } else console.log("incorrect password");
 
     });
 

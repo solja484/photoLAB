@@ -24,7 +24,7 @@ body
                         button(class="btn btn-warning " type="submit") Пошук
     .row(class="mg-0 pd-25")
         .col-md-3(class="pd-0 mg-10")
-            .panel(class="pd-0")
+            .panel(class="pd-0 sticky-top")
                 .panel-heading Фільтрувати пошук
                 form(class="panel-body")
                     div(class="form-group")
@@ -35,6 +35,12 @@ body
                                 option= t.name
                         br
 
+                        label(for="filter_city", class="non-bold") Місто
+                        select(class="form-control", id="filter_city")
+                            option Усі міста
+                            each c in cities
+                                option= c.city
+                        br
                         label(for="filter_years", class="non-bold") Стаж
                         select(class="form-control" id="filter_years")
                             option Будь-який
@@ -44,55 +50,55 @@ body
                             option 4+ роки
                     button(class="btn btn-info bg-green", type="submit") Фільтрувати
         .col-md-9
-            .panel.panel-primary
-                .row(class="mg-0 pd-10")
-                    .col-md-3
-                        div(class="avatar mg-10")
-                            div(class="circle-avatar pd-10" style="background-image:url(../public/images/slider2.jpg)")
-                    .col-md-6
-                        .h1(class="text-24") Прізвище Ім'я
-                        .h5
-                            span(class="text-muted pd-r-25") $150-220
-                            i(class="material-icons text-20 ") &#xe55f;
-                            span(class="text-20") Kiev
+            each ph in phinfo
+                .panel.panel-primary
+                    .row(class="mg-0 pd-10")
+                        .col-md-3
+                            div(class="avatar mg-10")
+                                div(class="circle-avatar pd-10" style=`background-image:url(${ph.avatar_link})`)
+                        .col-md-6
+                            .h1(class="text-24")= ph.username
+                            .h5
+                                span(class="text-muted pd-r-25")= '$'+ph.price
+                                i(class="material-icons text-20 ") &#xe55f;
+                                span(class="text-20")= ph.city
 
-                        .p(class="text-14 text-break") Про себе малееньким шрифтом
-                    .col-md-3(class="pd-25")
-                        if(auth)
-                            div(class="form-group custom-checkbox ")
-                                input(type='checkbox',id="put",class="custom-control-input " )
-                                label(for="put", class="custom-control-label non-bold") Зберегти в закладках
+                        .col-md-3(class="pd-25")
+                            if(auth)
+                                div(class="form-group custom-checkbox ")
+                                    input(type='checkbox',id="put",class="custom-control-input" onclick='addToFavorites('+ph.id+')')
+                                    label(for="put", class="custom-control-label non-bold") Зберегти в закладках
 
-                        button(class="btn btn-info bg-green") Відкрити профіль
-                .row
-                    .col-md-12
-                        div(id="blogCarousel" class="carousel slide pd-25" data-ride="carousel")
-                            div(class="carousel-inner")
-                                div(class="carousel-item active")
-                                    .row
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider1.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider3.jpg)")
-                                div(class="carousel-item ")
-                                    .row
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider6.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider7.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
-                                        .col-md-3
-                                            div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
+                            a(class="btn btn-info bg-green" type="button" href=`/guest/`+`${ph.username}`) Відкрити профіль
+                    .row
+                        .col-md-12
+                            div(id="blogCarousel" class="carousel slide pd-25" data-ride="carousel")
+                                div(class="carousel-inner")
+                                    div(class="carousel-item active")
+                                        .row
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider1.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider3.jpg)")
+                                    div(class="carousel-item ")
+                                        .row
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider6.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider7.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
+                                            .col-md-3
+                                                div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
 
-                            a(class="carousel-control-prev" href="#blogCarousel" role="button" data-slide="prev")
-                                span(class="carousel-control-prev-icon" aria-hidden="true")
-                                span(class="sr-only") Previous
-                            a(class="carousel-control-next" href="#blogCarousel" role="button" data-slide="next")
-                                span(class="carousel-control-next-icon" aria-hidden="true")
-                                span(class="sr-only") Next
+                                a(class="carousel-control-prev" href="#blogCarousel" role="button" data-slide="prev")
+                                    span(class="carousel-control-prev-icon" aria-hidden="true")
+                                    span(class="sr-only") Previous
+                                a(class="carousel-control-next" href="#blogCarousel" role="button" data-slide="next")
+                                    span(class="carousel-control-next-icon" aria-hidden="true")
+                                    span(class="sr-only") Next
 
