@@ -10,3 +10,39 @@
     color: black;
     text-decoration: none;
 }
+
+#folders{
+    overflow: auto;
+
+}
+
+.folder-link{
+    background: transparent;
+    color:white;!important;
+    border-radius: 0;!important;
+    padding:5px;
+    text-align: center;
+}
+
+.folder-link:hover{
+    color:#ffc107;!important;
+}
+
+#folders .active{
+    border:1px solid white!important;
+    background: transparent;!important;
+    color:white;!important;
+}
+
+.img-container{
+    margin:2%;
+    padding:0;
+    width:96%;
+    max-height:480px;
+    overflow: hidden;
+
+}
+
+.empty_div{
+    height:25px!important;
+}

@@ -74,8 +74,8 @@ include ../navbar_unsign
                             .panel-body(style="padding-left:30px!important;" class="row")
                                 each t in types
                                     div(class="form-group custom-checkbox col-md-6")
-                                        input(type='checkbox',id="check"+t.name,class="custom-control-input " )
-                                        label(for="check"+t.name, class="custom-control-label non-bold")=t.name
+                                        input(type='checkbox',id="check"+t.type_id,class="custom-control-input " )
+                                        label(for="check"+t.type_id, class="custom-control-label non-bold")=t.name
                         div(class="row")
                             div(class="form-group col")
                                 label(for="ph_reg_price" class="non-bold") Середня ціна зйомки($):

@@ -61,6 +61,10 @@ body{
 .mg-l-15{
     margin-left:15px!important;
 }
+
+.mg-top-20{
+    margin-top: 20px!important;
+}
 .expand{
     width:100%;
 }
@@ -84,6 +88,9 @@ body{
     float:right;
 }
 
+.sharp-corners{
+    border-radius: 0;
+}
 
 
 

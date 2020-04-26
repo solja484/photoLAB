@@ -4,7 +4,10 @@ html
     style
         include ../public/stylesheets/profile.css
 body
-    include ../navbar
+    if(guest&&!auth)
+        include ../navbar_unsign
+    else
+        include ../navbar
     .row(class='mg-0 pd-0 bg-white ')
         .col-md-2
         .col-md-8
@@ -30,48 +33,80 @@ body
                                 p(class="text-14")= info.organization
                             p(class="text-14 text-break")= info.about
                         .col-md-4
-                            a(class="btn btn-info bg-green" href='/edit/'+info.username) Редагувати
+                            if(!guest)
+                                a(class="btn btn-info bg-green" href='/edit/'+info.username) Редагувати
+                                br
                             br
-                            br
-                            span(class="text-20")= info.ave +'/10⭐️'
+
+                            span(class="text-20" id="ph_ave")= info.ave +'/10⭐️'
+                            if(guest&&auth)
+                                input(type='number',min='0',max='10',class="form-control",value='5')
                         .col-md-12
                             p
                                 each t in mytypes
                                     a(class='link1' href='/home/?subj='+t )= '#' + t.name+' '
                 .col-md-12
                     ul(class='nav nav-tabs')
-                        li(class="active")
-                            a(data-toggle="tab" href="#favorites" class='link1') Збережено
+                        if(!guest)
+                            li(class="active")
+                                a(data-toggle="tab" href="#favorites" class='link1') Збережено
+                        if(guest)
+                            li(class="active")
+                                a(data-toggle="tab" href="#contacts" class='link1') Контакти
+                        else
+                            li
+                                a(data-toggle="tab" href="#contacts" class='link1') Контакти
                         li
                             a(data-toggle="tab" href="#calendar" class='link1') Календар
                         li
-                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
-                        li
-                            a( class='link1' href='/photoalbum/'+info.username) Фото
+                            if(guest)
+                                a( class='link1' href='/guest/photoalbum/'+info.username) Фото
+                            else
+                                a( class='link1' href='/photoalbum/'+username) Фото
         .col-md-12
             div(class="tab-content minh")
-                div(id="favorites" class="tab-pane row fade in active show")
-                    .col-md-1
-                    .col-md-10
-                        p favorites
+                if(!guest)
+                    div(id="favorites" class="tab-pane row fade in active show")
+                        .col-md-1
+                        .col-md-10
+
+                            each fav in favorites
+                                p= fav.username
                 div(id="calendar" class="tab-pane  row fade")
                     .col-md-1
                     .col-md-10
                         p calendar
-                div(id="contacts" class="tab-pane  row fade")
-                    .col-md-1
-                    .col-md-10
-                        .row
-                            each con in contacts
+                if(guest)
+                    div(id="contacts" class="tab-pane row fade in active show")
+                        .col-md-1
+                        .col-md-10
+                            .row
+                                each con in contacts
 
-                                .col-md-3
-                                    if(con.site_name=='gmail')
-                                        a(class='link1 btn ' href="")
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.account_link
-                                    else
-                                        a(class='link1 btn ' href=con.account_link)
-                                            span(class=`${con.icon}`)
-                                            = ' ' +con.site_name
+                                    .col-md-3
+                                        if(con.site_name=='gmail')
+                                            a(class='link1 btn ' href="")
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.account_link
+                                        else
+                                            a(class='link1 btn ' href=con.account_link)
+                                                span(class=`${con.icon}`)
+                                                = ' ' +con.site_name
+                else
+                    div(id="contacts" class="tab-pane  row fade")
+                        .col-md-1
+                        .col-md-10
+                            .row
+                                each con in contacts
+
+                                    .col-md-3
+                                        if(con.site_name == 'gmail')
+                                            a(class='link1 btn ' href="")
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.account_link
+                                        else
+                                            a(class='link1 btn ' href=con.account_link)
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.site_name
 
         .col-md-2
