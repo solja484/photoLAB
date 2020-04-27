@@ -14,7 +14,9 @@ server.set("view engine", "pug");
 server.set('views', './');
 
 server.use(express.static(__dirname));
+server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
+
 server.listen(2606, () => {
     console.log('listening on 2606')
 });
@@ -87,27 +89,37 @@ server.get('/', function (req, res) {
 
 server.get('/:username', (req, res) => {
 
+    let username=req.params.username;
+
     if (!authentication) res.redirect('/');
+    authentication=true;
     active = 'home';
     guest = false;
     connection.query("SELECT * FROM users WHERE  username=?", [username])
         .then(([results, fields]) => {
+            let user_id=results[0].user_id;
             connection.query(
                 "SELECT ph_id,photographers.user_id, username,avatar_link,city,price " +
                 "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;"
             ).then(([results2, fields2]) => {
-                //console.log(results);
-                res.render(__dirname + '/views/home.pug',
-                    {
-                        types: types,
-                        phinfo: results2,
-                        info: results[0],
-                        username: username,
-                        cities: cities,
-                        auth: authentication,
-                        active: active,
-                        config: config
-                    });
+                connection.query(
+                    "SELECT ph_id FROM favorites WHERE user_id=?",[user_id]
+                ).then(([results3, fields3]) => {
+
+                    res.render(__dirname + '/views/home.pug',
+                        {
+                            types: types,
+                            phinfo: results2,
+                            info: results[0],
+                            username: username,
+                            favorites:results3,
+                            cities: cities,
+                            auth: authentication,
+                            active: active,
+                            config: config
+                        });
+
+                })
 
             })
                 .catch(err => {
@@ -123,7 +135,7 @@ server.get('/:username', (req, res) => {
 });
 
 server.get('/guest/photoalbum/:username', (req, res) => {
-    guest_username = req.params.username;
+    let guest_username = req.params.username;
     active = '';
     guest = true;
 
@@ -143,7 +155,7 @@ server.get('/guest/photoalbum/:username', (req, res) => {
 
                             res.render(__dirname + "/views/photoalbum.pug", {
                                 config: config, username: username, guest: guest,
-                                ph_username: guest_username, photos: results2, folders: results3
+                                ph_username: guest_username, auth:authentication,photos: results2, folders: results3
                             });
                         })
                         .catch(err => {
@@ -170,7 +182,7 @@ server.get('/guest/photoalbum/:username', (req, res) => {
 
 
 server.get('/guest/:username', (req, res) => {
-    guest_username = req.params.username;
+    let guest_username = req.params.username;
     active = '';
     guest = true;
 
@@ -188,7 +200,7 @@ server.get('/guest/:username', (req, res) => {
                     connection.query("SELECT account_link,site_name,icon FROM accounts " +
                         "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=?", [ph_id])
                         .then(([results3, fields3]) => {
-                            console.log(results3);
+
                             res.render(__dirname + "/views/profileph.pug",
                                 {
                                     mytypes: results2,
@@ -197,7 +209,8 @@ server.get('/guest/:username', (req, res) => {
                                     active: active,
                                     config: config,
                                     guest: guest,
-                                    username: username
+                                    username: username,
+                                    auth:authentication
                                 });
 
                         })
@@ -222,15 +235,16 @@ server.get('/guest/:username', (req, res) => {
 });
 
 server.get('/edit/:username', (req, res) => {
-    res.render(__dirname + "/views/edit.pug", {active: active, info: {username: username, config: config}});
+    let username=req.params.username;
+    res.render(__dirname + "/views/edit.pug", {active: active, info: {username: username}, config: config});
 });
 
 server.get('/photoalbum/:username', function (req, res) {
     if(!authentication) res.redirect('/');
 
+    let username=req.params.username;
     active = 'album';
     guest = false;
-    authentication=true;
 
     connection.query("SELECT ph_id FROM photographers INNER JOIN users on photographers.user_id= users.user_id WHERE username=?", [username])
         .then(([results, fields]) => {
@@ -248,7 +262,7 @@ server.get('/photoalbum/:username', function (req, res) {
 
                             res.render(__dirname + "/views/photoalbum.pug", {
                                 config: config, username: username, guest: guest,
-                                ph_username: username, photos: results2, folders: results3
+                                ph_username: username, photos: results2, folders: results3,active:active
                             });
                         })
                         .catch(err => {
@@ -276,10 +290,13 @@ server.get('/photoalbum/:username', function (req, res) {
 });
 
 server.get('/profile/:username', function (req, res) {
-    active = 'profile';
+
     if (!authentication) res.redirect('/');
 
-    //let username = "gingermias";
+    let username=req.params.username;
+    active = 'profile';
+    guest=false;
+
     if (role === 'photographer') {
         connection.query("SELECT photographers.ph_id,photographers.user_id,email,avatar_link,city,organization,username,lastname,firstname," +
             "fathername,price,exp,organization,about,ROUND(AVG(mark)) AS ave" +
@@ -296,7 +313,7 @@ server.get('/profile/:username', function (req, res) {
                             "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=?", [user_id])
                             .then(([results3, fields3]) => {
                                 connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
-                                    "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=?", [user_id])
+                                    "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [user_id])
                                     .then(([results4, fields4]) => {
                                         console.log(results4);
                                         res.render(__dirname + "/views/profileph.pug",
@@ -369,7 +386,7 @@ server.post('/registerph', (req, res) => {
 server.post('/login', (req, res) => {
 
     const login = req.body.login;
-    pass = req.body.pass;
+    let pass = req.body.pass;
     connection.query("SELECT * FROM users INNER JOIN roles on users.role_id = roles.role_id WHERE  email=?", [login])
         .then(([results, fields]) => {
 
@@ -378,10 +395,10 @@ server.post('/login', (req, res) => {
                 authentication = true;
                 username = results[0].username;
                 role = results[0].role;
-                console.log("Username: " + username);
+
+
                 res.redirect('/' + username);
             } else {
-
                 console.log("incorrect password");
             }
 
@@ -399,6 +416,38 @@ server.post('/addfolder',(req, res) => {
 
 server.post('/addphoto',(req, res) => {
     //ajax!
+});
+
+server.post('/addfavorite',(req, res) => {
+
+    connection.query("INSERT INTO favorites(user_id, ph_id) VALUES(?, ?)", [req.body.user_id, req.body.ph_id])
+        .then(([results, fields]) => {
+            console.log("Successfully add data");
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+
+        });
+
+});
+
+server.post('/delfavorite',(req, res) => {
+
+
+    connection.query("DELETE FROM favorites WHERE user_id=? AND ph_id=?", [req.body.user_id, req.body.ph_id])
+        .then(([results, fields]) => {
+            console.log("Successfully delete data");
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+
+        });
+
+
 });
 
 function hashing(raw) {

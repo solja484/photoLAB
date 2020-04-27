@@ -61,7 +61,7 @@ body
                                     else
                                         div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
                             .col-md-6
-                                .h1(class="text-24")= ph.username
+                                .h1(class="text-24")= '@'+ ph.username
                                 .h5
                                     span(class="text-muted pd-r-25")= '$'+ph.price
                                     i(class="material-icons text-20 ") &#xe55f;
@@ -71,8 +71,9 @@ body
                             .col-md-3(class="pd-25")
                                 if(auth)
                                     div(class="form-group custom-checkbox ")
-                                        button(id="put", class="btn btn-outline-info bg-hover-green"
-                                        onclick=`addToFavorites(${ph.ph_id},'${info.username}')`)  Зберегти в закладках
+
+                                        button(id=`fav${ph.ph_id}`, class="btn btn-outline-info bg-hover-green"
+                                        onclick=`addToFavorites(${ph.ph_id},'${info.user_id}')`)  Зберегти в закладках
 
                                 a(class="btn btn-info bg-green" type="button" href=`/guest/`+`${ph.username}`) Відкрити профіль
                         .row

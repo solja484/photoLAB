@@ -69,9 +69,27 @@ body
                     div(id="favorites" class="tab-pane row fade in active show")
                         .col-md-1
                         .col-md-10
-
+                            .row
+                            if(favorites===[])
+                                p Поки що немає збережених фотографів
                             each fav in favorites
-                                p= fav.username
+
+                                .panel(class='col-md-5')
+                                    .row(class="mg-0 ")
+                                        .col-md-4
+                                            div(class="avatar-sm mg-10")
+                                                if(fav.avatar_link != undefined)
+                                                    div(class="circle-avatar pd-10" style=`background-image:url(${fav.avatar_link})`)
+                                                else
+                                                    div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
+                                        .col-md-6
+                                            a(class="text-24 link1" href=`/guest/${fav.username}`)= '@'+fav.username
+                                            .h5
+                                                i(class="material-icons text-20 ") &#xe55f;
+                                                span(class="text-20")= fav.city
+                                            .h5
+                                                span(class="text-muted pd-r-25")= '$' + fav.price
+                                .col-md-1
                 div(id="calendar" class="tab-pane  row fade")
                     .col-md-1
                     .col-md-10

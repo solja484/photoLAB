@@ -106,7 +106,14 @@ body{
     border-radius:50%;
 }
 
-
+.avatar-sm{
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    vertical-align: middle;
+    /* make it a circle */
+    border-radius:50%;
+}
 
 .circle-avatar{
     /* make it responsive */
