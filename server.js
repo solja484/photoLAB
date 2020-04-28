@@ -198,7 +198,7 @@ server.get('/guest/:username', (req, res) => {
                 .then(([results2, fields2]) => {
 
                     connection.query("SELECT account_link,site_name,icon FROM accounts " +
-                        "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=?", [ph_id])
+                        "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
                         .then(([results3, fields3]) => {
 
                             res.render(__dirname + "/views/profileph.pug",
@@ -310,7 +310,7 @@ server.get('/profile/:username', function (req, res) {
                     .then(([results2, fields2]) => {
 
                         connection.query("SELECT account_link,site_name,icon FROM accounts " +
-                            "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=?", [user_id])
+                            "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [user_id])
                             .then(([results3, fields3]) => {
                                 connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
                                     "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [user_id])

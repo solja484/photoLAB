@@ -2,14 +2,6 @@
     min-height:150px;
 }
 
-.link1 {
-    color: gray;!important;
-}
-.link1:hover,.link1:focus,.link1:active{
-
-    color: black;
-    text-decoration: none;
-}
 
 #folders{
     overflow: auto;

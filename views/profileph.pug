@@ -8,7 +8,7 @@ body
         include ../navbar_unsign
     else
         include ../navbar
-    .row(class='mg-0 pd-0 bg-white ')
+    .row(class='mg-0 pd-0 bg-white' id="profile")
         .col-md-2
         .col-md-8
             .row(class='mg-0 pd-10  ')
@@ -67,6 +67,7 @@ body
             div(class="tab-content minh")
                 if(!guest)
                     div(id="favorites" class="tab-pane row fade in active show")
+                        div(class="empty_div col-md-12")
                         .col-md-1
                         .col-md-10
                             .row
@@ -74,7 +75,7 @@ body
                                 p Поки що немає збережених фотографів
                             each fav in favorites
 
-                                .panel(class='col-md-5')
+                                .panel(class='col-md-5' id=`favpanel${fav.ph_id}`)
                                     .row(class="mg-0 ")
                                         .col-md-4
                                             div(class="avatar-sm mg-10")
@@ -83,12 +84,16 @@ body
                                                 else
                                                     div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
                                         .col-md-6
-                                            a(class="text-24 link1" href=`/guest/${fav.username}`)= '@'+fav.username
+                                            a(class="text-20 link1" href=`/guest/${fav.username}`)= '@'+fav.username
                                             .h5
-                                                i(class="material-icons text-20 ") &#xe55f;
-                                                span(class="text-20")= fav.city
+                                                i(class="material-icons text-17 ") &#xe55f;
+                                                span(class="text-17")= fav.city
                                             .h5
                                                 span(class="text-muted pd-r-25")= '$' + fav.price
+                                        .col-md-2
+                                            button(id=`fav${fav.ph_id}`, class="btn btn-outline-danger border-none"
+                                            onclick=`deleteFromFavorites(${fav.ph_id},${info.user_id},true)`)
+                                                i(class="fa fa-trash red")
                                 .col-md-1
                 div(id="calendar" class="tab-pane  row fade")
                     .col-md-1
@@ -102,8 +107,8 @@ body
                                 each con in contacts
 
                                     .col-md-3
-                                        if(con.site_name=='gmail')
-                                            a(class='link1 btn ' href="")
+                                        if(con.site_name=='gmail'||con.site_name == 'phone')
+                                            a(class='link1 btn ' href="#contacts")
                                                 span(class=`${con.icon}`)
                                                 = ' ' + con.account_link
                                         else
@@ -118,8 +123,8 @@ body
                                 each con in contacts
 
                                     .col-md-3
-                                        if(con.site_name == 'gmail')
-                                            a(class='link1 btn ' href="")
+                                        if(con.site_name == 'gmail' || con.site_name == 'phone')
+                                            a(class='link1 btn ' href="#contacts")
                                                 span(class=`${con.icon}`)
                                                 = ' ' + con.account_link
                                         else

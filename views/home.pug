@@ -61,7 +61,7 @@ body
                                     else
                                         div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
                             .col-md-6
-                                .h1(class="text-24")= '@'+ ph.username
+                                a(class="text-24 link1" href=`/guest/`+`${ph.username}`)= '@'+ ph.username
                                 .h5
                                     span(class="text-muted pd-r-25")= '$'+ph.price
                                     i(class="material-icons text-20 ") &#xe55f;
@@ -72,10 +72,11 @@ body
                                 if(auth)
                                     div(class="form-group custom-checkbox ")
 
-                                        button(id=`fav${ph.ph_id}`, class="btn btn-outline-info bg-hover-green"
-                                        onclick=`addToFavorites(${ph.ph_id},'${info.user_id}')`)  Зберегти в закладках
+                                        button(id=`fav${ph.ph_id}`, class="btn pd-0 btn-light float-right hover-green border-none green bg-transparent"
+                                        onclick=`addToFavorites(${ph.ph_id},${info.user_id})`)
+                                            i(class=" text-40 material-icons") &#xe8e7;
 
-                                a(class="btn btn-info bg-green" type="button" href=`/guest/`+`${ph.username}`) Відкрити профіль
+
                         .row
                             .col-md-12
                                 div(id="blogCarousel" class="carousel slide pd-25" data-ride="carousel")

@@ -13,9 +13,7 @@ function addToFavorites(ph_id,user_id){
         contentType: 'application/json',
         success: function (data2) {
 
-            $("#fav"+ph_id).text("Видалити з закладок").removeClass('btn-outline-info').removeClass('bg-hover-green')
-                .addClass('btn-outline-danger');
-            $("#fav"+ph_id).attr("onclick","deleteFromFavorites("+ph_id+","+user_id+")");
+            $("#fav"+ph_id).empty().append(`<i class=' text-40 material-icons '>&#xe8e6;</i>`).attr("onclick","deleteFromFavorites("+ph_id+","+user_id+")");
         },
         error: function (data2) {
             console.log(data2.error);
@@ -27,7 +25,7 @@ function addToFavorites(ph_id,user_id){
 
 
 
-function deleteFromFavorites(ph_id,user_id){
+function deleteFromFavorites(ph_id,user_id, profile=false){
 
     let data = {
         "ph_id": ph_id,
@@ -42,9 +40,11 @@ function deleteFromFavorites(ph_id,user_id){
         contentType: 'application/json',
         success: function (data2) {
 
-            $("#fav"+ph_id).text("Додати до закладок").removeClass('btn-outline-danger').addClass('btn-outline-info').addClass('bg-hover-green')
-
-            $("#fav"+ph_id).attr("onclick","addToFavorites("+ph_id+","+user_id+")");
+            if(profile){
+                $("#favpanel"+ph_id).remove();
+            }else{
+            $("#fav"+ph_id).empty().append(`<i class=' text-40 material-icons '>&#xe8e7;</i>`).attr("onclick","addToFavorites("+ph_id+","+user_id+")");
+            }
         },
         error: function (data2) {
             console.log(data2.error);
@@ -53,3 +53,5 @@ function deleteFromFavorites(ph_id,user_id){
     });
 
 }
+
+
