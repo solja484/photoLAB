@@ -141,3 +141,17 @@ function validEmpty(str) {
     selector.addClass('is-valid');
     return true;
 }
+
+
+//ці два методи забирають валідацію і інфу відповідно
+function removeValid(str) {
+    $("form#" + str + " :input").each(function () {
+        $(this).removeClass('is-valid');
+    });
+}
+
+function clearForm(str) {
+    $("form#" + str + " :input").each(function () {
+        $(this).val('');
+    });
+}

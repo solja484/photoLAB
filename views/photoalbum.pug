@@ -13,27 +13,45 @@ body
             if(guest)
                 a(class='link1 btn btn-outline-light sharp-corners' href=`/guest/${ph_username}`)
                     span(class='fa fa-arrow-left')
-            div(class="nav sticky-top flex-column nav-pills" id="folders" role="tablist" aria-orientation="vertical")
+            div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
+
+
                 if(!guest)
-                    button(class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
-                br
+                    button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
+
                 div(class="empty_div")
                 each f in folders
                     if(f==folders[0])
-                        a(class="link1  folder-link active" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="true")= f.name
+                        a(class="link1 col-md-10 folder-link active" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
+                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="true" onclick=`setCurrentFolder(${f.folder_id})`)= f.name
                     else
-                        a(class="link1  folder-link" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="false")= f.name
+                        a(class="link1 col-md-10  folder-link" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
+                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="false" onclick=`setCurrentFolder(${f.folder_id})`)= f.name
+
+
         .col-md-1
         .col-md-5
             div(class="tab-content" id='photos_container')
                 if(!guest)
-                    button(class="btn btn-block btn-outline-light " type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
+                    button(class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
                 br
+                script.
+                    let folders0 = !{JSON.stringify(folders)};
+                    setCurrentFolder(folders0[0].folder_id)
                 each f in folders
                     if(f.folder_id===folders[0].folder_id)
                         div(class="tab-pane show active" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
+                            button(id=`edit_folder${f.folder_id}`, class="link2  bg-transparent border-none", data-toggle="modal",
+                            data-target='#edit_folder_modal' onclick=`setFolderName("${f.name}")`)
+                                span Перейменувати папку
+                                i(class="fa fa-edit ")
+                            button(id=`delete_folder${f.folder_id}`, class="link-hover-red bg-transparent border-none",  data-toggle="modal",
+                            data-target='#delete_folder_modal')
+                                span Видалити папку
+                                i(class="fa fa-trash-o ")
+
+                            br
+                            br
                             each photo in photos
                                 if(photo.folder_id===f.folder_id)
                                     div(class='card ')
@@ -45,6 +63,17 @@ body
                                     br
                     else
                         div(class="tab-pane fade" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
+                            button(id=`edit_folder${f.folder_id}`, class="link2  bg-transparent border-none", data-toggle="modal",
+                            data-target='#edit_folder_modal' onclick=`setFolderName("${f.name}")`)
+                                span Перейменувати папку
+                                i(class="fa fa-edit ")
+                            button(id=`delete_folder${f.folder_id}`, class="link-hover-red bg-transparent border-none",  data-toggle="modal",
+                            data-target='#delete_folder_modal')
+                                span Видалити папку
+                                i(class="fa fa-trash-o ")
+
+                            br
+                            br
                             each photo in photos
                                 if(photo.folder_id === f.folder_id)
                                     div(class='card')
@@ -56,7 +85,9 @@ body
                                     br
         .col-md-1
 
-div(id="add_folder_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
+
+
+div(id="add_folder_modal", class="modal fade font-17", role="dialog")
     div(class="modal-dialog")
         div(class="modal-content" )
             div(class="modal-header")
@@ -64,9 +95,12 @@ div(id="add_folder_modal", class="modal fade font-17", role="dialog", aria-hidde
                 button(type="button" class="close" data-dismiss="modal") &times;
 
             div(class="modal-body")
-                form(method="POST", class="mx-auto font-17", action="/addfolder" )
-                    +input("text","","Назва", "Назва папки:",name='title', required)
-                    button(type="submit" class="btn btn-info bg-green btn-block font-17" ) Створити папку
+                form(class="mx-auto font-17 " id='add_folder_form')
+                    label(for='addfoldertitle' class='non-bold') Назва папки:
+                    input(type="text", class='form-control' id="addfoldertitle", placeholder="Назва", name='title')
+                    div(class="invalid-feedback text-14 mg-l-15") Це поле не може бути пустим!
+                button(class="btn btn-info bg-green btn-block font-17"
+                    onclick='addFolder()') Створити папку
 
 
 div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
@@ -96,3 +130,21 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
                                 input(type="file", id="photo_file", class="form-control", name='photo_file',accept="image/*")
                                 div(class="invalid-feedback text-14 mg-l-15") Оберіть файл!
                             input(type="submit" class="btn btn-info btn-block ", value="Додати фото!")
+
+
+div(class="modal fade font-17" id="edit_folder_modal" role="dialog")
+    div(class="modal-dialog")
+        div(class="modal-content")
+            div(class="modal-header")
+                h4(class="modal-title") Перейменувати папку
+                button(type="button" class="close" data-dismiss="modal") &times;
+            div(class="modal-body")
+                form(id="edit_folder_form" class="needs-validation" novalidate)
+
+                    div(id="edit_folder_form_body" class="form-group row")
+                        div(class="col-md-12")
+                            label(for="edit_folder_caption") Назва:
+                            input(id="edit_folder_caption" class="form-control" required)
+                            div(class="invalid-feedback") Це поле не може бути пустим
+            div(class="modal-footer")
+                button(id="edit_folder_button" type="button" class="btn btn-outline-info" onclick="editFolder()") Зберегти зміни
