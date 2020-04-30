@@ -124,13 +124,15 @@ server.get('/:username', (req, res) => {
                 "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;"
             ).then(([results2, fields2]) => {
                 connection.query(
-                    "SELECT * FROM favorites WHERE user_id=?", [res2.user_id]
+                    "SELECT user_id,ph_id FROM favorites WHERE user_id=? GROUP BY ph_id", [res.cookies.user_id]
                 ).then(([results3, fields3]) => {
                     connection.query(
                         "SELECT link, ph_id FROM photos INNER JOIN folders ON folders.folder_id=photos.folder_id"
                     ).then(([results4, fields4]) => {
 
+
                             console.log(res.cookies);
+                            console.log(results3);
                             res.render(__dirname + '/views/home.pug',
                                 {
                                     types: types,
