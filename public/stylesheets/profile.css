@@ -14,7 +14,7 @@
     border-radius: 0;!important;
     padding:5px 0;
     margin: 0;
-    text-align: center;
+    text-align: center;!important;
 }
 
 .folder-link:hover{

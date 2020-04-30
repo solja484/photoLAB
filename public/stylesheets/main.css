@@ -20,7 +20,9 @@ body{
 .green{
     color: #34a99c;
 }
-
+.yellow{
+    color: #ffd43f;
+}
 .black, .black:active, .black:hover, .black:focus{
     color:black!important;
 }
@@ -143,6 +145,15 @@ body{
     color: #e0e0e0;
 }
 .link-hover-red:hover,.link-hover-red:focus,.link-hover-red:active{
+
+    color: #dc3545;
+    text-decoration: none;
+}
+
+.link-hover-red2 {
+    color: gray;
+}
+.link-hover-red2:hover,.link-hover-red2:focus,.link-hover-red2:active{
 
     color: #dc3545;
     text-decoration: none;

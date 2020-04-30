@@ -143,6 +143,30 @@ function validEmpty(str) {
 }
 
 
+function validTags(str) {
+    const selector = $("#" + str);
+    let name = selector.text();
+
+    if (name==="") {
+        selector.removeClass('is-invalid');
+        selector.removeClass('is-valid');
+        return true;
+    }
+    let letters = /^[a-zA-Z0-9а-яА-ЯіІїЇ\s]+$/;
+    if (name.match(letters)) {
+        selector.removeClass('is-invalid');
+        selector.addClass('is-valid');
+        return true;
+    } else {
+        selector.removeClass('is-valid');
+        selector.addClass('is-invalid');
+        return false;
+    }
+}
+
+
+
+
 //ці два методи забирають валідацію і інфу відповідно
 function removeValid(str) {
     $("form#" + str + " :input").each(function () {

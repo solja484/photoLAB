@@ -14,22 +14,22 @@ html
             div(class="collapse navbar-collapse ", id="mynavbar")
                 div(class="navbar-nav expand my-navbar font-17")
                     if(active=='home')
-                        a(class="nav-item nav-link menu-active" active style="color: #efefef" href="/"+username) головна
+                        a(class="nav-item nav-link menu-active" active style="color: #efefef" href="/"+cookies.username) головна
                     else
-                        a(class="nav-item nav-link" active style="color: #efefef" href="/"+username) головна
+                        a(class="nav-item nav-link" active style="color: #efefef" href="/"+cookies.username) головна
                     if(active=='profile')
-                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/profile/"+username) профіль
+                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/profile/"+cookies.username) профіль
                     else
-                        a(class="nav-item nav-link" style="color: #efefef" href="/profile/"+username) профіль
+                        a(class="nav-item nav-link" style="color: #efefef" href="/profile/"+cookies.username) профіль
                     if(active == 'album')
-                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/photoalbum/"+username) фотоальбом
+                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
                     else
-                        a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+username) фотоальбом
+                        a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
                     if(active=='help')
                         a(class="nav-item nav-link menu-active" style="color: #efefef" href='/help') про нас
                     else
                         a(class="nav-item nav-link" style="color: #efefef" href='/help') про нас
-                p(class='nav-text float-rightt mg-10 text-25 white')= '@'+username
+                p(class='nav-text float-rightt mg-10 text-25 white')= '@'+cookies.username
                 button(class="btn btn-outline-warning m-l-15 float-rightt", type='button', data-toggle="modal", data-target='#exit_modal') Вихід
 
 
@@ -43,4 +43,5 @@ div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="tru
                     button(class="btn btn-md btn-danger col-md-6" type=submit value='Вийти')
                     button(class="btn btn-md btn-default col-md-6" type="button" data-dismiss="modal") Повернутись
 
+include views/modals
     include views/scripts

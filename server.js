@@ -53,7 +53,12 @@ server.get('/help', function (req, res) {
 
     let active = 'help';
     res.cookies = req.cookies;
-    res.render(__dirname + "/views/help.pug", {active: active, auth: req.cookies.auth, config: config});
+    res.render(__dirname + "/views/help.pug", {
+        active: active,
+        auth: req.cookies.auth,
+        config: config,
+        cookies: req.cookies
+    });
 });
 
 server.get('/', function (req, res) {
@@ -63,8 +68,6 @@ server.get('/', function (req, res) {
         res.cookies = req.cookies;
         res.redirect('/' + req.cookies.username);
     }
-
-
     let noun = "";
     connection.query(
         "SELECT ph_id,photographers.user_id, organization,username,avatar_link,city,price " +
@@ -80,7 +83,8 @@ server.get('/', function (req, res) {
                     cities: cities,
                     auth: req.cookies.auth,
                     active: active,
-                    config: config
+                    config: config,
+                    cookies: req.cookies
                 });
 
         })
@@ -93,53 +97,54 @@ server.get('/', function (req, res) {
 
 server.get('/:username', (req, res) => {
     let username = req.params.username;
-    let auth = req.cookies.auth;
-    console.log("user: " + req.cookies.username+" "+username);
+
+    console.log("user: " + req.cookies.username + " " + username);
 
     res.cookies = req.cookies;
-    if (!auth&&username == req.cookies.username)
-            res.redirect('/');
+    if ((!req.cookies.auth) && username === req.cookies.username){
 
-    if (username !== req.cookies.username){
-        res.username=req.cookies.username;
-        res.redirect('/guest/' + username);
+        res.redirect('/');
     }
 
+
+    if (username !== req.cookies.username) {
+        res.username = req.cookies.username;
+        res.redirect('/guest/' + username);
+    }
 
 
     let active = 'home';
     let guest = false;
     connection.query("SELECT * FROM users WHERE  username=?", [username])
         .then(([results, fields]) => {
-
+            res.cookie("user_id", results[0].user_id);
             let res2 = results[0];
             connection.query(
                 "SELECT ph_id,photographers.user_id, username,avatar_link,city,price " +
                 "FROM photographers INNER JOIN users ON photographers.user_id=users.user_id;"
             ).then(([results2, fields2]) => {
                 connection.query(
-                    "SELECT ph_id FROM favorites WHERE user_id=?", [res2.user_id]
+                    "SELECT * FROM favorites WHERE user_id=?", [res2.user_id]
                 ).then(([results3, fields3]) => {
                     connection.query(
                         "SELECT link, ph_id FROM photos INNER JOIN folders ON folders.folder_id=photos.folder_id"
                     ).then(([results4, fields4]) => {
 
-                        res.cookies = req.cookies;
+                            console.log(res.cookies);
+                            res.render(__dirname + '/views/home.pug',
+                                {
+                                    types: types,
+                                    phinfo: results2,
+                                    info: results[0],
+                                    favorites: results3,
+                                    photos: results4,
+                                    cities: cities,
+                                    active: active,
+                                    guest: guest,
+                                    config: config,
+                                    cookies: res.cookies
+                                });
 
-                        res.render(__dirname + '/views/home.pug',
-                            {
-                                types: types,
-                                phinfo: results2,
-                                info: results[0],
-                                username: username,
-                                favorites: results3,
-                                photos: results4,
-                                cities: cities,
-                                auth: auth,
-                                active: active,
-                                guest: guest,
-                                config: config
-                            });
                     })
                         .catch(err => {
                             console.log(err);
@@ -158,18 +163,18 @@ server.get('/:username', (req, res) => {
 
 server.get('/guest/photoalbum/:username', (req, res) => {
     let guest_username = req.params.username;
+
     let active = '';
     let guest = true;
-    let auth = req.cookies.auth;
 
     res.cookies = req.cookies;
     if (guest_username === req.cookies.username)
-        res.redirect('/photoalbum'+guest_username);
+        res.redirect('/photoalbum/' + guest_username);
 
     connection.query("SELECT ph_id FROM photographers INNER JOIN users on photographers.user_id= users.user_id WHERE username=?", [guest_username])
         .then(([results, fields]) => {
             let ph_id = results[0].ph_id;
-            connection.query("SELECT link,title,tags,photos.folder_id " +
+            connection.query("SELECT link,title,tags, descr, photos.folder_id " +
                 "FROM photos INNER JOIN folders ON folders.folder_id=photos.folder_id " +
                 "WHERE ph_id =? " +
                 "ORDER BY folders.folder_id ASC, photo_id DESC", [ph_id])
@@ -180,8 +185,14 @@ server.get('/guest/photoalbum/:username', (req, res) => {
 
 
                             res.render(__dirname + "/views/photoalbum.pug", {
-                                config: config, username: req.cookies.username, guest: guest, active: active,
-                                ph_username: guest_username, auth: auth, photos: results2, folders: results3
+                                config: config,
+                                username: req.cookies.username,
+                                guest: guest,
+                                active: active,
+                                ph_username: guest_username,
+                                photos: results2,
+                                folders: results3,
+                                cookies: req.cookies
                             });
                         })
                         .catch(err => {
@@ -200,14 +211,15 @@ server.get('/guest/photoalbum/:username', (req, res) => {
 
 server.get('/guest/:username', (req, res) => {
     let guest_username = req.params.username;
-
+    res.cookies = req.cookies;
     console.log(req.cookies);
-    console.log("guest "+guest_username);
+    console.log("guest " + guest_username);
     let active = '';
     let guest = true;
-    if(guest_username==null){
-        res.cookies=req.cookies;
-        res.redirect('/');}
+    if (guest_username == null) {
+
+        res.redirect('/');
+    }
 
     connection.query("SELECT photographers.ph_id AS ph_id,photographers.user_id AS user_id,email,avatar_link,city,organization,username,lastname,firstname," +
         "fathername,price,exp,organization,about,ROUND(AVG(mark)) AS ave" +
@@ -233,7 +245,8 @@ server.get('/guest/:username', (req, res) => {
                                     config: config,
                                     guest: guest,
                                     username: req.params.username,
-                                    auth: req.cookies.auth
+                                    auth: req.cookies.auth,
+                                    cookies: req.cookies
                                 });
 
                         })
@@ -259,62 +272,60 @@ server.get('/guest/:username', (req, res) => {
 
 server.get('/edit/:username', (req, res) => {
     let username = req.params.username;
+    if (req.cookies.username !== username)
+        res.redirect('/guest/' + username);
     let active = "";
 
     res.cookies = req.cookies;
     res.render(__dirname + "/views/edit.pug", {
         active: active,
         auth: req.cookies.auth,
-        info: {username: username},
-        config: config
+        config: config,
+        cookies: req.cookies
     });
 });
 
 server.get('/photoalbum/:username', function (req, res) {
-    if (!req.cookies.auth) res.redirect('/');
-
     let username = req.params.username;
+    if (!req.cookies.auth && req.cookies.username === username) res.redirect('/');
+    if (!req.cookies.auth && req.cookies.username !== username) res.redirect('/guest/photoalbum/' + username);
+
     let active = 'album';
     let guest = false;
-
+    res.cookies = req.cookies;
     connection.query("SELECT ph_id FROM photographers INNER JOIN users on photographers.user_id= users.user_id WHERE username=?", [username])
         .then(([results, fields]) => {
             let ph_id = results[0].ph_id;
-            connection.query("SELECT link,title,tags,photos.folder_id " +
+            res.cookie("user_id", results[0].user_id);
+            connection.query("SELECT photo_id, link,title,tags, descr, photos.folder_id " +
                 "FROM photos INNER JOIN folders ON folders.folder_id=photos.folder_id " +
                 "WHERE ph_id =? " +
                 "ORDER BY folders.folder_id ASC, photo_id DESC", [ph_id])
                 .then(([results2, fields2]) => {
-
                     connection.query("SELECT folder_id,name FROM folders WHERE ph_id =? GROUP BY folder_id ORDER BY folder_id", [ph_id])
                         .then(([results3, fields3]) => {
-
-                            res.cookies = req.cookies;
+                            for (p in results2)
+                                results2[p].taglist = splitIntoTags(results2[p].tags);
                             res.render(__dirname + "/views/photoalbum.pug", {
-                                config: config, username: username, guest: guest, auth: req.cookies.auth,
-                                ph_username: username, photos: results2, folders: results3, active: active
+                                config: config,
+                                guest: guest,
+                                photos: results2,
+                                folders: results3,
+                                active: active,
+                                cookies: req.cookies
                             });
                         })
                         .catch(err => {
-
                             console.log(err);
                         });
-
-
                 })
                 .catch(err => {
-
                     console.log(err);
                 });
-
-
         })
         .catch(err => {
-
             console.log(err);
         });
-
-
 });
 
 server.get('/profile/:username', function (req, res) {
@@ -343,6 +354,7 @@ server.get('/profile/:username', function (req, res) {
             "  WHERE  username=?", [username])
             .then(([results, fields]) => {
                 let ph_id = results[0].ph_id;
+                res.cookie("user_id", results[0].user_id);
                 connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
                     .then(([results2, fields2]) => {
 
@@ -353,40 +365,30 @@ server.get('/profile/:username', function (req, res) {
                                     "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [results[0].user_id])
                                     .then(([results4, fields4]) => {
 
-                                        res.cookies = req.cookies;
+
                                         res.render(__dirname + "/views/profileph.pug",
                                             {
                                                 mytypes: results2,
                                                 contacts: results3,
                                                 favorites: results4,
                                                 info: results[0],
-                                                username: username,
                                                 active: active,
                                                 config: config,
-                                                auth: req.cookies.auth,
-                                                guest: guest
+                                                guest: guest,
+                                                cookies: req.cookies
                                             });
-
                                     })
                                     .catch(err => {
-
                                         console.log(err);
                                     });
-
-
                             })
                             .catch(err => {
-
                                 console.log(err);
                             });
-
-
                     })
                     .catch(err => {
-
                         console.log(err);
                     });
-
             })
             .catch(err => {
                 console.log(err);
@@ -395,12 +397,13 @@ server.get('/profile/:username', function (req, res) {
     else if (req.cookies.role === 'client') {
         connection.query("SELECT * FROM users WHERE  username=?", [username])
             .then(([results, fields]) => {
-
+                res.cookies = req.cookies;
                 res.render(__dirname + "/views/profile.pug", {
                     types: types,
                     info: results,
                     active: active,
-                    config: config
+                    config: config,
+                    cookies: req.cookies
                 });
 
             })
@@ -425,12 +428,14 @@ server.get('/logout', function (req, res) {
 });
 
 server.post('/register', (req, res) => {
+    res.cookies = req.cookies;
     res.cookies('role', "client");
     res.cookies("auth", true);
 
 });
 
 server.post('/registerph', (req, res) => {
+    res.cookies = req.cookies;
     res.cookies('role', "photographer");
     res.cookies("auth", true);
 
@@ -453,6 +458,7 @@ server.post('/login', (req, res) => {
                 res.cookie("role", results[0].role);
                 res.cookie("auth", true);
                 res.cookie("username", results[0].username);
+                res.cookie("user_id", results[0].user_id);
 
                 res.redirect('/' + results[0].username);
             } else {
@@ -467,6 +473,35 @@ server.post('/login', (req, res) => {
 
 });
 
+
+server.post('/addfavorite', (req, res) => {
+    res.cookies = req.cookies;
+    connection.query("INSERT INTO favorites(user_id, ph_id) VALUES(?, ?)", [req.body.user_id, req.body.ph_id])
+        .then(([results, fields]) => {
+            console.log("Successfully add data");
+
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+
+        });
+
+});
+server.post('/delfavorite', (req, res) => {
+    res.cookies = req.cookies;
+    connection.query("DELETE FROM favorites WHERE user_id=? AND ph_id=?", [req.body.user_id, req.body.ph_id])
+        .then(([results, fields]) => {
+            console.log("Successfully delete data");
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+        });
+});
+
 server.post('/addfolder', (req, res) => {
     if (req.cookies.auth)
         connection.query("SELECT ph_id FROM photographers INNER JOIN users on photographers.user_id= users.user_id WHERE username=?", [req.cookies.username])
@@ -476,8 +511,8 @@ server.post('/addfolder', (req, res) => {
                     .then(([results2, fields2]) => {
                         console.log("Successfully add new folder");
                         console.log(results2.insertId);
-                        res.cookies=req.cookies;
-                        res.send({'folder_id':results2.insertId});
+                        res.cookies = req.cookies;
+                        res.send({'folder_id': results2.insertId});
                     })
                     .catch(err => {
                         console.log(err);
@@ -491,42 +526,101 @@ server.post('/addfolder', (req, res) => {
             });
 
 });
+server.post('/editfolder', (req, res) => {
+
+    connection.query("UPDATE folders SET name=? WHERE folder_id=?", [req.body.name, req.body.folder_id])
+        .then(([results, fields]) => {
+            console.log("Successfully updated data");
+            res.cookies = req.cookies;
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+
+        });
+
+});
+server.post('/deletefolder', (req, res) => {
+    connection.query("DELETE FROM folders WHERE folder_id=?", [req.body.folder_id])
+        .then(([results, fields]) => {
+            console.log("Successfully delete folder");
+            res.cookies = req.cookies;
+            res.send(results);
+        })
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+        });
+});
 
 server.post('/addphoto', (req, res) => {
-    //ajax!
+    if (req.cookies.auth)
+        connection.query("INSERT INTO photos(folder_id,link,title,descr,tags) VALUES(?, ?, ?, ?, ?)", [req.body.folder_id, req.body.link, req.body.title, req.body.descr, req.body.tags])
+            .then(([results, fields]) => {
+                console.log("Successfully add new photo");
+                console.log(results.insertId);
+                res.cookies = req.cookies;
+                res.send({'photo_id': results.insertId});
+            })
+            .catch(err => {
+                console.log(err);
+                res.send(err);
+            });
 });
-
-server.post('/addfavorite', (req, res) => {
-
-    connection.query("INSERT INTO favorites(user_id, ph_id) VALUES(?, ?)", [req.body.user_id, req.body.ph_id])
+server.post('/deletephoto', (req, res) => {
+    connection.query("DELETE FROM photos WHERE photo_id=?", [req.body.photo_id])
         .then(([results, fields]) => {
-            console.log("Successfully add data");
+            console.log("Successfully deleted photo");
+            res.cookies = req.cookies;
             res.send(results);
         })
         .catch(err => {
             console.log(err);
             res.send(err);
-
         });
-
 });
-
-server.post('/delfavorite', (req, res) => {
-
-
-    connection.query("DELETE FROM favorites WHERE user_id=? AND ph_id=?", [req.body.user_id, req.body.ph_id])
+server.post('/editphoto', (req, res) => {
+    connection.query("DELETE FROM tags WHERE photo_id=?", [req.body.photo_id])
         .then(([results, fields]) => {
-            console.log("Successfully delete data");
-            res.send(results);
+            connection.query("UPDATE photos SET title=?, descr=?, tags=? WHERE photo_id=?", [req.body.title, req.body.descr, req.body.tags, req.body.photo_id])
+                .then(([results2, fields2]) => {
+                    console.log("Successfully updated data");
+                    res.cookies = req.cookies;
+                    let taglist = splitIntoTags(req.body.tags);
+                    res.send(taglist);
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send(err);
+                });
         })
         .catch(err => {
             console.log(err);
             res.send(err);
-
         });
-
-
 });
+
+
+function getListOfFolders(array) {
+
+    let attributes = [];
+    array.map(({folder_id}) => {
+        if (folder_id) attributes.push(folder_id)
+    });
+
+    console.log(attributes);
+    return attributes;
+}
+
+function splitIntoTags(str) {
+    let tags = [];
+    let stringArray = str.split(/\s/);
+    for (s of stringArray)
+        tags.push(s);
+    return tags;
+}
+
 
 function hashing(raw) {
     let hash = require("crypto").createHmac("sha256", "password")

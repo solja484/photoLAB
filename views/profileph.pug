@@ -6,7 +6,7 @@ html
 body
 
 
-    if(guest&&!auth)
+    if(guest&&!cookies.auth)
         include ../navbar_unsign
     else
         include ../navbar
@@ -40,8 +40,9 @@ body
                                 br
                             br
 
-                            span(class="text-20" id="ph_ave")= info.ave +'/10⭐️'
-                            if(guest&&auth)
+                            span(class="text-20" id="ph_ave")= info.ave +'/10'
+                                i(class='text-20 fa fa-star yellow')
+                            if(guest&&cookies.auth)
                                 input(type='number',min='0',max='10',class="form-control",value='5')
                         .col-md-12
                             p
@@ -64,7 +65,7 @@ body
                             if(guest)
                                 a( class='link1' href='/guest/photoalbum/'+info.username) Фото
                             else
-                                a( class='link1' href='/photoalbum/'+username) Фото
+                                a( class='link1' href='/photoalbum/'+cookies.username) Фото
         .col-md-12
             div(class="tab-content minh")
                 if(!guest)

@@ -4,7 +4,7 @@ html
     style
         include ../public/stylesheets/profile.css
 body
-    if(guest&&!auth)
+    if(guest && !auth)
         include ../navbar_unsign
     else
         include ../navbar
@@ -12,21 +12,32 @@ body
         .col-md-5
             if(guest)
                 a(class='link1 btn btn-outline-light sharp-corners' href=`/guest/${ph_username}`)
-                    span(class='fa fa-arrow-left')
+                    i(class='fa fa-arrow-left')
+                    span= ` до профілю @${ph_username}`
+
+            if(!guest)
+                button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
+                div
+                    button(id='edit_folder', class="link2 bg-transparent border-none", data-toggle="modal",
+                    data-target='#edit_folder_modal')
+                        span Перейменувати папку
+                        i(class="fa fa-edit ")
+                    button(id='delete_folder', class="link-hover-red  bg-transparent border-none",  data-toggle="modal",
+                    data-target='#delete_folder_modal')
+                        span Видалити папку
+                        i(class="fa fa-trash-o ")
             div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
-
-
-                if(!guest)
-                    button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
 
                 div(class="empty_div")
                 each f in folders
-                    if(f==folders[0])
+                    if(f == folders[0])
                         a(class="link1 col-md-10 folder-link active" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="true" onclick=`setCurrentFolder(${f.folder_id})`)= f.name
+                        role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="true" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
+                        script.
+                            setCurrentFolder(!{JSON.stringify(f.folder_id)});
                     else
                         a(class="link1 col-md-10  folder-link" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href=`folder${f.folder_id}` aria-selected="false" onclick=`setCurrentFolder(${f.folder_id})`)= f.name
+                        role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="false" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
 
 
         .col-md-1
@@ -37,99 +48,52 @@ body
                 br
                 script.
                     let folders0 = !{JSON.stringify(folders)};
-                    setCurrentFolder(folders0[0].folder_id)
+                    if (getCurrentFolder() == "")
+                        setCurrentFolder(folders0[0].folder_id);
                 each f in folders
-                    if(f.folder_id===folders[0].folder_id)
+                    if(f.folder_id === folders[0].folder_id)
                         div(class="tab-pane show active" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
-                            button(id=`edit_folder${f.folder_id}`, class="link2  bg-transparent border-none", data-toggle="modal",
-                            data-target='#edit_folder_modal' onclick=`setFolderName("${f.name}")`)
-                                span Перейменувати папку
-                                i(class="fa fa-edit ")
-                            button(id=`delete_folder${f.folder_id}`, class="link-hover-red bg-transparent border-none",  data-toggle="modal",
-                            data-target='#delete_folder_modal')
-                                span Видалити папку
-                                i(class="fa fa-trash-o ")
-
-                            br
-                            br
                             each photo in photos
-                                if(photo.folder_id===f.folder_id)
-                                    div(class='card ')
+                                if(photo.folder_id === f.folder_id)
+                                    div(class='card ' id=`photo${photo.photo_id}`)
                                         div(class='img-container')
                                             div(class="circle-avatar " style=`background-image:url(${photo.link})`)
                                         div(class='card-body')
-                                            h5(class='card-title')= photo.title
-                                            p(class="text-14 text-muted text-break")= photo.tags
+                                            button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
+                                            onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
+                                                i(class="fa text-20 fa-trash-o ")
+                                            button(class='link1 bg-transparent float-right text-20 border-none' id=`editphotobutton${photo.photo_id}` data-toggle="modal", data-target='#edit_photo_modal'
+                                            onclick=`fillEditPhotoModal(${JSON.stringify(photo)})`)
+                                                i(class="fa text-20 fa-edit ")
+                                            h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
+                                            p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
+                                            p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
+                                                each tag in photo.taglist
+                                                    a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
                                     br
                     else
                         div(class="tab-pane fade" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
-                            button(id=`edit_folder${f.folder_id}`, class="link2  bg-transparent border-none", data-toggle="modal",
-                            data-target='#edit_folder_modal' onclick=`setFolderName("${f.name}")`)
-                                span Перейменувати папку
-                                i(class="fa fa-edit ")
-                            button(id=`delete_folder${f.folder_id}`, class="link-hover-red bg-transparent border-none",  data-toggle="modal",
-                            data-target='#delete_folder_modal')
-                                span Видалити папку
-                                i(class="fa fa-trash-o ")
 
-                            br
-                            br
+
                             each photo in photos
                                 if(photo.folder_id === f.folder_id)
-                                    div(class='card')
+                                    div(class='card' id=`photo${photo.photo_id}`)
                                         div(class='img-container')
                                             div(class="circle-avatar " style=`background-image:url(${photo.link})`)
                                         div(class='card-body')
-                                            h5(class='card-title')= photo.title
-                                            p(class="text-14 text-muted text-break")= photo.tags
+                                            button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
+                                            onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
+                                                i(class="fa text-20 fa-trash-o ")
+                                            button(class='link1 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#edit_photo_modal'
+                                            onclick=`fillEditPhotoModal(${JSON.stringify(photo)})` id=`editphotobutton${photo.photo_id}`)
+                                                i(class="fa text-20 fa-edit ")
+                                            h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
+                                            p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
+                                            p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
+                                                each tag in photo.taglist
+                                                    a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
                                     br
         .col-md-1
-
-
-
-div(id="add_folder_modal", class="modal fade font-17", role="dialog")
-    div(class="modal-dialog")
-        div(class="modal-content" )
-            div(class="modal-header")
-                h4(class="text-center text-20") Нова папка
-                button(type="button" class="close" data-dismiss="modal") &times;
-
-            div(class="modal-body")
-                form(class="mx-auto font-17 " id='add_folder_form')
-                    label(for='addfoldertitle' class='non-bold') Назва папки:
-                    input(type="text", class='form-control' id="addfoldertitle", placeholder="Назва", name='title')
-                    div(class="invalid-feedback text-14 mg-l-15") Це поле не може бути пустим!
-                button(class="btn btn-info bg-green btn-block font-17"
-                    onclick='addFolder()') Створити папку
-
-
-div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
-    div(class="modal-dialog")
-        div(class="modal-content" )
-            div(class="modal-body")
-                nav
-                    div(class="nav nav-tabs font-17" id="nav-tab" role="tablist")
-                        a(class="nav-item nav-link black active" id="link_photo_tab" data-toggle="tab" href="#link_photo" role="tab" aria-controls="link_photo" aria-selected="true") Посилання
-                        a(class="nav-item nav-link black " disabled id="download_photo_tab" data-toggle="tab" href="#download_photo" role="tab" aria-controls="download_photo" aria-selected="false") Завантажити
-
-                div(class="tab-content" id="nav-tabContent")
-                    div(class="tab-pane show active" id="link_photo" role="tabpanel" aria-labelledby="link_photo_tab")
-                        form(id="link_photo_form", method="POST", class="mx-auto needs-validation", action="/addphoto")
-                            div(class="form-group")
-                                label(for="photo_link" class="non-bold") Посилання:
-                                input(type="text", id="photo_link", class="form-control", placeholder="Url", name='photo_link')
-                                div(class="invalid-feedback text-14 mg-l-15") Це полене може бути пустим!
-                            input(type="submit" class="btn btn-info btn-block" value="Додати фото!")
-
-
-                    div(class="tab-pane fade" id="download_photo" role="tabpanel" aria-labelledby="download_photo_tab")
-                        form(id="download_photo_form", method="POST", class="mx-auto needs-validation", action="downloadphoto")
-
-                            div(class="form-group")
-                                label(for="photo_file" class="non-bold") Оберіть файл:
-                                input(type="file", id="photo_file", class="form-control", name='photo_file',accept="image/*")
-                                div(class="invalid-feedback text-14 mg-l-15") Оберіть файл!
-                            input(type="submit" class="btn btn-info btn-block ", value="Додати фото!")
 
 
 div(class="modal fade font-17" id="edit_folder_modal" role="dialog")
@@ -143,8 +107,64 @@ div(class="modal fade font-17" id="edit_folder_modal" role="dialog")
 
                     div(id="edit_folder_form_body" class="form-group row")
                         div(class="col-md-12")
-                            label(for="edit_folder_caption") Назва:
+                            select(class="form-control col-md-12" id='edit_folder_select')
+                                each f in folders
+                                    option(value=f.folder_id id=`editfolderoption${f.folder_id}`)= f.name
+                        div(class="col-md-12")
+                            label(for="edit_folder_caption") Нова назва:
                             input(id="edit_folder_caption" class="form-control" required)
                             div(class="invalid-feedback") Це поле не може бути пустим
             div(class="modal-footer")
                 button(id="edit_folder_button" type="button" class="btn btn-outline-info" onclick="editFolder()") Зберегти зміни
+
+div(class="modal fade font-17" id="delete_folder_modal" role="dialog")
+    div(class="modal-dialog")
+        div(class="modal-content")
+            div(class="modal-header")
+                h4(class="modal-title") Видалити папку
+                button(type="button" class="close" data-dismiss="modal") &times;
+            div(class="modal-body")
+                form(id="delete_folder_form")
+                    div( class="form-group row")
+                        div(class="col-md-12")
+                            select(class="form-control col-md-12" id='delete_folder_select')
+                                each f in folders
+                                    option(value=f.folder_id id=`delfolderoption${f.folder_id}`)= f.name
+            div(class="modal-footer")
+                button(id="delete_folder_button" type="button" class="btn btn-block btn-outline-danger" onclick="deleteFolder()") Видалити папку!
+
+div(class="modal fade font-17" id="delete_photo_modal" role="dialog")
+    div(class="modal-dialog")
+        div(class="modal-content")
+            div(class="modal-header")
+                h5(class="modal-title") Впевнені, що хочете видалити зображення?
+                button(type="button" class="close" data-dismiss="modal") &times;
+            div(class="modal-body row")
+                button(type="button" class="btn mg-5 col-md-5 btn-light" data-dismiss="modal") Повернутись
+
+                button(id="delete_photo_button" type="button" class="btn mg-5 col-md-5 btn-outline-danger" ) Видалити
+
+
+div(class="modal fade" id="edit_photo_modal" role="dialog")
+    div(class="modal-dialog")
+        div(class="modal-content")
+            div(class="modal-header")
+                h4(class="modal-title") Редагувати фото
+                button(type="button" class="close" data-dismiss="modal") &times;
+            div(class="modal-body")
+                form(id="edit_photo_form" class="needs-validation" novalidate)
+                    div(id="edit_photo_form_body" class="form-group row")
+                        div(class="col-md-12")
+                            label(for="edit_photo_title") Назва:
+                            input(id="edit_photo_title" class="form-control")
+                        div(class="col-md-12")
+                            label(for="edit_photo_descr") Опис:
+                            textarea(id="edit_photo_descr" class="form-control" rows=2)
+
+                        div(class="col-md-12")
+                            label(for="edit_photo_tags") Теги:
+                            textarea(id="edit_photo_tags" class="form-control" rows=2)
+                            small(class='text-14 text-muted') Одне слово-один тег
+                            div(class='invalid-feedback') Тільки букви та цифри, без # та інших символів
+            div(class="modal-footer")
+                button(id="edit_photo_button" type="button" class="btn btn-outline-info") Зберегти зміни

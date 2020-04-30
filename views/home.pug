@@ -6,7 +6,7 @@ html
 body
 
 
-    if(auth)
+    if(cookies.auth)
         include ../navbar
     else
         include ../navbar_unsign
@@ -51,65 +51,10 @@ body
                             option 3 роки
                             option 4+ роки
                     button(class="btn btn-info bg-green", type="submit") Фільтрувати
-        .col-md-9
-            each ph in phinfo
-                if((auth&&ph.username!==info.username)||(!auth))
-                    .panel.panel-primary
-                        .row(class="mg-0 pd-10" )
-                            .col-md-3
-                                div(class="avatar mg-10")
-                                    if(ph.avatar_link!=undefined)
-                                        div(class="circle-avatar pd-10" style=`background-image:url(${ph.avatar_link})`)
-                                    else
-                                        div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
-                            .col-md-6
-                                a(class="text-24 link1" href=`/guest/`+`${ph.username}`)= '@'+ ph.username
-                                .h5
-                                    span(class="text-muted pd-r-25")= '$'+ph.price
-                                    i(class="material-icons text-20 ") &#xe55f;
-                                    span(class="text-20")= ph.city
-                                if(ph.organization!==undefined)
-                                    .h5= ph.organization
-                            .col-md-3(class="pd-25")
-                                if(auth)
-                                    div(class="form-group custom-checkbox ")
-                                        button(id=`fav${ph.ph_id}`, class="btn pd-0 btn-light float-right hover-green border-none green bg-transparent"
-                                        onclick=`addToFavorites(${ph.ph_id},${info.user_id})`)
-                                            i(class=" text-40 material-icons") &#xe8e7;
+        div( class='col-md-9' id='search_people')
+            script.
+                fillSearchPhotographers(!{JSON.stringify(phinfo)},!{JSON.stringify(cookies)},!{JSON.stringify(info)},!{JSON.stringify(favorites)});
 
-
-                        .row
-                            .col-md-12
-                                div(id=`blogCarousel${ph.ph_id}` class="carousel slide pd-25" data-ride="carousel")
-                                    div(class="carousel-inner" id=`carousel${ph.ph_id}`)
-
-                                        div(class="carousel-item active")
-                                            .row
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider1.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider3.jpg)")
-                                        div(class="carousel-item ")
-                                            .row
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider6.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider7.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider5.jpg)")
-                                                .col-md-3
-                                                    div(class="circle-avatar" style="background-image:url(../public/images/slider4.jpg)")
-
-                                    a(class="carousel-control-prev" href=`blogCarousel${ph.ph_id}` role="button" data-slide="prev")
-                                        span(class="carousel-control-prev-icon" aria-hidden="true")
-                                        span(class="sr-only") Previous
-                                    a(class="carousel-control-next" href=`blogCarousel${ph.ph_id}` role="button" data-slide="next")
-                                        span(class="carousel-control-next-icon" aria-hidden="true")
-                                        span(class="sr-only") Next
 
 
 
