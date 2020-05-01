@@ -11,15 +11,15 @@ body
     else
         include ../navbar
     .row(class='mg-0 pd-0 bg-white' id="profile")
-        .col-md-2
-        .col-md-8
+        .col-md-1
+        .col-md-10
             .row(class='mg-0 pd-10  ')
-                .col-md-4
-                    div(class="avatar mg-10")
+                .col-md-3
+                    div(class="avatar-lg mg-10")
                         div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
-                .col-md-8
+                .col-md-9
                     .row
-                        .col-md-8
+                        .col-md-7
                             if(info.fathername===undefined)
                                 .h1(class="text-24")= info.lastname +' ' +info.firstname
                             else
@@ -34,16 +34,14 @@ body
                             if(info.organization!=undefined)
                                 p(class="text-14")= info.organization
                             p(class="text-14 text-break")= info.about
-                        .col-md-4
+                        .col-md-5
                             if(!guest)
-                                a(class="btn btn-info bg-green" href='/edit/'+info.username) Редагувати
+                                a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
                                 br
-                            br
+                            div(id="rating_container" class='float-right')
+                            script.
+                                setRatings(!{JSON.stringify(guest)},!{JSON.stringify(info)},!{JSON.stringify(cookies)});
 
-                            span(class="text-20" id="ph_ave")= info.ave +'/10'
-                                i(class='text-20 fa fa-star yellow')
-                            if(guest&&cookies.auth)
-                                input(type='number',min='0',max='10',class="form-control",value='5')
                         .col-md-12
                             p
                                 each t in mytypes
@@ -135,4 +133,4 @@ body
                                                 span(class=`${con.icon}`)
                                                 = ' ' + con.site_name
 
-        .col-md-2
+        .col-md-1

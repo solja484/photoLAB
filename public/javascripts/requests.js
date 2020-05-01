@@ -328,7 +328,93 @@ function addPhotoLink(){
 function splitIntoTags(str) {
     let tags = [];
     let stringArray = str.split(/\s/);
-    for (s of stringArray)
+    for (let s of stringArray)
         tags.push(s);
     return tags;
+}
+
+
+function fillCities(){
+        $.ajax({
+            url: 'http://localhost:2606/getcities',
+            method: 'get',
+            success: function (data) {
+                for (let i of data)
+                    $("#filter_city").append("<option value='filter_" + i.city + "'>" + i.city + "</option>");
+
+            }
+        });
+
+}
+
+function vote(mark,user_id,ph_id){
+    for(let j=0;j<mark;j++){
+        $("#rating_star"+j).removeClass("fa-star-o").addClass("fa-star").hover(function(){
+            for(let j=0;j<mark;j++){
+                $("#rating_star"+j).removeClass("fa-star-o").addClass("fa-star");
+            }
+        },function(){for(let j=0;j<mark;j++){
+            $("#rating_star"+j).removeClass("fa-star-o").addClass("fa-star");
+        }});
+    }
+    console.log(user_id+" vote "+ph_id);
+
+    let data={
+        "user_id":user_id,
+        "ph_id":ph_id,
+        "mark":mark
+    };
+
+    $.ajax({
+        url: 'http://localhost:2606/vote',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            let info={
+                "ave":data2.ave,
+                "mark":mark,
+                "ph_id":ph_id
+            };
+            setRatings(true,info,data2.cookies);
+        },
+        error: function (data2) {
+            console.log(data2.error);
+        }
+
+    });
+
+}
+
+function unvote(user_id,ph_id){
+    console.log(user_id+" unvote "+ph_id);
+
+    let data={
+        "user_id":user_id,
+        "ph_id":ph_id
+    };
+
+    $.ajax({
+        url: 'http://localhost:2606/unvote',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            let info={
+                "ave":data2.ave,
+                "mark":0,
+                "ph_id":ph_id
+            };
+            setRatings(true,info,data2.cookies);
+        },
+        error: function (data2) {
+            console.log(data2.error);
+        }
+
+    });
+
+
+
 }

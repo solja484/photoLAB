@@ -159,13 +159,22 @@ body{
     text-decoration: none;
 }
 
-.avatar{
+.avatar-lg{
+     width: 160px;
+     height: 160px;
+     overflow: hidden;
+     vertical-align: middle;
+     /* make it a circle */
+     border-radius:50%;
+ }
+
+.avatar-square{
     width: 160px;
     height: 160px;
     overflow: hidden;
     vertical-align: middle;
     /* make it a circle */
-    border-radius:50%;
+    border-radius:0;
 }
 
 .avatar-sm{
@@ -177,6 +186,14 @@ body{
     border-radius:50%;
 }
 
+.avatar-md{
+    width: 130px;
+    height: 130px;
+    overflow: hidden;
+    vertical-align: middle;
+    /* make it a circle */
+    border-radius:50%;
+}
 .circle-avatar{
     /* make it responsive */
     max-width: 100%;
@@ -212,6 +229,7 @@ body{
         float: left;!important;
     }
 }
+
 
 
 

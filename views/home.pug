@@ -40,8 +40,7 @@ body
                         label(for="filter_city", class="non-bold") Місто
                         select(class="form-control", id="filter_city")
                             option Усі міста
-                            each c in cities
-                                option= c.city
+
                         br
                         label(for="filter_years", class="non-bold") Стаж
                         select(class="form-control" id="filter_years")
@@ -53,7 +52,8 @@ body
                     button(class="btn btn-info bg-green", type="submit") Фільтрувати
         div( class='col-md-9' id='search_people')
             script.
-                fillSearchPhotographers(!{JSON.stringify(phinfo)},!{JSON.stringify(cookies)},!{JSON.stringify(info)},!{JSON.stringify(favorites)});
+                fillSearchPhotographers(!{JSON.stringify(phinfo)},!{JSON.stringify(cookies)},!{JSON.stringify(photos)},
+                    !{JSON.stringify(favorites)},!{JSON.stringify(ratings)});
 
 
 
