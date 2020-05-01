@@ -1,8 +1,31 @@
-if(auth)
+if(cookies.auth=='true')
     include ../navbar
 else
     include ../navbar_unsign
-    .row(style='margin:50px;')
-        .col-md-3
-        .col-md-6
-            p help page
+.row(class='bg-white pd-0 mg-0')
+    .col-md-2
+    .col-md-8
+        p(class='text-24 green') PhotoLAB 1.1
+        p(class='text-20 green') КЛІЄНТАМ:
+            ul
+                li Знайти фотографів з свого міста
+                li Знайти тих, хто знімає у потрібному вам напрямку
+                li Оцінювати роботи фотографів
+                li Зберігати вподобаних майстрів
+                li Замовити зйомку(в процесі)
+        p(class='text-20 green') ФОТОГРАФАМ:
+            ul
+                li Знайти потенційних клієнтів
+                li Ділитись своєю творчістю
+                li Знаходити творишів по цеху
+        p(class='text-24 green') КОНТАКТИ
+        p(class='text-20 mg-0')
+            i(class='text-20 fa fa-envelope')
+            span  solja484@gmail.com
+        p(class='text-20 mg-0')
+            i(class='text-20 fa fa-phone')
+            span  +380958340484
+        a(class='text-20 link1 mg-0' href='https://www.instagram.com/gingermias/')
+            i(class='text-20 fa fa-instagram')
+            span gingermias
+    .col-md-2

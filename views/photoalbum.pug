@@ -4,7 +4,7 @@ html
     style
         include ../public/stylesheets/profile.css
 body
-    if(guest && !auth)
+    if(cookies.auth=='false')
         include ../navbar_unsign
     else
         include ../navbar
@@ -13,7 +13,7 @@ body
             if(guest)
                 a(class='link1 btn btn-outline-light sharp-corners' href=`/guest/${ph_username}`)
                     i(class='fa fa-arrow-left')
-                    span= ` до профілю @${ph_username}`
+                    span= `до профілю @${ph_username}`
 
             if(!guest)
                 button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку

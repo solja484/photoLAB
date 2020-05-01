@@ -1,0 +1,72 @@
+include ../navbar
+        .row(class='mg-0 pd-0 bg-white' id="profilecl")
+            .col-md-1
+            .col-md-10
+                .row(class='mg-0 pd-10  ')
+                    .col-md-3
+                        div(class="avatar-lg mg-10")
+                            div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                    .col-md-9
+                        .row
+                            .col-md-7
+                                .h5
+                                    p(class='text-muted')= '@'+info.username
+                                    i(class="material-icons text-20 ") &#xe55f;
+                                    span(class="text-20")= info.city
+                                p(class="text-14")
+                                    i(class="fa fa-envelope")
+                                    span= ' '+info.email
+                                if(info.phone!= undefined)
+                                    p(class="text-14")
+                                        i(class="fa fa-phone")
+                                        span=' '+info.phone
+                                if(info.descr != undefined)
+                                    p(class="text-14 text-break")= info.descr
+                            .col-md-5
+                                a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
+                                br
+                    .col-md-12
+                        ul(class='nav nav-tabs')
+
+                            li(class="active")
+                                a(data-toggle="tab" href="#client_favorites" class='link1') Збережено
+
+                            li
+                                a(data-toggle="tab" href="#client_photosessions" class='link1') Фотосесії
+
+            .col-md-12
+                div(class="tab-content minh")
+                        div(id="client_favorites" class="tab-pane row fade in active show")
+                            div(class="empty_div col-md-12")
+                            .col-md-1
+                            .col-md-10
+                                .row
+                                if(favorites==[])
+                                    p Поки що немає збережених фотографів
+                                each fav in favorites
+                                    .panel(class='col-md-5' id=`favpanel${fav.ph_id}`)
+                                        .row(class="mg-0 ")
+                                            .col-md-4
+                                                div(class="avatar-sm mg-10")
+                                                    if(fav.avatar_link != undefined)
+                                                        div(class="circle-avatar pd-10" style=`background-image:url(${fav.avatar_link})`)
+                                                    else
+                                                        div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
+                                            .col-md-6
+                                                a(class="text-20 link1" href=`/guest/${fav.username}`)= '@'+fav.username
+                                                .h5
+                                                    i(class="material-icons text-17 ") &#xe55f;
+                                                    span(class="text-17")= fav.city
+                                                .h5
+                                                    span(class="text-muted pd-r-25")= '$' + fav.price
+                                            .col-md-2
+                                                button(id=`fav${fav.ph_id}`, class="btn btn-outline-danger border-none"
+                                                onclick=`deleteFromFavorites(${fav.ph_id},${info.user_id},true)`)
+                                                    i(class="fa fa-trash red")
+                                    .col-md-1
+                        div(id="client_photosessions" class="tab-pane  row fade")
+                            .col-md-1
+                            .col-md-10
+                                p photosessions
+
+            .col-md-1

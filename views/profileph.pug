@@ -5,8 +5,7 @@ html
         include ../public/stylesheets/profile.css
 body
 
-
-    if(guest&&!cookies.auth)
+    if(cookies.auth=='false')
         include ../navbar_unsign
     else
         include ../navbar

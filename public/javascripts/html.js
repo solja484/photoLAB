@@ -1,8 +1,7 @@
 function fillSearchPhotographers(phinfo,cookies,photos,favorites,ratings){
     fillCities();
     for(let ph of phinfo){
-        if((cookies.auth&&ph.username!==cookies.username)||(!cookies.auth)){
-
+        if((cookies.auth=='true'&&ph.username!==cookies.username)||(cookies.auth=='false')){
             let avatar_link=ph.avatar_link;
             if(ph.avatar_link==undefined||ph.avatar_link==null)
                 avatar_link="https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg";
@@ -26,7 +25,7 @@ function fillSearchPhotographers(phinfo,cookies,photos,favorites,ratings){
                 "<div class='col-md-4 pd-25 float-right' id='favorites_button"+ph.ph_id+"'>" +
                 "</div>" +
                 "</div></div>");
-            if(cookies.auth){
+            if(cookies.auth=='true'){
                 let contains=false;
                 for(let fav of favorites)
                     if (fav.user_id == cookies.user_id&&fav.ph_id==ph.ph_id) {
@@ -128,7 +127,7 @@ function setRatings(guest,info,cookies){
     const sel=  $("#rating_container");
   sel.empty();
 
-    if((!cookies.auth)||(!guest)){
+    if((cookies.auth=='false')||(!guest)){
         let stars="<p class='text-14'>";
         for(let st=0;st<info.ave;st++)
             stars+="<i class='fa fa-star yellow text-24' ></i>";

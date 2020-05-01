@@ -1,0 +1,13 @@
+include ../navbar
+
+.row
+for photo in photos
+    div(class='col-md-3' id=`photo${photo.photo_id}`)
+        div(class='card mg-5-10')
+            div(class='empty-div')
+                br
+            div(class='img-container')
+                div(class="circle-avatar " style=`background-image:url(${photo.link})`)
+            div(class='card-body')
+                button(class='link-hover-red2 bg-transparent float-right text-20 border-none' onclick=`deletePhoto(${photo.photo_id})`)
+                    i(class="fa text-20 fa-trash-o ")

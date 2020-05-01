@@ -6,6 +6,7 @@ html
         style
             include public/stylesheets/main.css
             include public/stylesheets/menu.css
+            include public/stylesheets/profile.css
     body
         nav(id='menu' class="navbar navbar-expand-md rounded-0 menu mg-0 font-17 navbar-fixed" style="background: #1e1e1e")
             button(class="navbar-toggler btn btn-outline-light mr-auto" type="button" data-toggle="collapse" data-target="#mynavbar")
@@ -13,35 +14,30 @@ html
             a(class="navbar-brand disabled brand" style="color: #efefef!important;") photoLAB
             div(class="collapse navbar-collapse ", id="mynavbar")
                 div(class="navbar-nav expand my-navbar font-17")
-                    if(active=='home')
-                        a(class="nav-item nav-link menu-active" active style="color: #efefef" href="/"+cookies.username) головна
-                    else
-                        a(class="nav-item nav-link" active style="color: #efefef" href="/"+cookies.username) головна
-                    if(active=='profile')
-                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/profile/"+cookies.username) профіль
-                    else
-                        a(class="nav-item nav-link" style="color: #efefef" href="/profile/"+cookies.username) профіль
-                    if(active == 'album')
-                        a(class="nav-item nav-link menu-active" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
-                    else
-                        a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
-                    if(active=='help')
-                        a(class="nav-item nav-link menu-active" style="color: #efefef" href='/help') про нас
-                    else
-                        a(class="nav-item nav-link" style="color: #efefef" href='/help') про нас
+                    if(cookies.role!='admin')
+                        if(active=='home')
+                            a(class="nav-item nav-link menu-active" active style="color: #efefef" href="/home/"+cookies.username) головна
+                        else
+                            a(class="nav-item nav-link" active style="color: #efefef" href="/home/"+cookies.username) головна
+
+                        if(active=='profile')
+                            a(class="nav-item nav-link menu-active" style="color: #efefef" href="/profile/"+cookies.username) профіль
+                        else
+                            a(class="nav-item nav-link" style="color: #efefef" href="/profile/"+cookies.username) профіль
+                        if(cookies.role=='photographer')
+                            if(active == 'album')
+                                a(class="nav-item nav-link menu-active" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
+                            else
+                                a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
+                        if(active=='help')
+                            a(class="nav-item nav-link menu-active" style="color: #efefef" href='/help') про нас
+                        else
+                            a(class="nav-item nav-link" style="color: #efefef" href='/help') про нас
                 p(class='nav-text float-rightt mg-10 text-25 white')= '@'+cookies.username
                 button(class="btn btn-outline-warning m-l-15 float-rightt", type='button', data-toggle="modal", data-target='#exit_modal') Вихід
 
 
-div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
-    div(class="modal-dialog")
-        div(class="modal-content" )
-            div(class="modal-body")
-                button(type="button" class="close" data-dismiss="modal") &times;
-                form(action="/logout", method="GET", class="row")
-                    p(class="text-24 text-center col-md-12") Ви впевнені, що хочете вийти?
-                    button(class="btn btn-md btn-danger col-md-6" type=submit value='Вийти')
-                    button(class="btn btn-md btn-default col-md-6" type="button" data-dismiss="modal") Повернутись
+
 
 include views/modals
-    include views/scripts
+include views/scripts
