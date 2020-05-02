@@ -68,9 +68,9 @@ server.get('/', function (req, res) {
     if (req.cookies.auth == 'true') {
         console.log("HERE");
         res.cookies = req.cookies;
-        if(req.cookies.role != 'admin')
-        res.redirect('/home/' + req.cookies.username);
-        if(req.cookies.role == 'admin')
+        if (req.cookies.role != 'admin')
+            res.redirect('/home/' + req.cookies.username);
+        if (req.cookies.role == 'admin')
             res.redirect('/admin');
     }
     let noun = "";
@@ -94,7 +94,7 @@ server.get('/', function (req, res) {
                                     auth: res.cookies.auth,
                                     active: active,
                                     config: config,
-                                    favorites:res.cookies,
+                                    favorites: res.cookies,
                                     ratings: results3,
                                     cookies: res.cookies
                                 });
@@ -118,8 +118,8 @@ server.get('/home/:username', (req, res) => {
     let username = req.params.username;
     console.log("user: " + req.cookies.username + " " + username);
 
-    if ((req.cookies.auth=='false') && username == req.cookies.username)
-         res.redirect('/');
+    if ((req.cookies.auth == 'false') && username == req.cookies.username)
+        res.redirect('/');
     if (username != req.cookies.username)
         res.redirect('/guest/' + username);
 
@@ -309,14 +309,28 @@ server.get('/edit/:username', (req, res) => {
     if (req.cookies.username !== username)
         res.redirect('/guest/' + username);
     let active = "";
-
     res.cookies = req.cookies;
-    res.render(__dirname + "/views/edit.pug", {
-        active: active,
-        auth: req.cookies.auth,
-        config: config,
-        cookies: req.cookies
-    });
+    if (req.cookies.role == 'client')
+        connection.query("SELECT * FROM users WHERE username=?", [username])
+            .then(([results, fields]) => {
+                connection.query("SELECT username, email FROM users")
+                    .then(([results2, fields2]) => {
+                        res.render(__dirname + "/views/edit.pug", {
+                            active: active,
+                            auth: req.cookies.auth,
+                            config: config,
+                            cookies: req.cookies,
+                            info:results[0],
+                            users:results2
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+            });
 });
 
 server.get('/photoalbum/:username', function (req, res) {
@@ -366,9 +380,9 @@ server.get('/profile/:username', function (req, res) {
     let username = req.params.username;
     res.cookies = req.cookies;
     if (req.cookies.auth == 'false') {
-      if (username == req.cookies.username)
-        res.redirect('/');
-      else res.redirect('/guest/' + req.cookies.username);
+        if (username == req.cookies.username)
+            res.redirect('/');
+        else res.redirect('/guest/' + req.cookies.username);
     }
     if (username != req.cookies.username)
         res.redirect('/guest/' + req.cookies.username);
@@ -436,7 +450,7 @@ server.get('/profile/:username', function (req, res) {
                         res.render(__dirname + "/views/profile.pug", {
                             types: types,
                             info: results[0],
-                            favorites:results2,
+                            favorites: results2,
                             active: active,
                             config: config,
                             cookies: req.cookies
@@ -514,10 +528,10 @@ server.post('/login', (req, res) => {
                 res.cookie("auth", 'true');
                 res.cookie("username", results[0].username);
                 res.cookie("user_id", results[0].user_id);
-                let href='/';
-                if(results[0].role=='admin')
-                    href+='admin';
-                else href+='home/'+results[0].username;
+                let href = '/';
+                if (results[0].role == 'admin')
+                    href += 'admin';
+                else href += 'home/' + results[0].username;
                 res.redirect(href);
 
             } else {

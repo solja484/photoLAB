@@ -17,6 +17,10 @@ function validateRegistry() {
     return false;
 }
 
+function validateSearch(){
+    return validEmpty("search_input");
+}
+
 function phValidateRegistry() {
 
     let a = validEmail("ph_reg_email");

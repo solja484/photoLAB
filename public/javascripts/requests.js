@@ -412,9 +412,10 @@ function unvote(user_id,ph_id){
         error: function (data2) {
             console.log(data2.error);
         }
-
     });
+}
 
 
-
+function editClientInfo(user_id,users){
+    console.log(user_id);
 }

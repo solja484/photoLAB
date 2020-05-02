@@ -9,19 +9,20 @@ include ../navbar
                     .col-md-9
                         .row
                             .col-md-7
-                                .h5
-                                    p(class='text-muted')= '@'+info.username
-                                    i(class="material-icons text-20 ") &#xe55f;
-                                    span(class="text-20")= info.city
-                                p(class="text-14")
+                                div(class='empty-div')
+                                h5(class='text-muted text-24')= '@'+info.username
+                                p
+                                    i(class="material-icons") &#xe55f;
+                                    span= info.city
+                                    br
                                     i(class="fa fa-envelope")
                                     span= ' '+info.email
-                                if(info.phone!= undefined)
-                                    p(class="text-14")
+                                    br
+                                    if(info.phone!= undefined)
                                         i(class="fa fa-phone")
                                         span=' '+info.phone
-                                if(info.descr != undefined)
-                                    p(class="text-14 text-break")= info.descr
+                                if(info.about != undefined)
+                                    p(class="text-14 text-break")= info.about
                             .col-md-5
                                 a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
                                 br

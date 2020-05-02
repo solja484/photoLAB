@@ -7,13 +7,11 @@
 }
 
 .slider{
-
     max-height:86vh;!important;
     overflow: hidden;
     vertical-align: center;
     position: relative;
 }
-
 
 .blog .carousel-indicators {
     left: 0;
@@ -22,7 +20,6 @@
 
 }
 
-/* The colour of the indicators */
 .blog .carousel-indicators li {
     background: #a3a3a3;
     border-radius: 50%;

@@ -1,59 +1,53 @@
-html
-    head
-        title=title
-        style
-            include ../public/stylesheets/home.css
-body
 
-    if(cookies.auth=='true')
-        include ../navbar
-    else if(cookies.auth=='false')
-        include ../navbar_unsign
-    .row(class="mg-0 let-menu")
-        div(class="carousel slide col-md-12 mg-0 pd-0 slider" data-ride="carousel")
-            div(class="carousel-inner")
-                div(class="carousel-item active mg-0")
-                    img(class="d-block w-100 mg-0", src="/public/images/slider1.jpg", alt="First slide")
-                div(class="carousel-item mg-0")
-                    img(class="d-block w-100", src="/public/images/slider2.jpg", alt="Second slide")
-                div(class="carousel-item mg-0")
-                    img(class="d-block w-100 mg-0", src="/public/images/slider7.jpg", alt="Third slide")
-            form(method="POST",action="/search" class="search-form")
-                div(class="input-group mb-3")
-                    input(type="search" class="form-control " placeholder="Моя ідеальна фотосесія" )
-                    div(class="input-group-append")
-                        button(class="btn btn-warning " type="submit") Пошук
-    .row(class="mg-0 pd-25")
-        .col-md-3(class="pd-0 ")
-            .panel(class="pd-0 sticky-top")
-                .panel-heading Фільтрувати пошук
-                form(class="panel-body")
-                    div(class="form-group")
-                        label(for="filter_type", class="non-bold") Тип зйомки
-                        select(class="form-control", id="filter_type")
-                            option Будь-яка зйомка
-                            each t in types
-                                option= t.name
-                        br
+if(cookies.auth=='true')
+    include ../navbar
+else if(cookies.auth=='false')
+    include ../navbar_unsign
+.row(class="mg-0 let-menu")
+    div(class="carousel slide col-md-12 mg-0 pd-0 slider" data-ride="carousel")
+        div(class="carousel-inner")
+            div(class="carousel-item active mg-0")
+                img(class="d-block w-100 mg-0", src="/public/images/slider1.jpg", alt="First slide")
+            div(class="carousel-item mg-0")
+                img(class="d-block w-100", src="/public/images/slider2.jpg", alt="Second slide")
+            div(class="carousel-item mg-0")
+                img(class="d-block w-100 mg-0", src="/public/images/slider7.jpg", alt="Third slide")
+        form(method="POST", action="/search" class="search-form" onsubmit="return validateSearch()")
+            div(class="input-group mb-3")
+                input(type="search" class="form-control" id="search_input" placeholder="Моя ідеальна фотосесія" )
+                div(class="input-group-append")
+                    button(class="btn btn-warning " type="submit") Пошук
+.row(class="mg-0 pd-25")
+    .col-md-3(class="pd-0 ")
+        .panel(class="pd-0 sticky-top")
+            .panel-heading Фільтрувати пошук
+            form(class="panel-body")
+                div(class="form-group")
+                    label(for="filter_type", class="non-bold") Тип зйомки
+                    select(class="form-control", id="filter_type")
+                        option Будь-яка зйомка
+                        each t in types
+                            option= t.name
+                    br
 
-                        label(for="filter_city", class="non-bold") Місто
-                        select(class="form-control", id="filter_city")
-                            option Усі міста
+                    label(for="filter_city", class="non-bold") Місто
+                    select(class="form-control", id="filter_city")
+                        option Усі міста
 
-                        br
-                        label(for="filter_years", class="non-bold") Стаж
-                        select(class="form-control" id="filter_years")
-                            option Будь-який
-                            option менше 1 року
-                            option 2 роки
-                            option 3 роки
-                            option 4+ роки
-                    button(class="btn btn-info bg-green", type="submit") Фільтрувати
-        div( class='col-md-9' id='search_people')
-            script.
+                    br
+                    label(for="filter_years", class="non-bold") Стаж
+                    select(class="form-control" id="filter_years")
+                        option Будь-який
+                        option менше 1 року
+                        option 2 роки
+                        option 3 роки
+                        option 4+ роки
+                button(class="btn btn-info bg-green", type="submit") Фільтрувати
+    div( class='col-md-9' id='search_people')
+        script.
 
-                let cookies = !{JSON.stringify(cookies)};
-                fillSearchPhotographers(!{JSON.stringify(phinfo)}, !{JSON.stringify(cookies)}, !{JSON.stringify(photos)},!{JSON.stringify(favorites)}, !{JSON.stringify(ratings)});
+            let cookies = !{JSON.stringify(cookies)};
+            fillSearchPhotographers(!{JSON.stringify(phinfo)}, !{JSON.stringify(cookies)}, !{JSON.stringify(photos)},!{JSON.stringify(favorites)}, !{JSON.stringify(ratings)});
 
 
 
