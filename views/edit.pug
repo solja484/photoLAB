@@ -1,14 +1,17 @@
 include ../navbar
-if(cookies.role=='client')
-    .row(class='mg-0 pd-0')
-        .col-md-2
-        .col-md-8
-            .panel.panel-primary(class='mg-10 pd-10')
-                p(class='text-center text-20') Редагувати інформацію
-                form(class='pd-10')
-                    div(class='form-group row')
+
+.row(class='mg-0 pd-0')
+    .col-md-2
+    .col-md-8
+        .panel.panel-primary(class='mg-10 pd-0')
+            br
+            p(class='text-center text-20') Редагувати інформацію
+            .panel.panel-default(class='pd-0' id='editclient')
+                .panel-heading Загальна інформація
+                .panel-body
+                    div(class='form-group pd-10 row')
                         .col-md-3
-                            div(class="avatar-sm mg-10")
+                            div(class="avatar-sm mg-10" id='edit_cl_avatar_holder')
                                 div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
                         .col-md-8(class='pd-0 mg-0')
                             .row(class='pd-0 mg-0')
@@ -20,11 +23,9 @@ if(cookies.role=='client')
 
                         .col-md-2
                         .col-md-10
-                            button(class='bg-transparent border-none green mg-5 float-bottom btn-sm text-14 ') Спробувати нове фото
-                            button(class='bg-transparent border-none link1 mg-5 btn-sm text-14 float-bottom') Скинути
-
-
-
+                            button(class='bg-transparent border-none green mg-5 float-bottom btn-sm text-14' onclick='tryNewPhoto()') Спробувати нове фото
+                            button(class='bg-transparent border-none link1 mg-5 btn-sm text-14 float-bottom' onclick=`setOldPhoto(${JSON.stringify(info.avatar_link)})`) Відмінити
+                            button(class='bg-transparent border-none red  mg-5 btn-sm text-14 float-bottom' onclick='deleteAvatarPhoto()') Видалити
 
                     div(class='form-group row')
                         label(class='col-md-3 text-rightt non-bold' for='edit_cl_username') Ім'я користувача:
@@ -32,6 +33,8 @@ if(cookies.role=='client')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text") @
                             input(class=' form-control sharp-corners' id="edit_cl_username" type='text' value=`${info.username}`)
+                            div(class='invalid-feedback' id='invalid_cl_edit_un') Це поле не може бути пустим!
+
                     div(class='form-group row')
                         label(class='col-md-3 text-rightt non-bold' for='edit_cl_email') Електронна пошта:
                         div(class='input-group col-md-8')
@@ -39,6 +42,7 @@ if(cookies.role=='client')
                                 div(class="input-group-text")
                                     i(class='fa fa-envelope')
                             input(class=' form-control sharp-corners' id="edit_cl_email" type='text' value=`${info.email}`)
+                            div(class='invalid-feedback' id='invalid_cl_edit_email') Неправильно введена електронна пошта
                     div(class='form-group row')
                         label(class='col-md-3 text-rightt non-bold' for='edit_cl_city') Місто:
                         div(class='input-group col-md-8')
@@ -54,34 +58,74 @@ if(cookies.role=='client')
                             input(class=' form-control sharp-corners' id="edit_cl_phone" type='text' value=`${info.phone}`)
 
                     div(class='form-group row')
-                        .col-md-1
-                        div(class='input-group col-md-10')
+                        label(class='col-md-3 text-rightt non-bold' for='edit_cl_about') Про себе
+                        div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text")
                                     i(class="fa fa-pencil-square-o")
                             textarea(class=' form-control sharp-corners' id="edit_cl_about" rows='3')= info.about
-                button(class='btn btn-info bg-green float-right' onclick=`editClientInfo(${info.user_id},${JSON.stringify(users)})`) Зберегти зміни
+                .panel-footer(class='text-center')
+                    button(class='border-none bg-transparent link1 expand' onclick=`editClientInfo(${JSON.stringify(info)},${JSON.stringify(users)})`) Зберегти зміни
+            br
+            br
+            if(cookies.role=='photographer')
+                .panel.panel-info(class='mg-0 pd-0' id='editph_types')
+                    .panel-heading Типи зйомки
+                    .panel-body(class='pd-10 row' style="padding-left:35px!important;")
+                        each t in types
+                            div(class="form-group custom-checkbox mg-10 col-md-5")
+                                input(type='checkbox',id="edit_type" + t.type_id, class="custom-control-input" )
+                                label(for="edit_type" + t.type_id, class="custom-control-label non-bold")=t.name
+                        script.
+                            let ph_types=!{JSON.stringify(ph_types)};
+                            for(t of ph_types)
+                                $("#edit_type"+t.type_id).prop("checked",true);
+                    .panel-footer(class='text-center')
+                        button(class='border-none bg-transparent link1 expand'
+                        onclick=`editPhTypes(${JSON.stringify(info)},${JSON.stringify(types)})`) Зберегти типи
                 br
                 br
-                br
-                .panel.panel-danger(class='form-group')
-                    .panel-heading Змінити пароль
-                    .panel-body
+                .panel.panel-default(class='mg-0 pd-0' id='editph_contacts')
+                    .panel-heading Посилання на соцмережі
+                    .panel-body(class='pd-10' )
+                        each s in social
+                            div(class='form-group row')
+                                label(class='col-md-2 text-rightt non-bold' for=`edit_acc${s.social_id}`)= s.site_name
+                                div(class='input-group col-md-9')
+                                    div(class="input-group-prepend ")
+                                        div(class="input-group-text")
+                                            i(class=`${s.icon}`)
+                                    input(class=' form-control sharp-corners' id=`edit_acc${s.social_id}` type='text' )
+                        script.
+                            let accounts=!{JSON.stringify(accounts)};
+                            for(acc of accounts)
+                                $("#edit_acc"+acc.social_id).val(acc.account_link);
+
+                    .panel-footer(class='text-center')
+                        button(class='border-none bg-transparent link1 expand'
+                        onclick=`editPhAccounts(${JSON.stringify(info)},${JSON.stringify(social)})`) Зберегти контакти
+            br
+            br
+            .panel.panel-danger(class='form-group mg-0 pd-0' id="editpassword")
+                .panel-heading Змінити пароль
+                .panel-body(class='pd-10')
+                    form(id='change_password_form')
                         div(class='form-group row')
-                            label(class='col-md-3 text-rightt non-bold' for='cur-password') Старий пароль:
+                            label(class='col-md-3 text-rightt non-bold' for='cur_password') Старий пароль:
                             .col-md-8(class='pd-0')
-                                input(type='password' id='cur-password' class='expand form-control sharp-corners')
+                                input(type='password' id='cur_password' class='expand form-control sharp-corners')
                                 div(class='invalid-feedback text-14 expand') Неправильний пароль
                         div(class='form-group row')
-                            label(class='col-md-3 text-rightt non-bold' for='new-password') Новий пароль:
+                            label(class='col-md-3 text-rightt non-bold' for='new_password') Новий пароль:
                             .col-md-8(class='pd-0')
-                                input(type='password' id='new-password' class='expand form-control sharp-corners')
+                                input(type='password' id='new_password' class='expand form-control sharp-corners')
                                 div(class='invalid-feedback expand text-14') Пароль не відповідає вимогам
                         div(class='form-group row')
-                            label(class='col-md-3 text-rightt non-bold' for='new-password') Повторіть пароль:
+                            label(class='col-md-3 text-rightt non-bold' for='new_password2') Повторіть пароль:
                             .col-md-8(class='pd-0')
-                                input(type='password' id='new-password2' class='expand form-control sharp-corners')
+                                input(type='password' id='new_password2' class='expand form-control sharp-corners')
                                 div(class='invalid-feedback expand text-14') Паролі не збігаються
-                        button(class='btn btn-danger float-right' onclick=`changePassword(${info.user_pass})`) Змінити пароль
+                .panel-footer(class='text-center')
+                    button(class='border-none bg-transparent link1 expand red' onclick=`changePassword(${JSON.stringify(info)})`) Змінити пароль
 
-        .col-md-2
+    .col-md-2

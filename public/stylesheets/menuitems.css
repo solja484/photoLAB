@@ -1,0 +1,88 @@
+/*MENU ITEMS*/
+.menu a, button{
+    color: #efefef;
+}
+.menu button{
+    margin-right: 10px;
+}
+.brand{
+    font-size:20px!important;
+
+}
+.menu{
+    height: 13vh;
+}
+
+.my-navbar a {
+    padding: 5px 15px;
+}
+.my-navbar a:hover{
+    color:   #ffc107!important;
+}
+
+.my-navbar  a:focus,a:active {
+    color: #34a99c !important;
+}
+
+/*LINKS*/
+
+.link1 {
+    color: gray;!important;
+}
+.link1:hover,.link1:focus,.link1:active{
+
+    color: black;
+    text-decoration: none;
+}
+
+.link2 {
+    color: #e0e0e0;
+}
+.link2:hover,.link2:focus,.link2:active{
+
+    color: #adadad;
+    text-decoration: none;
+}
+
+.link-hover-red {
+    color: #e0e0e0;
+}
+.link-hover-red:hover,.link-hover-red:focus,.link-hover-red:active{
+
+    color: #dc3545;
+    text-decoration: none;
+}
+
+.link-hover-red2 {
+    color: gray;
+}
+.link-hover-red2:hover,.link-hover-red2:focus,.link-hover-red2:active{
+
+    color: #dc3545;
+    text-decoration: none;
+}
+
+
+.folder-link{
+    background: transparent;
+    color:white;!important;
+    border-radius: 0;!important;
+    padding:5px 0;
+    margin: 0;
+    text-align: center;!important;
+}
+
+.folder-link:hover{
+    color:#ffc107;!important;
+}
+
+#folders_container .active{
+    border:1px solid white!important;
+    background: transparent;!important;
+    color:white;!important;
+}
+#folders_container{
+    overflow: auto;
+
+}
+

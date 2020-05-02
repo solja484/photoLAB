@@ -188,3 +188,5 @@ function getListOfFolders(array) {
     console.log(attributes);
     return attributes;
 }
+
+

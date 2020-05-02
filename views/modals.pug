@@ -1,12 +1,14 @@
 div(id="entry_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
     div(class="modal-dialog")
         div(class="modal-content" )
-            div(class="modal-body")
+            div(class="modal-body" )
                 button(type="button" class="close" data-dismiss="modal") &times;
-                form(method="POST", class="mx-auto font-17", action="/login" )
-                    +input("text","","Логін", "Логін",name='login', required)
-                    +input("password","","Пароль", "Пароль",name='password', required)
-                    button(type="submit" class="btn btn-warning btn-block font-17" ) Вхід
+
+                form(class="mx-auto font-17" id="entry_form")
+                    +input("text","login_login","Логін", "Логін",name='login', required)
+                    +input("password","login_pass","Пароль", "Пароль",name='password', required)
+                button(type="button" class="btn btn-warning btn-block font-17" onclick='login()') Вхід
+
 
 div(id="add_folder_modal", class="modal fade font-17", role="dialog")
     div(class="modal-dialog")

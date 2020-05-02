@@ -1,3 +1,38 @@
+function login() {
+
+    $("#login_failed").remove();
+
+    alert("here in entry!");
+
+    let data={
+        "login":$("#login_login").val(),
+        "password":$("#login_pass").val()
+    };
+    $.ajax({
+        url: 'http://localhost:2606/login',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=='yes')
+                window.location.replace(data2.href);
+
+            else
+                $("#entry_form").append("<div class='panel' id='login_failed'>" +
+                    "<p class='red'>Неправильний логін або пароль</p></div>");
+        },
+        error: function (data2) {
+            console.log(data2.error);
+            $("#entry_form").append("<div class='panel' id='login_failed'>" +
+                "<p class='red'>Неправильний логін або пароль</p></div>");
+
+        }
+
+    });
+}
+
+
 function addToFavorites(ph_id, user_id) {
 
     let data = {
@@ -22,7 +57,6 @@ function addToFavorites(ph_id, user_id) {
     });
 
 }
-
 
 function deleteFromFavorites(ph_id, user_id, profile = false) {
 
@@ -52,10 +86,6 @@ function deleteFromFavorites(ph_id, user_id, profile = false) {
     });
 
 }
-
-
-
-
 
 function setCurrentFolder(folder_id) {
     localStorage.setItem("folder", folder_id);
@@ -415,7 +445,3 @@ function unvote(user_id,ph_id){
     });
 }
 
-
-function editClientInfo(user_id,users){
-    console.log(user_id);
-}

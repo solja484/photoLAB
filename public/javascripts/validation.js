@@ -168,8 +168,18 @@ function validTags(str) {
     }
 }
 
-
-
+function validExistedUsername(str,users) {
+    for(let u of users)
+        if(str==u.username)
+            return false;
+    return true;
+}
+function validExistedEmail(str,users) {
+    for(let u of users)
+        if(str==u.email)
+            return false;
+    return true;
+}
 
 //ці два методи забирають валідацію і інфу відповідно
 function removeValid(str) {

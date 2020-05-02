@@ -313,7 +313,7 @@ server.get('/edit/:username', (req, res) => {
     if (req.cookies.role == 'client')
         connection.query("SELECT * FROM users WHERE username=?", [username])
             .then(([results, fields]) => {
-                connection.query("SELECT username, email FROM users")
+                connection.query("SELECT username, email FROM users WHERE username<>?",[username])
                     .then(([results2, fields2]) => {
                         res.render(__dirname + "/views/edit.pug", {
                             active: active,
@@ -331,6 +331,50 @@ server.get('/edit/:username', (req, res) => {
             .catch(err => {
                 console.log(err);
             });
+    else if (req.cookies.role == 'photographer')
+            connection.query("SELECT * FROM users INNER JOIN photographers ON users.user_id = photographers.user_id WHERE username=?", [username])
+                .then(([results, fields]) => {
+                    let ph_id=results[0].ph_id;
+                    connection.query("SELECT username, email FROM users WHERE username<>?",[username])
+                        .then(([results2, fields2]) => {
+                            connection.query("SELECT shoots.type_id, name, ph_id FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?",[ph_id])
+                                .then(([results3, fields3]) => {
+                                    connection.query("SELECT * FROM accounts WHERE ph_id=?",[ph_id])
+                                        .then(([results4, fields4]) => {
+                                            connection.query("SELECT * FROM socialnetworks ORDER BY site_name")
+                                                .then(([results5, fields5]) => {
+                                                    res.render(__dirname + "/views/edit.pug", {
+                                                        active: active,
+                                                        auth: req.cookies.auth,
+                                                        config: config,
+                                                        social:results5,
+                                                        accounts:results4,
+                                                        ph_types:results3,
+                                                        types:types,
+                                                        cookies: req.cookies,
+                                                        info:results[0],
+                                                        users:results2
+                                                    });
+                                                })
+                                                .catch(err => {
+                                                    console.log(err);
+                                                });
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        });
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
 });
 
 server.get('/photoalbum/:username', function (req, res) {
@@ -514,15 +558,18 @@ server.post('/registerph', (req, res) => {
 server.post('/login', (req, res) => {
 
     const login = req.body.login;
-    let pass = req.body.pass;
+    let pass = req.body.password;
     connection.query("SELECT * FROM users INNER JOIN roles on users.role_id = roles.role_id WHERE  email=?", [login])
         .then(([results, fields]) => {
 
-            if (results === []) {
+            if (results == []) {
                 console.log("no user with this username");
-                res.redirect("/");
+                res.send({'success':'no'});
             }
-            if (hashing(pass) === results[0].user_pass) {
+
+            if (hashing(pass) == results[0].user_pass) {
+                console.log("login pass: "+results[0].user_pass+" "+pass);
+                console.log("hash: "+hashing(pass));
 
                 res.cookie("role", results[0].role);
                 res.cookie("auth", 'true');
@@ -532,22 +579,97 @@ server.post('/login', (req, res) => {
                 if (results[0].role == 'admin')
                     href += 'admin';
                 else href += 'home/' + results[0].username;
-                res.redirect(href);
+                res.send({"success":"yes","href":href})
 
             } else {
                 console.log("incorrect password");
-                res.redirect("/");
+                res.send({'success':'no'});
             }
 
         })
         .catch(err => {
             console.log('no user with this login');
             console.log(err);
-            res.redirect("/");
+            res.send({'success':'no'});
         });
 
 });
 
+server.post('/changepassword',(req, res) => {
+    res.cookies=req.cookies;
+    let pass=hashing(req.body.user_pass);
+    connection.query("UPDATE users SET user_pass=? WHERE user_id=?", [pass,req.body.user_id])
+        .then(([results, fields]) => {
+            res.send({"success":"yes"});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"success":"no"});
+        });
+});
+
+server.post('/editclient',(req, res) => {
+    connection.query("UPDATE users SET username=?, email=?, city=?,avatar_link=?,phone=?,about=? WHERE user_id=?",
+        [req.body.username,req.body.email,req.body.city, req.body.avatar_link,req.body.phone,req.body.about,req.body.user_id])
+        .then(([results, fields]) => {
+            console.log("Successfully updated user");
+            res.cookies = req.cookies;
+            res.send({'success':'yes'});
+        })
+        .catch(err => {
+            console.log(err);
+            console.log("HERE");
+            res.send({'success':'no'});
+
+        });
+
+
+});
+server.post('/editaccounts',(req, res) =>{
+    res.cookies = req.cookies;
+    let values=req.body.values;
+    connection.query("DELETE FROM accounts WHERE ph_id=?", [req.body.ph_id])
+        .then(([results, fields]) => {
+            connection.query("INSERT INTO accounts(social_id,account_link,ph_id) VALUES ?", [values])
+                .then(([results, fields]) => {
+                    console.log("Successfully update contacts");
+                    res.send({"success":"yes"});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send({"success":"no"});
+                });
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"success":"no"});
+        });
+
+
+});
+
+server.post('/edittypes',(req, res) =>{
+    res.cookies = req.cookies;
+    let values=req.body.values;
+    connection.query("DELETE FROM shoots WHERE ph_id=?", [req.body.ph_id])
+        .then(([results, fields]) => {
+            connection.query("INSERT INTO shoots(type_id,ph_id) VALUES ?", [values])
+                .then(([results, fields]) => {
+                    console.log("Successfully update photosession types");
+                    res.send({"success":"yes"});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send({"success":"no"});
+                });
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"success":"no"});
+        });
+
+
+});
 
 server.post('/addfavorite', (req, res) => {
     res.cookies = req.cookies;
@@ -726,6 +848,12 @@ server.post('/vote', (req, res) => {
 
         });
 });
+
+server.post('/hashpass',(req, res) =>{
+    res.cookies=req.cookies;
+ res.send({"pass":hashing(req.body.pass)});
+});
+
 
 function getListOfFolders(array) {
 

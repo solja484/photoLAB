@@ -71,6 +71,7 @@ include ../navbar_unsign
 
                         .panel.panel-default(class="form-group")
                             .panel-heading Вкажіть все, чим займаєтесь:
+                                small(class='text-14 text-muted') Можна заповнити потім, пам'ятайте, ця інформація важлива при пошуку!
                             .panel-body(style="padding-left:30px!important;" class="row")
                                 each t in types
                                     div(class="form-group custom-checkbox col-md-6")
@@ -84,10 +85,10 @@ include ../navbar_unsign
                             div(class="form-group col")
                                 label(for="ph_reg_experience", class="non-bold") Стаж:
                                     select(class="form-control" id="ph_reg_experience")
-                                        option до 1 року
-                                        option 2 роки
-                                        option 3 роки
-                                        option 4+ роки
+                                        option(value='1') до 1 року
+                                        option(value='2') 2 роки
+                                        option(value='3') 3 роки
+                                        option(value='4') 4+ роки
                         div(class="form-group")
                             label(for="ph_reg_job" class="non-bold") Місце роботи (організація)
                             input(type="text" class="form-control" id="ph_reg_job" )
