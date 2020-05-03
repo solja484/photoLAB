@@ -6,12 +6,12 @@ include ../navbar
         .panel.panel-primary(class='mg-10 pd-0')
             br
             p(class='text-center text-20') Редагувати інформацію
-            .panel.panel-default(class='pd-0' id='editclient')
-                .panel-heading Загальна інформація
+            .panel.panel-default(class='pd-0' id='edituser')
+                .panel-heading(class='text-center') Загальна інформація
                 .panel-body
                     div(class='form-group pd-10 row')
                         .col-md-3
-                            div(class="avatar-sm mg-10" id='edit_cl_avatar_holder')
+                            div(class="avatar-sm mg-10" id='edit_avatar_holder')
                                 div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
                         .col-md-8(class='pd-0 mg-0')
                             .row(class='pd-0 mg-0')
@@ -19,7 +19,7 @@ include ../navbar
                                     div(class="input-group-prepend ")
                                         div(class="input-group-text")
                                             i(class="fa fa-picture-o")
-                                    input(class=' form-control sharp-corners' id="edit_cl_avatar" type='text' value=`${info.avatar_link}`)
+                                    input(class=' form-control sharp-corners' id="edit_avatar" type='text' value=`${info.avatar_link}`)
 
                         .col-md-2
                         .col-md-10
@@ -28,34 +28,91 @@ include ../navbar
                             button(class='bg-transparent border-none red  mg-5 btn-sm text-14 float-bottom' onclick='deleteAvatarPhoto()') Видалити
 
                     div(class='form-group row')
-                        label(class='col-md-3 text-rightt non-bold' for='edit_cl_username') Ім'я користувача:
+                        label(class='col-md-3 text-rightt non-bold' for='edit_username') Ім'я користувача:
                         div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text") @
-                            input(class=' form-control sharp-corners' id="edit_cl_username" type='text' value=`${info.username}`)
-                            div(class='invalid-feedback' id='invalid_cl_edit_un') Це поле не може бути пустим!
+                            input(class=' form-control sharp-corners' id="edit_username" type='text' value=`${info.username}`)
+                            div(class='invalid-feedback' id='invalid_edit_un') Це поле не може бути пустим!
 
                     div(class='form-group row')
-                        label(class='col-md-3 text-rightt non-bold' for='edit_cl_email') Електронна пошта:
+                        label(class='col-md-3 text-rightt non-bold' for='edit_email') Електронна пошта:
                         div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text")
                                     i(class='fa fa-envelope')
-                            input(class=' form-control sharp-corners' id="edit_cl_email" type='text' value=`${info.email}`)
-                            div(class='invalid-feedback' id='invalid_cl_edit_email') Неправильно введена електронна пошта
+                            input(class=' form-control sharp-corners' id="edit_email" type='text' value=`${info.email}`)
+                            div(class='invalid-feedback' id='invalid_edit_email') Неправильно введена електронна пошта
                     div(class='form-group row')
-                        label(class='col-md-3 text-rightt non-bold' for='edit_cl_city') Місто:
+                        label(class='col-md-3 text-rightt non-bold' for='edit_city') Місто:
                         div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text")
                                     i(class="material-icons") &#xe55f;
-                            input(class=' form-control sharp-corners' id="edit_cl_city" type='text' value=`${info.city}`)
+                            input(class=' form-control sharp-corners' id="edit_city" type='text' value=`${info.city}`)
                     div(class='form-group row')
-                        label(class='col-md-3 text-rightt non-bold' for='edit_cl_phone') Телефон:
+                        label(class='col-md-3 text-rightt non-bold' for='edit_phone') Телефон:
                         div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
                                 div(class="input-group-text") 38
-                            input(class=' form-control sharp-corners' id="edit_cl_phone" type='text' value=`${info.phone}`)
+                            input(class=' form-control sharp-corners' id="edit_phone" type='text' value=`${info.phone}`)
+
+                    if(cookies.role=='photographer')
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_lastname') Прізвище:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-id-card-o')
+                                input(class=' form-control sharp-corners' id="edit_lastname" type='text' value=`${info.lastname}`)
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_firstname') Ім'я:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-id-card-o')
+                                input(class=' form-control sharp-corners' id="edit_firstname" type='text' value=`${info.firstname}`)
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_fathername') По-батькові:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-id-card-o')
+                                if(info.fathername==null)
+                                    input(class=' form-control sharp-corners' id="edit_fathername" type='text' value="")
+                                else
+                                    input(class=' form-control sharp-corners' id="edit_fathername" type='text' value=`${info.fathername}`)
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_organization') Місце роботи:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-camera')
+                                if(info.organization==null)
+                                    input(class=' form-control sharp-corners' id="edit_organization" type='text' value="")
+                                else
+                                    input(class=' form-control sharp-corners' id="edit_organization" type='text' value=`${info.organization}`)
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_price') Ціна:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-usd')
+                                input(class=' form-control sharp-corners' id="edit_price" type='number' min='0' value=`${info.price}`)
+                        div(class='form-group row')
+                            label(class='col-md-3 text-rightt non-bold' for='edit_exp') Стаж:
+                            div(class='input-group col-md-8')
+                                div(class="input-group-prepend ")
+                                    div(class="input-group-text")
+                                        i(class='fa fa-wrench')
+                                select(id='edit_exp_select' class='form-control sharp-corners')
+                                    option(value='1') до 1 року
+                                    option(value='2') 2 роки
+                                    option(value='3') 3 роки
+                                    option(value='4') 4+ роки
+                                script.
+                                    let exp=!{JSON.stringify(info)}.exp;
+                                    $("#edit_exp_select").val(exp);
 
                     div(class='form-group row')
                         label(class='col-md-3 text-rightt non-bold' for='edit_cl_about') Про себе
@@ -70,7 +127,7 @@ include ../navbar
             br
             if(cookies.role=='photographer')
                 .panel.panel-info(class='mg-0 pd-0' id='editph_types')
-                    .panel-heading Типи зйомки
+                    .panel-heading(class='text-center') Типи зйомки
                     .panel-body(class='pd-10 row' style="padding-left:35px!important;")
                         each t in types
                             div(class="form-group custom-checkbox mg-10 col-md-5")
@@ -86,7 +143,7 @@ include ../navbar
                 br
                 br
                 .panel.panel-default(class='mg-0 pd-0' id='editph_contacts')
-                    .panel-heading Посилання на соцмережі
+                    .panel-heading(class='text-center') Посилання на соцмережі
                     .panel-body(class='pd-10' )
                         each s in social
                             div(class='form-group row')
@@ -107,7 +164,7 @@ include ../navbar
             br
             br
             .panel.panel-danger(class='form-group mg-0 pd-0' id="editpassword")
-                .panel-heading Змінити пароль
+                .panel-heading(class='text-center') Змінити пароль
                 .panel-body(class='pd-10')
                     form(id='change_password_form')
                         div(class='form-group row')

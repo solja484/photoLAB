@@ -343,9 +343,9 @@ server.get('/edit/:username', (req, res) => {
                                         .then(([results4, fields4]) => {
                                             connection.query("SELECT * FROM socialnetworks ORDER BY site_name")
                                                 .then(([results5, fields5]) => {
+                                                    results[0].role=req.cookies.role;
                                                     res.render(__dirname + "/views/edit.pug", {
                                                         active: active,
-                                                        auth: req.cookies.auth,
                                                         config: config,
                                                         social:results5,
                                                         accounts:results4,
@@ -612,13 +612,29 @@ server.post('/editclient',(req, res) => {
     connection.query("UPDATE users SET username=?, email=?, city=?,avatar_link=?,phone=?,about=? WHERE user_id=?",
         [req.body.username,req.body.email,req.body.city, req.body.avatar_link,req.body.phone,req.body.about,req.body.user_id])
         .then(([results, fields]) => {
-            console.log("Successfully updated user");
+
             res.cookies = req.cookies;
-            res.send({'success':'yes'});
+            if(req.body.role=='photographer')
+                connection.query("UPDATE photographers SET user_id=?, firstname=?, lastname=?,fathername=?,price=?,exp=?,organization=? WHERE ph_id=?",
+                    [req.body.user_id,req.body.firstname,req.body.lastname,req.body.fathername, req.body.price,req.body.experience, req.body.organization,req.body.ph_id])
+                    .then(([results, fields]) => {
+                        console.log("Successfully updated photographer");
+                        res.cookies = req.cookies;
+                        res.send({'success':'yes'});
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.send({'success':'no'});
+
+                    });
+                else{
+                console.log("Successfully updated user");
+                res.send({'success':'yes'});
+            }
+
         })
         .catch(err => {
             console.log(err);
-            console.log("HERE");
             res.send({'success':'no'});
 
         });

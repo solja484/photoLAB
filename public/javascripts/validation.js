@@ -29,9 +29,8 @@ function phValidateRegistry() {
     let d = validNames("ph_reg_name");
     let e = validNamesF("ph_reg_fathername");
     let f = validNamesF("ph_reg_city");
-    let g = validEmpty("ph_reg_job");
     let h = validPassword("ph_reg_password");
-    if (a && b && c && d && e && f && g && h) {
+    if (a && b && c && d && e && f  && h) {
         if ($("#ph_reg_password").val() == $("#ph_reg_password2").val()) {
             validPassword("ph_reg_password2");
             return true;

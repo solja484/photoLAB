@@ -38,10 +38,10 @@ else if(cookies.auth=='false')
                     label(for="filter_years", class="non-bold") Стаж
                     select(class="form-control" id="filter_years")
                         option Будь-який
-                        option менше 1 року
-                        option 2 роки
-                        option 3 роки
-                        option 4+ роки
+                        option(value='1') до 1 року
+                        option(value='2') 2 роки
+                        option(value='3') 3 роки
+                        option(value='4') 4+ роки
                 button(class="btn btn-info bg-green", type="submit") Фільтрувати
     div( class='col-md-9' id='search_people')
         script.

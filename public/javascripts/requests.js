@@ -2,7 +2,6 @@ function login() {
 
     $("#login_failed").remove();
 
-    alert("here in entry!");
 
     let data={
         "login":$("#login_login").val(),

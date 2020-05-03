@@ -71,12 +71,14 @@ include ../navbar_unsign
 
                         .panel.panel-default(class="form-group")
                             .panel-heading Вкажіть все, чим займаєтесь:
-                                small(class='text-14 text-muted') Можна заповнити потім, пам'ятайте, ця інформація важлива при пошуку!
                             .panel-body(style="padding-left:30px!important;" class="row")
                                 each t in types
                                     div(class="form-group custom-checkbox col-md-6")
                                         input(type='checkbox',id="check"+t.type_id,class="custom-control-input " )
                                         label(for="check"+t.type_id, class="custom-control-label non-bold")=t.name
+                            .panel-footer
+                                small(class='text-14 text-muted') Цю інформацію можна заповнити потім, пам'ятайте, вона важлива при пошуку!
+
                         div(class="row")
                             div(class="form-group col")
                                 label(for="ph_reg_price" class="non-bold") Середня ціна зйомки($):
