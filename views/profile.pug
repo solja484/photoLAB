@@ -5,16 +5,21 @@ include ../navbar
                 .row(class='mg-0 pd-10  ')
                     .col-md-3
                         div(class="avatar-lg mg-10")
-                            div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                            if(info.avatar_link==""||info.avatar_link==null)
+                                div(class="circle-avatar pd-10" style=`background-image:url(${config.noavatar})`)
+                            else
+                                div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
                     .col-md-9
                         .row
                             .col-md-7
-                                div(class='empty-div')
+                                div(class='empty_div')
                                 h5(class='text-muted text-24')= '@'+info.username
+                                br
                                 p
-                                    i(class="material-icons") &#xe55f;
-                                    span= info.city
-                                    br
+                                    if(info.city!=null&&info.city!=undefined&&info.city!="")
+                                        i(class="material-icons") &#xe55f;
+                                        span= info.city
+                                        br
                                     i(class="fa fa-envelope")
                                     span= ' '+info.email
                                     br

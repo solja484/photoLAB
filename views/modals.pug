@@ -75,6 +75,14 @@ div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="tru
             div(class="modal-body")
                 button(type="button" class="close" data-dismiss="modal") &times;
                 form(action="/logout", method="POST", class="row")
+                    br
                     p(class="text-24 text-center col-md-12") Ви впевнені, що хочете вийти?
-                    input(class="btn btn-md btn-danger col-md-6" type="submit" value='Вийти')
-                    button(class="btn btn-md btn-default col-md-6" type="button" data-dismiss="modal") Повернутись
+                    div(class='empty-div')
+                    .col-md-6
+                        .row
+                            .col-md-1
+                            input(class="btn btn-md btn-danger col-md-10" type="submit" value='Вийти')
+                    .col-md-6
+                        .row
+                            .col-md-1
+                            button(class="btn btn-md btn-default col-md-10" type="button" data-dismiss="modal") Повернутись

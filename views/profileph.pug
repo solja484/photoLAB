@@ -9,7 +9,10 @@ else
         .row(class='mg-0 pd-10  ')
             .col-md-3
                 div(class="avatar-lg mg-10")
-                    div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                    if(info.avatar_link==null||info.avatar_link=="")
+                        div(class="circle-avatar pd-10" style=`background-image:url(${config.noavatar})`)
+                    else
+                        div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
             .col-md-9
                 .row
                     .col-md-7
@@ -21,15 +24,26 @@ else
                         .h5
                             p(class='text-muted')= '@'+info.username
                             span(class="text-muted pd-r-25")= '$'+info.price
-                            i(class="material-icons text-20 ") &#xe55f;
-                            span(class="text-20")= info.city
+                            if(info.city!=null && info.city!="")
+                                i(class="material-icons text-20 ") &#xe55f;
+                                span(class="text-20")= info.city
                         p(class="text-14")= 'Стаж: '+info.exp+' роки'
-                        if(info.organization!=undefined)
+                        if(info.organization!=undefined&&info.organization!=null)
                             p(class="text-14")= info.organization
                         p(class="text-14 text-break")= info.about
                     .col-md-5
                         if(!guest)
                             a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
+
+                        if(guest)
+                            if(!favorite)
+                                button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
+                                onclick=`addToFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
+                                    i( class='text-40 material-icons') &#xe8e7;
+                            else
+                                button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
+                                onclick=`deleteFromFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
+                                    i( class='text-40 material-icons') &#xe8e6;
                             br
                         div(id="rating_container" class='float-right')
                         script.

@@ -12,19 +12,26 @@ include ../navbar
                     div(class='form-group pd-10 row')
                         .col-md-3
                             div(class="avatar-sm mg-10" id='edit_avatar_holder')
-                                div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                                if(info.avatar_link==null||info.avatar_link==""||info.avatar_link==undefined)
+                                    div(class="circle-avatar pd-10" style=`background-image:url(${config.noavatar})`)
+                                else
+                                    div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
                         .col-md-8(class='pd-0 mg-0')
                             .row(class='pd-0 mg-0')
                                 div(class='input-group col-md-12 bottom')
                                     div(class="input-group-prepend ")
                                         div(class="input-group-text")
                                             i(class="fa fa-picture-o")
-                                    input(class=' form-control sharp-corners' id="edit_avatar" type='text' value=`${info.avatar_link}`)
+                                    if(info.avatar_link==null||info.avatar_link==""||info.avatar_link==undefined)
+                                        input(class=' form-control sharp-corners' id="edit_avatar" type='text' value="")
+                                    else
+                                        input(class=' form-control sharp-corners' id="edit_avatar" type='text' value=`${info.avatar_link}`)
 
                         .col-md-2
                         .col-md-10
                             button(class='bg-transparent border-none green mg-5 float-bottom btn-sm text-14' onclick='tryNewPhoto()') Спробувати нове фото
-                            button(class='bg-transparent border-none link1 mg-5 btn-sm text-14 float-bottom' onclick=`setOldPhoto(${JSON.stringify(info.avatar_link)})`) Відмінити
+                            if(info.avatar_link==null||info.avatar_link==""||info.avatar_link==undefined)
+                                button(class='bg-transparent border-none link1 mg-5 btn-sm text-14 float-bottom' onclick=`setOldPhoto(${JSON.stringify(info.avatar_link)})`) Відмінити
                             button(class='bg-transparent border-none red  mg-5 btn-sm text-14 float-bottom' onclick='deleteAvatarPhoto()') Видалити
 
                     div(class='form-group row')
@@ -49,14 +56,21 @@ include ../navbar
                             div(class="input-group-prepend ")
                                 div(class="input-group-text")
                                     i(class="material-icons") &#xe55f;
-                            input(class=' form-control sharp-corners' id="edit_city" type='text' value=`${info.city}`)
+                            if(info.city==null||info.city==undefined)
+                                input(class=' form-control sharp-corners' id="edit_city" type='text' value="")
+                            else
+                                input(class=' form-control sharp-corners' id="edit_city" type='text' value=`${info.city}`)
                     div(class='form-group row')
-                        label(class='col-md-3 text-rightt non-bold' for='edit_phone') Телефон:
+                        label(class='col-md-3 text-rightt non-bold' for="edit_phone") Телефон:
                         div(class='input-group col-md-8')
                             div(class="input-group-prepend ")
-                                div(class="input-group-text") 38
-                            input(class=' form-control sharp-corners' id="edit_phone" type='text' value=`${info.phone}`)
-
+                                div(class="input-group-text")
+                                    i(class='fa fa-phone')
+                            if(info.phone==null)
+                                input(class=' form-control sharp-corners' id="edit_phone" type='text' value="")
+                            else
+                                input(class=' form-control sharp-corners' id="edit_phone" type='text' value=`${info.phone}`)
+                            div(class='invalid-feedback') Телефон - 10 цифр
                     if(cookies.role=='photographer')
                         div(class='form-group row')
                             label(class='col-md-3 text-rightt non-bold' for='edit_lastname') Прізвище:
@@ -124,7 +138,6 @@ include ../navbar
                 .panel-footer(class='text-center')
                     button(class='border-none bg-transparent link1 expand' onclick=`editClientInfo(${JSON.stringify(info)},${JSON.stringify(users)})`) Зберегти зміни
             br
-            br
             if(cookies.role=='photographer')
                 .panel.panel-info(class='mg-0 pd-0' id='editph_types')
                     .panel-heading(class='text-center') Типи зйомки
@@ -140,7 +153,6 @@ include ../navbar
                     .panel-footer(class='text-center')
                         button(class='border-none bg-transparent link1 expand'
                         onclick=`editPhTypes(${JSON.stringify(info)},${JSON.stringify(types)})`) Зберегти типи
-                br
                 br
                 .panel.panel-default(class='mg-0 pd-0' id='editph_contacts')
                     .panel-heading(class='text-center') Посилання на соцмережі
@@ -161,7 +173,6 @@ include ../navbar
                     .panel-footer(class='text-center')
                         button(class='border-none bg-transparent link1 expand'
                         onclick=`editPhAccounts(${JSON.stringify(info)},${JSON.stringify(social)})`) Зберегти контакти
-            br
             br
             .panel.panel-danger(class='form-group mg-0 pd-0' id="editpassword")
                 .panel-heading(class='text-center') Змінити пароль

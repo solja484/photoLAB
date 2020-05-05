@@ -35,7 +35,7 @@ function editClientInfo(info, users) {
         $("#edit_username").removeClass("is-valid").addClass("is-invalid");
     }
     if(!validExistedEmail($("#edit_email").val(),users)){
-        $("#invalid_edit_email").text("Користувач з таким іменем уже існує!");
+        $("#invalid_edit_email").text("Користувач з такою поштою уже існує!");
         $("#edit_email").removeClass("is-valid").addClass("is-invalid");
     }
     if(info.role=='photographer'){
@@ -175,6 +175,7 @@ function changePass(user_id,new_password){
 
 
 }
+
 function editPhTypes(info, types){
 
     let values=[];

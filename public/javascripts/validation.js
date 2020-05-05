@@ -1,47 +1,8 @@
-function validateRegistry() {
-    //  let a=validEmail("reg_email");
-    let b = validEmpty("reg_username");
-    let c = validNamesF("reg_city");
-    let d = validPassword("reg_password");
-
-    if (b && c && d) {
-        pass = $("#reg_password").val();
-        pass2 = $("#reg_password2").val();
-        if (pass == pass2) {
-            validPassword("reg_password2");
-            return true;
-        }
-        validPassword("reg_password2");
-        return false;
-    }
-    return false;
-}
 
 function validateSearch(){
     return validEmpty("search_input");
 }
 
-function phValidateRegistry() {
-
-    let a = validEmail("ph_reg_email");
-    let b = validEmpty("ph_reg_username");
-    let c = validNames("ph_reg_surname");
-    let d = validNames("ph_reg_name");
-    let e = validNamesF("ph_reg_fathername");
-    let f = validNamesF("ph_reg_city");
-    let h = validPassword("ph_reg_password");
-    if (a && b && c && d && e && f  && h) {
-        if ($("#ph_reg_password").val() == $("#ph_reg_password2").val()) {
-            validPassword("ph_reg_password2");
-            return true;
-        }
-        validPassword("ph_reg_password2");
-        return false;
-    }
-
-
-    return false;
-}
 
 function validEmail(str) {
     const selector = $("#" + str);
@@ -64,7 +25,7 @@ function validEmail(str) {
     }
 }
 
-//кирилиця+латиниця+тире+апостроф
+//кирилиця+латиниця+тире+апостроф не менше двох символів
 function validNames(str) {
     const selector = $("#" + str);
     let name = selector.val();
@@ -97,7 +58,7 @@ function validNamesF(str) {
 }
 
 
-//кирилиця + латиниця + цифри + тире + апостроф + _
+//кирилиця + латиниця + цифри + тире  + нижнє підкреслення, не менше 6 символів
 function validPassword(str) {
     const selector = $("#" + str);
     let pass = selector.val();
@@ -106,7 +67,7 @@ function validPassword(str) {
         selector.addClass('is-invalid');
         return false;
     }
-    let pattern = /^[a-zA-Z0-9а-яА-ЯіІїЇ\-'_]+$/;
+    let pattern = /^[a-zA-Z0-9а-яА-ЯіІїЇ\-_]+$/;
     if (pass.match(pattern)) {
         selector.removeClass('is-invalid');
         selector.addClass('is-valid');
@@ -120,9 +81,14 @@ function validPassword(str) {
 function validPhone(str) {
     const selector = $("#" + str);
     let phone = selector.val();
+    if (phone == "") {
+        selector.removeClass('is-valid');
+        selector.removeClass('is-invalid');
+        return true
+    }
     let pattern = /^\d+$/;
     let pattern2 = /^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/;
-    if (phone.match(pattern) && phone.length === 10 || phone.match(pattern2)) {
+    if (phone.match(pattern) && phone.length == 10 || phone.match(pattern2)) {
         selector.removeClass('is-invalid');
         selector.addClass('is-valid');
         return true
@@ -134,8 +100,9 @@ function validPhone(str) {
 
 function validEmpty(str) {
     const selector = $("#" + str);
-    let edu = selector.val();
-    if (edu === "") {
+    let val = selector.val();
+    let pattern = /^\s+$/;
+    if (val == ""||val.match(pattern)) {
         selector.removeClass('is-valid');
         selector.addClass('is-invalid');
         return false;
@@ -144,7 +111,6 @@ function validEmpty(str) {
     selector.addClass('is-valid');
     return true;
 }
-
 
 function validTags(str) {
     const selector = $("#" + str);
@@ -171,8 +137,10 @@ function validExistedUsername(str,users) {
     for(let u of users)
         if(str==u.username)
             return false;
+
     return true;
 }
+
 function validExistedEmail(str,users) {
     for(let u of users)
         if(str==u.email)
@@ -180,7 +148,7 @@ function validExistedEmail(str,users) {
     return true;
 }
 
-//ці два методи забирають валідацію і інфу відповідно
+//ці два методи забирають валідацію і стирають заповнені поля форми відповідно
 function removeValid(str) {
     $("form#" + str + " :input").each(function () {
         $(this).removeClass('is-valid');
