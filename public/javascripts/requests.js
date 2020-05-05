@@ -178,11 +178,6 @@ function regPh(users,types) {
 }
 
 
-
-
-
-
-
 function addToFavorites(ph_id, user_id) {
 
     let data = {
@@ -206,10 +201,6 @@ function addToFavorites(ph_id, user_id) {
 
     });
 
-}
-
-function addToFavoritesPr(ph_id, user_id){
-    console.log(ph_id+" "+user_id);
 }
 
 function deleteFromFavorites(ph_id, user_id, profile = false) {
@@ -524,7 +515,8 @@ function fillCities() {
         method: 'get',
         success: function (data) {
             for (let i of data)
-                $("#filter_city").append("<option value='filter_" + i.city + "'>" + i.city + "</option>");
+                if(i.city!=null&&i.city!="")
+                    $("#filter_city").append("<option value='"+ i.city + "'>" + i.city + "</option>");
 
         }
     });

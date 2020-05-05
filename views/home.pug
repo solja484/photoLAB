@@ -21,33 +21,53 @@ else if(cookies.auth=='false')
     .col-md-3(class="pd-0 ")
         .panel(class="pd-0 sticky-top")
             .panel-heading Фільтрувати пошук
-            form(class="panel-body")
+            .panel-body
                 div(class="form-group")
                     label(for="filter_type", class="non-bold") Тип зйомки
                     select(class="form-control", id="filter_type")
-                        option Будь-яка зйомка
+                        option(value='0') Будь-яка зйомка
                         each t in types
-                            option= t.name
+                            option(value=t.type_id)= t.name
                     br
 
                     label(for="filter_city", class="non-bold") Місто
                     select(class="form-control", id="filter_city")
-                        option Усі міста
+                        option(value='0') Усі міста
 
                     br
                     label(for="filter_years", class="non-bold") Стаж
                     select(class="form-control" id="filter_years")
-                        option Будь-який
-                        option(value='1') до 1 року
-                        option(value='2') 2 роки
-                        option(value='3') 3 роки
-                        option(value='4') 4+ роки
-                button(class="btn btn-info bg-green", type="submit") Фільтрувати
-    div( class='col-md-9' id='search_people')
-        script.
+                        option(value='0') Будь-який
+                        option(value=1) до 1 року
+                        option(value=2) 2 роки
+                        option(value=3) 3 роки
+                        option(value=4) 4+ роки
+                    br
+                    label(for="filter_price", class="non-bold") Ціна:
+                    input(type="text" id="filter_price" readonly class='border-none')
+                    div(id="slider-range")
+                    div
+                        span(class='float-left') 0
+                        span(class='float-right') 5000
+                    br
+                button(class="btn btn-info bg-green",  onclick='filter()') Фільтрувати
+                button(class="bg-transparent border-none btn link1 ",  onclick=`nofilter(${JSON.stringify(phinfo)},
+                 ${JSON.stringify(cookies)}, ${JSON.stringify(photos)},${JSON.stringify(favorites)});`) Скасувати
 
+
+    div( class='col-md-9')
+        div(id='filter_spinner' class='expand text-center minh ')
+            i(class='fa fa-pulse fa-spinner text-40 white')
+        div(class='expand ' id='search_people')
+        div(id='filter_error' class='panel panel-danger mg-0 pd-0')
+            div(class='panel-heading') За вашим запитом нічого не знайдено
+        script.
+            $("#filter_spinner").hide();
+            $("#filter_error").hide();
+            setSlider();
             let cookies = !{JSON.stringify(cookies)};
-            fillSearchPhotographers(!{JSON.stringify(phinfo)}, !{JSON.stringify(cookies)}, !{JSON.stringify(photos)},!{JSON.stringify(favorites)}, !{JSON.stringify(ratings)});
+            fillSearchPhotographers(!{JSON.stringify(phinfo)}, !{JSON.stringify(cookies)},
+                !{JSON.stringify(photos)},!{JSON.stringify(favorites)});
 
 
 

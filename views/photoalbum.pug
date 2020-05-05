@@ -1,102 +1,98 @@
-html
-    head
-        title= config.title
-    style
-        include ../public/stylesheets/profile.css
-body
-    if(cookies.auth=='false')
-        include ../navbar_unsign
-    else
-        include ../navbar
-    .row(class="pd-0 mg-0")
-        .col-md-5
-            if(guest)
-                a(class='link1 btn btn-outline-light sharp-corners' href=`/guest/${ph_username}`)
-                    i(class='fa fa-arrow-left')
-                    span= `до профілю @${ph_username}`
 
+if(cookies.auth=='false')
+    include ../navbar_unsign
+else
+    include ../navbar
+.row(class="pd-0 mg-0")
+    .col-md-5
+        if(guest)
+            a(class='link1 btn btn-outline-light sharp-corners' href=`/guest/${ph_username}`)
+                i(class='fa fa-arrow-left')
+                span= `до профілю @${ph_username}`
+
+        if(!guest)
+            button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
+            div
+                button(id='edit_folder', class="link2 bg-transparent border-none", data-toggle="modal",
+                data-target='#edit_folder_modal')
+                    span Перейменувати папку
+                    i(class="fa fa-edit ")
+                button(id='delete_folder', class="link-hover-red  bg-transparent border-none",  data-toggle="modal",
+                data-target='#delete_folder_modal')
+                    span Видалити папку
+                    i(class="fa fa-trash-o ")
+        div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
+
+            div(class="empty_div")
+            each f in folders
+                if(f == folders[0])
+                    a(class="link1 col-md-10 folder-link active" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
+                    role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="true" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
+                    script.
+                        setCurrentFolder(!{JSON.stringify(f.folder_id)});
+                else
+                    a(class="link1 col-md-10  folder-link" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
+                    role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="false" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
+
+
+    .col-md-1
+    .col-md-5
+        div(class="tab-content" id='photos_container')
             if(!guest)
-                button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
-                div
-                    button(id='edit_folder', class="link2 bg-transparent border-none", data-toggle="modal",
-                    data-target='#edit_folder_modal')
-                        span Перейменувати папку
-                        i(class="fa fa-edit ")
-                    button(id='delete_folder', class="link-hover-red  bg-transparent border-none",  data-toggle="modal",
-                    data-target='#delete_folder_modal')
-                        span Видалити папку
-                        i(class="fa fa-trash-o ")
-            div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
-
-                div(class="empty_div")
-                each f in folders
-                    if(f == folders[0])
-                        a(class="link1 col-md-10 folder-link active" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="true" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
-                        script.
-                            setCurrentFolder(!{JSON.stringify(f.folder_id)});
-                    else
-                        a(class="link1 col-md-10  folder-link" id=`folder${f.folder_id}-tab` data-toggle="pill"  href=`#folder${f.folder_id}`
-                        role="tab" aria-controls= href = `folder${f.folder_id}` aria-selected="false" onclick=`setCurrentFolder(${JSON.stringify(f.folder_id)})`)= f.name
-
-
-        .col-md-1
-        .col-md-5
-            div(class="tab-content" id='photos_container')
-                if(!guest)
-                    button(class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
-                br
-                script.
-                    let folders0 = !{JSON.stringify(folders)};
-                    if (getCurrentFolder() == "")
-                        setCurrentFolder(folders0[0].folder_id);
-                each f in folders
-                    if(f.folder_id === folders[0].folder_id)
-                        div(class="tab-pane show active" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
-                            each photo in photos
-                                if(photo.folder_id === f.folder_id)
-                                    div(class='card ' id=`photo${photo.photo_id}`)
-                                        div(class='img-container')
-                                            div(class="circle-avatar " style=`background-image:url(${photo.link})`)
-                                        div(class='card-body')
+                button(class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
+            br
+            script.
+                let folders0 = !{JSON.stringify(folders)};
+                if (getCurrentFolder() == "")
+                    setCurrentFolder(folders0[0].folder_id);
+            each f in folders
+                if(f.folder_id === folders[0].folder_id)
+                    div(class="tab-pane show active" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
+                        each photo in photos
+                            if(photo.folder_id === f.folder_id)
+                                div(class='card ' id=`photo${photo.photo_id}`)
+                                    div(class='img-container')
+                                        div(class="circle-avatar " style=`background-image:url(${photo.link})`)
+                                    div(class='card-body')
+                                        if(!guest)
                                             button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
                                             onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
                                                 i(class="fa text-20 fa-trash-o ")
                                             button(class='link1 bg-transparent float-right text-20 border-none' id=`editphotobutton${photo.photo_id}` data-toggle="modal", data-target='#edit_photo_modal'
                                             onclick=`fillEditPhotoModal(${JSON.stringify(photo)})`)
                                                 i(class="fa text-20 fa-edit ")
-                                            h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
-                                            p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
-                                            p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
-                                                each tag in photo.taglist
-                                                    a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
-                                    br
-                    else
-                        div(class="tab-pane fade" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
+                                        h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
+                                        p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
+                                        p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
+                                            each tag in photo.taglist
+                                                a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
+                                br
+                else
+                    div(class="tab-pane fade" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
 
 
-                            each photo in photos
-                                if(photo.folder_id === f.folder_id)
-                                    div(class='card' id=`photo${photo.photo_id}`)
-                                        div(class='img-container')
-                                            div(class="circle-avatar " style=`background-image:url(${photo.link})`)
-                                        div(class='card-body')
-                                            button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
-                                            onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
-                                                i(class="fa text-20 fa-trash-o ")
-                                            button(class='link1 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#edit_photo_modal'
-                                            onclick=`fillEditPhotoModal(${JSON.stringify(photo)})` id=`editphotobutton${photo.photo_id}`)
-                                                i(class="fa text-20 fa-edit ")
-                                            h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
-                                            p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
-                                            p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
-                                                each tag in photo.taglist
-                                                    a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
-                                    br
-        .col-md-1
+                        each photo in photos
+                            if(photo.folder_id === f.folder_id)
+                                div(class='card' id=`photo${photo.photo_id}`)
+                                    div(class='img-container')
+                                        div(class="circle-avatar " style=`background-image:url(${photo.link})`)
+                                    div(class='card-body')
+                                        button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
+                                        onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
+                                            i(class="fa text-20 fa-trash-o ")
+                                        button(class='link1 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#edit_photo_modal'
+                                        onclick=`fillEditPhotoModal(${JSON.stringify(photo)})` id=`editphotobutton${photo.photo_id}`)
+                                            i(class="fa text-20 fa-edit ")
+                                        h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
+                                        p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
+                                        p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
+                                            each tag in photo.taglist
+                                                a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
+                                br
+    .col-md-1
 
 
-div(class="modal fade font-17" id="edit_folder_modal" role="dialog")
+div(class="modal fade font-17" id="edit_folder_modal" aria-hidden='true' role="dialog")
     div(class="modal-dialog")
         div(class="modal-content")
             div(class="modal-header")
@@ -117,7 +113,7 @@ div(class="modal fade font-17" id="edit_folder_modal" role="dialog")
             div(class="modal-footer")
                 button(id="edit_folder_button" type="button" class="btn btn-outline-info" onclick="editFolder()") Зберегти зміни
 
-div(class="modal fade font-17" id="delete_folder_modal" role="dialog")
+div(class="modal fade font-17" id="delete_folder_modal" aria-hidden='true' role="dialog")
     div(class="modal-dialog")
         div(class="modal-content")
             div(class="modal-header")
@@ -133,7 +129,7 @@ div(class="modal fade font-17" id="delete_folder_modal" role="dialog")
             div(class="modal-footer")
                 button(id="delete_folder_button" type="button" class="btn btn-block btn-outline-danger" onclick="deleteFolder()") Видалити папку!
 
-div(class="modal fade font-17" id="delete_photo_modal" role="dialog")
+div(class="modal fade font-17" id="delete_photo_modal" aria-hidden='true' role="dialog")
     div(class="modal-dialog")
         div(class="modal-content")
             div(class="modal-header")
@@ -145,7 +141,7 @@ div(class="modal fade font-17" id="delete_photo_modal" role="dialog")
                 button(id="delete_photo_button" type="button" class="btn mg-5 col-md-5 btn-outline-danger" ) Видалити
 
 
-div(class="modal fade" id="edit_photo_modal" role="dialog")
+div(class="modal fade" id="edit_photo_modal" aria-hidden='true' role="dialog")
     div(class="modal-dialog")
         div(class="modal-content")
             div(class="modal-header")

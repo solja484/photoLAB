@@ -3,141 +3,141 @@ if(cookies.auth=='false')
     include ../navbar_unsign
 else
     include ../navbar
-.row(class='mg-0 pd-0 bg-white' id="profile")
-    .col-md-1
-    .col-md-10
-        .row(class='mg-0 pd-10  ')
-            .col-md-3
-                div(class="avatar-lg mg-10")
-                    if(info.avatar_link==null||info.avatar_link=="")
-                        div(class="circle-avatar pd-10" style=`background-image:url(${config.noavatar})`)
-                    else
-                        div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
-            .col-md-9
-                .row
-                    .col-md-7
-                        if(info.fathername===undefined)
-                            .h1(class="text-24")= info.lastname +' ' +info.firstname
+    .row(class='mg-0 pd-0 bg-white' id="profile")
+        .col-md-1
+        .col-md-10
+            .row(class='mg-0 pd-10  ')
+                .col-md-3
+                    div(class="avatar-lg mg-10")
+                        if(info.avatar_link==null||info.avatar_link=="")
+                            div(class="circle-avatar pd-10" style=`background-image:url(${config.noavatar})`)
                         else
-                            .h1(class="text-24")= info.lastname +' ' +info.firstname +' '+info.fathername
-
-                        .h5
-                            p(class='text-muted')= '@'+info.username
-                            span(class="text-muted pd-r-25")= '$'+info.price
-                            if(info.city!=null && info.city!="")
-                                i(class="material-icons text-20 ") &#xe55f;
-                                span(class="text-20")= info.city
-                        p(class="text-14")= 'Стаж: '+info.exp+' роки'
-                        if(info.organization!=undefined&&info.organization!=null)
-                            p(class="text-14")= info.organization
-                        p(class="text-14 text-break")= info.about
-                    .col-md-5
-                        if(!guest)
-                            a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
-
-                        if(guest)
-                            if(!favorite)
-                                button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
-                                onclick=`addToFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
-                                    i( class='text-40 material-icons') &#xe8e7;
+                            div(class="circle-avatar pd-10" style=`background-image:url(${info.avatar_link})`)
+                .col-md-9
+                    .row
+                        .col-md-7
+                            if(info.fathername===undefined)
+                                .h1(class="text-24")= info.lastname +' ' +info.firstname
                             else
-                                button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
-                                onclick=`deleteFromFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
-                                    i( class='text-40 material-icons') &#xe8e6;
-                            br
-                        div(id="rating_container" class='float-right')
-                        script.
-                            setRatings(!{JSON.stringify(guest)},!{JSON.stringify(info)},!{JSON.stringify(cookies)});
+                                .h1(class="text-24")= info.lastname +' ' +info.firstname +' '+info.fathername
 
-                    .col-md-12
-                        p
-                            each t in mytypes
-                                a(class='link1' href='/home/?subj='+t )= '#' + t.name+' '
-            .col-md-12
-                ul(class='nav nav-tabs')
-                    if(!guest)
-                        li(class="active")
-                            a(data-toggle="tab" href="#favorites" class='link1') Збережено
-                    if(guest)
-                        li(class="active")
-                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
-                    else
-                        li
-                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
-                    li
-                        a(data-toggle="tab" href="#calendar" class='link1') Календар
-                    li
+                            .h5
+                                p(class='text-muted')= '@'+info.username
+                                span(class="text-muted pd-r-25")= '$'+info.price
+                                if(info.city!=null && info.city!="")
+                                    i(class="material-icons text-20 ") &#xe55f;
+                                    span(class="text-20")= info.city
+                            p(class="text-14")= 'Стаж: '+info.exp+' роки'
+                            if(info.organization!=undefined&&info.organization!=null)
+                                p(class="text-14")= info.organization
+                            p(class="text-14 text-break")= info.about
+                        .col-md-5
+                            if(!guest)
+                                a(class="btn btn-info bg-green float-right" href='/edit/'+cookies.username) Редагувати
+
+                            if(guest)
+                                if(!favorite)
+                                    button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
+                                    onclick=`addToFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
+                                        i( class='text-40 material-icons') &#xe8e7;
+                                else
+                                    button(class='btn pd-0 btn-light float-right hover-green border-none green bg-transparent' id=`fav${info.ph_id}`
+                                    onclick=`deleteFromFavorites(${JSON.stringify(info.ph_id)},${JSON.stringify(cookies.user_id)})`)
+                                        i( class='text-40 material-icons') &#xe8e6;
+                                br
+                            div(id="rating_container" class='float-right')
+                            script.
+                                setRatings(!{JSON.stringify(guest)},!{JSON.stringify(info)},!{JSON.stringify(cookies)});
+
+                        .col-md-12
+                            p
+                                each t in mytypes
+                                    a(class='link1' href='/home/?subj='+t )= '#' + t.name+' '
+                .col-md-12
+                    ul(class='nav nav-tabs')
+                        if(!guest)
+                            li(class="active")
+                                a(data-toggle="tab" href="#favorites" class='link1') Збережено
                         if(guest)
-                            a( class='link1' href='/guest/photoalbum/'+info.username) Фото
+                            li(class="active")
+                                a(data-toggle="tab" href="#contacts" class='link1') Контакти
                         else
-                            a( class='link1' href='/photoalbum/'+cookies.username) Фото
-    .col-md-12
-        div(class="tab-content minh")
-            if(!guest)
-                div(id="favorites" class="tab-pane row fade in active show")
-                    div(class="empty_div col-md-12")
+                            li
+                                a(data-toggle="tab" href="#contacts" class='link1') Контакти
+                        li
+                            a(data-toggle="tab" href="#calendar" class='link1') Календар
+                        li
+                            if(guest)
+                                a( class='link1' href='/guest/photoalbum/'+info.username) Фото
+                            else
+                                a( class='link1' href='/photoalbum/'+cookies.username) Фото
+        .col-md-12
+            div(class="tab-content minh")
+                if(!guest)
+                    div(id="favorites" class="tab-pane row fade in active show")
+                        div(class="empty_div col-md-12")
+                        .col-md-1
+                        .col-md-10
+                            .row
+                            if(favorites===[])
+                                p Поки що немає збережених фотографів
+                            each fav in favorites
+
+                                .panel(class='col-md-5' id=`favpanel${fav.ph_id}`)
+                                    .row(class="mg-0 ")
+                                        .col-md-4
+                                            div(class="avatar-sm mg-10")
+                                                if(fav.avatar_link != undefined)
+                                                    div(class="circle-avatar pd-10" style=`background-image:url(${fav.avatar_link})`)
+                                                else
+                                                    div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
+                                        .col-md-6
+                                            a(class="text-20 link1" href=`/guest/${fav.username}`)= '@'+fav.username
+                                            .h5
+                                                i(class="material-icons text-17 ") &#xe55f;
+                                                span(class="text-17")= fav.city
+                                            .h5
+                                                span(class="text-muted pd-r-25")= '$' + fav.price
+                                        .col-md-2
+                                            button(id=`fav${fav.ph_id}`, class="btn btn-outline-danger border-none"
+                                            onclick=`deleteFromFavorites(${fav.ph_id},${info.user_id},true)`)
+                                                i(class="fa fa-trash red")
+                                .col-md-1
+                div(id="calendar" class="tab-pane  row fade")
                     .col-md-1
                     .col-md-10
-                        .row
-                        if(favorites===[])
-                            p Поки що немає збережених фотографів
-                        each fav in favorites
+                        p calendar
+                if(guest)
+                    div(id="contacts" class="tab-pane row fade in active show")
+                        .col-md-1
+                        .col-md-10
+                            .row
+                                each con in contacts
 
-                            .panel(class='col-md-5' id=`favpanel${fav.ph_id}`)
-                                .row(class="mg-0 ")
-                                    .col-md-4
-                                        div(class="avatar-sm mg-10")
-                                            if(fav.avatar_link != undefined)
-                                                div(class="circle-avatar pd-10" style=`background-image:url(${fav.avatar_link})`)
-                                            else
-                                                div(class="circle-avatar pd-10" style='background-image:url(https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg)')
-                                    .col-md-6
-                                        a(class="text-20 link1" href=`/guest/${fav.username}`)= '@'+fav.username
-                                        .h5
-                                            i(class="material-icons text-17 ") &#xe55f;
-                                            span(class="text-17")= fav.city
-                                        .h5
-                                            span(class="text-muted pd-r-25")= '$' + fav.price
-                                    .col-md-2
-                                        button(id=`fav${fav.ph_id}`, class="btn btn-outline-danger border-none"
-                                        onclick=`deleteFromFavorites(${fav.ph_id},${info.user_id},true)`)
-                                            i(class="fa fa-trash red")
-                            .col-md-1
-            div(id="calendar" class="tab-pane  row fade")
-                .col-md-1
-                .col-md-10
-                    p calendar
-            if(guest)
-                div(id="contacts" class="tab-pane row fade in active show")
-                    .col-md-1
-                    .col-md-10
-                        .row
-                            each con in contacts
+                                    .col-md-3
+                                        if(con.site_name=='Email'||con.site_name == 'Phone')
+                                            a(class='link1 btn ' href="#contacts")
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.account_link
+                                        else
+                                            a(class='link1 btn ' href=con.account_link)
+                                                span(class=`${con.icon}`)
+                                                = ' ' +con.site_name
+                else
+                    div(id="contacts" class="tab-pane  row fade")
+                        .col-md-1
+                        .col-md-10
+                            .row
+                                each con in contacts
 
-                                .col-md-3
-                                    if(con.site_name=='Email'||con.site_name == 'Phone')
-                                        a(class='link1 btn ' href="#contacts")
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.account_link
-                                    else
-                                        a(class='link1 btn ' href=con.account_link)
-                                            span(class=`${con.icon}`)
-                                            = ' ' +con.site_name
-            else
-                div(id="contacts" class="tab-pane  row fade")
-                    .col-md-1
-                    .col-md-10
-                        .row
-                            each con in contacts
+                                    .col-md-3
+                                        if(con.site_name == 'gmail' || con.site_name == 'phone')
+                                            a(class='link1 btn ' href="#contacts")
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.account_link
+                                        else
+                                            a(class='link1 btn ' href=con.account_link)
+                                                span(class=`${con.icon}`)
+                                                = ' ' + con.site_name
 
-                                .col-md-3
-                                    if(con.site_name == 'gmail' || con.site_name == 'phone')
-                                        a(class='link1 btn ' href="#contacts")
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.account_link
-                                    else
-                                        a(class='link1 btn ' href=con.account_link)
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.site_name
-
-    .col-md-1
+        .col-md-1
