@@ -74,7 +74,7 @@ else
         .col-md-12
             div(class="tab-content minh")
                 if(!guest)
-                    div(id="favorites" class="tab-pane row fade in active show")
+                    div(id="favorites" class="tab-pane row fade " style='in active show')
                         div(class="empty_div col-md-12")
                         .col-md-1
                         .col-md-10
@@ -103,10 +103,7 @@ else
                                             onclick=`deleteFromFavorites(${fav.ph_id},${info.user_id},true)`)
                                                 i(class="fa fa-trash red")
                                 .col-md-1
-                div(id="calendar" class="tab-pane  row fade")
-                    .col-md-1
-                    .col-md-10
-                        p calendar
+
                 if(guest)
                     div(id="contacts" class="tab-pane row fade in active show")
                         .col-md-1
@@ -139,5 +136,36 @@ else
                                             a(class='link1 btn ' href=con.account_link)
                                                 span(class=`${con.icon}`)
                                                 = ' ' + con.site_name
+                div(id="calendar" class="tab-pane  row fade in active show")
+                    .col-md-1
+                    .col-md-10
+                        div(id='calendar_holder' class='mg-0 pd-0 expand')
+                            div(class="month expand")
+                                ul(class='no-marks pd-0 mg-0')
+                                    li(class="prev") &#10094;
+                                    li(class="next") &#10095;
+                                    li
+                                        span(id="month_name" class='text-20') August
+                                        br
+                                        span(id="year_number") 2017
+                            table(class='mg-0 pd-0 expand')
+                                thead
+                                    tr(class='weekdays')
+                                        td Пн
+                                        td Вт
+                                        td Ср
+                                        td Чт
+                                        td Пт
+                                        td Сб
+                                        td Нд
+                                tbody(id='dates')
+                                    if(guest)
+                                        script setCalendar();
+                                    else
+                                        script setPhCalendar();
+
+
+                        div(class='minh')
+
 
         .col-md-1

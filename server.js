@@ -3,7 +3,7 @@ let server = express();
 let bodyParser = require('body-parser');
 let config = require('./config.json');
 let cookieParser = require('cookie-parser');
-
+const mysql = require("mysql2");
 let types = [];
 
 
@@ -19,7 +19,6 @@ server.listen(2606, () => {
     console.log('listening on 2606')
 });
 
-const mysql = require("mysql2");
 const connection = mysql.createConnection({
     host: config.host,
     user: config.user,

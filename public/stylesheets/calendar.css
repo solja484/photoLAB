@@ -1,0 +1,73 @@
+
+
+/* Month header */
+.month {
+    padding: 40px 25px;
+    background: #34a99c;
+    text-align: center;
+}
+
+.no-marks{
+    list-style-type: none;
+}
+.month ul li {
+    color: white;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* Previous button inside month header */
+.month .prev {
+    float: left;
+    padding-top: 10px;
+}
+
+/* Next button */
+.month .next {
+    float: right;
+    padding-top: 10px;
+}
+
+
+.weekdays {
+    margin: 0;
+    padding: 10px 0;
+    background-color:#ddd;
+}
+
+.weekdays td {
+    width: 13.6%;!important;
+    color: #666;
+    text-align: center;
+}
+
+.day {
+    text-align:right;
+    padding:30px 10px;
+    font-size: 20px;
+    margin: 0;
+}
+
+.busy{
+    background: #c3c3c3;
+}
+.free{
+    background: #f8f8f8;
+}
+.free:hover,.free:active,.free:focus{
+    border: 1px solid #ffc107;
+    background: white;
+    cursor: pointer;
+}
+
+.approved{
+    background: rgba(119, 238, 119, 0.5);
+}
+.in-progress{
+    background: rgba(255, 193, 7, 0.5);
+}
+
+.denied{
+    background: rgba(220, 53, 69, 0.5);
+}

@@ -69,8 +69,6 @@ else
                                 br
                 else
                     div(class="tab-pane fade" id=`folder${f.folder_id}` role="tabpanel" aria-labelledby=`folder${f.folder_id}-tab`)
-
-
                         each photo in photos
                             if(photo.folder_id === f.folder_id)
                                 div(class='card' id=`photo${photo.photo_id}`)
@@ -89,6 +87,7 @@ else
                                             each tag in photo.taglist
                                                 a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
                                 br
+
     .col-md-1
 
 

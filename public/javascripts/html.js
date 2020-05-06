@@ -146,7 +146,6 @@ function setRatings(guest, info, cookies) {
 
 }
 
-
 function changingStars(user_id, ph_id) {
     for (let i = 0; i < 10; i++) {
         $("#rating_star" + i).attr("onclick", "vote(" + (i + 1) + "," + user_id + "," + ph_id + ")")
@@ -174,7 +173,6 @@ function getListOfFolders(array) {
     return attributes;
 }
 
-
 function setSlider() {
     $(function () {
         $("#slider-range").slider({
@@ -189,4 +187,168 @@ function setSlider() {
         $("#filter_price").val(" $" + $("#slider-range").slider("values", 0) +
             " - $" + $("#slider-range").slider("values", 1));
     });
+}
+
+$(document).ready(function () {
+  let date=getCurrentDate();
+  localStorage.setItem("cur_month",date.month);
+    localStorage.setItem("cur_day",date.day);
+    localStorage.setItem("calendar_month",date.month);
+
+});
+const months={
+    "1":{
+        "name":"Січень",
+        "days":31
+    },
+    "2":{
+        "name":"Лютий",
+        "days":28
+    },
+    "3":{
+        "name":"Березень",
+        "days":31
+    },
+    "4":{
+        "name":"Квітень",
+        "days":30
+    },
+    "5":{
+        "name":"Травень",
+        "days":31
+    },
+    "6":{
+        "name":"Червень",
+        "days":30
+    },
+    "7":{
+        "name":"Липень",
+        "days":31
+    },
+    "8":{
+        "name":"Серпень",
+        "days":31
+    },
+    "9":{
+        "name":"Вересень",
+        "days":30
+    },
+    "10":{
+        "name":"Жовтень",
+        "days":31
+    },
+    "11":{
+        "name":"Листопад",
+        "days":30
+    },
+    "12":{
+        "name":"Грудень",
+        "days":31
+    },
+};
+
+function setCalendar(){
+    const calendar=$("#calendar_holder");
+    let today=getCurrentDate();
+    $("#month_name").text(months[today.month].name);
+    $("#year_number").text(today.year);
+    let first = new Date();
+    first.setMonth(today.month-1,1);
+    let when_first = first.getDay();
+    if(when_first==0)
+        when_first=7;
+    let cells=[];
+
+
+    for(let i=1;i<=months[today.month].days;i++)
+        cells.push([i,0]);
+
+    //get active from database and put them here
+    cells[today.day-1][1]=5;
+
+    let before=[];
+    for(let i=1;i<when_first;i++)
+        before.push([0,0]);
+
+    cells=before.concat(cells);
+
+    while((cells.length%7)!=0)
+    cells.push([0,0]);
+    console.log(cells);
+
+    let str="";
+    for(let i=0;i<cells.length;i++){
+        if(i==0)
+            str+="<tr>";
+        else if(i%7==0)
+            str+="</tr><tr>";
+        if(cells[i][1]==0&&cells[i][0]==0)
+            str+='<td class="day busy"></td>';
+        else if(cells[i][1]==0)
+            str+='<td class="day busy">'+cells[i][0]+'</td>';
+        else
+            str+='<td class="day free">'+cells[i][0]+'</td>';
+
+    }
+    $("#dates").append(str);
+}
+
+function setPhCalendar(){
+    const calendar=$("#calendar_holder");
+    let today=getCurrentDate();
+    $("#month_name").text(months[today.month].name);
+    $("#year_number").text(today.year);
+    let first = new Date();
+    first.setMonth(today.month-1,1);
+    let when_first = first.getDay();
+    if(when_first==0)
+        when_first=7;
+    let cells=[];
+
+
+    for(let i=1;i<=months[today.month].days;i++)
+        cells.push([i,0]);
+
+    //get active from database and put them here
+    cells[today.day-1][1]=5;
+
+    let before=[];
+    for(let i=1;i<when_first;i++)
+        before.push([0,0]);
+
+    cells=before.concat(cells);
+
+    while((cells.length%7)!=0)
+        cells.push([0,0]);
+    console.log(cells);
+
+    let str="";
+    for(let i=0;i<cells.length;i++){
+        if(i==0)
+            str+="<tr>";
+        else if(i%7==0)
+            str+="</tr><tr>";
+        if(cells[i][1]==0&&cells[i][0]==0)
+            str+='<td class="day busy"></td>';
+        else if(cells[i][1]==0)
+            str+='<td class="day busy">'+cells[i][0]+'</td>';
+        else
+            str+='<td class="day free">'+cells[i][0]+'</td>';
+
+    }
+    $("#dates").append(str);
+}
+
+
+function getCurrentDate(){
+    let today=new Date();
+    let day=today.getDay();
+    if(day==0)
+        day=7;
+    return {
+        "day":today.getDate(),
+        "month":(today.getMonth() + 1),
+        "year":today.getFullYear(),
+        "weekday":day
+    };
 }
