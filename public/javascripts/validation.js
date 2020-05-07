@@ -1,7 +1,4 @@
 
-function validateSearch(){
-    return validEmpty("search_input");
-}
 
 
 function validEmail(str) {
@@ -35,7 +32,7 @@ function validNames(str) {
         selector.addClass('is-invalid');
         return false;
     }
-    let letters = /^[a-zA-Zа-яА-ЯіІїЇ\-']+$/;
+    let letters = /^[a-zA-Zа-яА-ЯіІїЇыЫэЭёЁъЪ\-']+$/;
     if (name.match(letters)) {
         selector.removeClass('is-invalid');
         selector.addClass('is-valid');

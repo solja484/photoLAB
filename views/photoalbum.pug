@@ -106,7 +106,7 @@ div(class="modal fade font-17" id="edit_folder_modal" aria-hidden='true' role="d
                                 each f in folders
                                     option(value=f.folder_id id=`editfolderoption${f.folder_id}`)= f.name
                         div(class="col-md-12")
-                            label(for="edit_folder_caption") Нова назва:
+                            label(for="edit_folder_caption" class="non-bold mg-0") Нова назва:
                             input(id="edit_folder_caption" class="form-control" required)
                             div(class="invalid-feedback") Це поле не може бути пустим
             div(class="modal-footer")

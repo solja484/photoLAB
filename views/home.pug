@@ -12,11 +12,18 @@ else if(cookies.auth=='false')
                 img(class="d-block w-100", src="/public/images/slider2.jpg", alt="Second slide")
             div(class="carousel-item mg-0")
                 img(class="d-block w-100 mg-0", src="/public/images/slider7.jpg", alt="Third slide")
-        form(method="POST", action="/search" class="search-form" onsubmit="return validateSearch()")
+        div(class="search-form")
             div(class="input-group mb-3")
                 input(type="search" class="form-control" id="search_input" placeholder="Моя ідеальна фотосесія" )
                 div(class="input-group-append")
-                    button(class="btn btn-warning " type="submit") Пошук
+                    button(class="btn btn-warning " onclick='search()')
+                        i(class='fa fa-search mg-h-5')
+            div(class=" text-center")
+                span(class="search_link selected" onclick="changeSearchType(0)" id="searchByPhoto")= ' за фото  '
+                    i(class='fa fa-image')
+                span(class="search_link" onclick="changeSearchType(1)" id="searchByPerson")= ' за фотографом  '
+                    i(class='fa fa-user-o')
+
 .row(class="mg-0 pd-25")
     .col-md-3(class="pd-0 ")
         .panel(class="pd-0 sticky-top")
@@ -51,18 +58,20 @@ else if(cookies.auth=='false')
                         span(class='float-right') 5000
                     br
                 button(class="btn btn-info bg-green",  onclick='filter()') Фільтрувати
-                button(class="bg-transparent border-none btn link1 ",  onclick=`nofilter(${JSON.stringify(phinfo)},
-                 ${JSON.stringify(cookies)}, ${JSON.stringify(photos)},${JSON.stringify(favorites)});`) Скасувати
+
 
 
     div( class='col-md-9')
         div(id='filter_spinner' class='expand text-center minh ')
             i(class='fa fa-pulse fa-spinner text-40 white')
+        button(class="bg-transparent border-none btn-block btn link1 ", id='cancel_search' onclick=`nofilter(${JSON.stringify(phinfo)},
+                         ${JSON.stringify(cookies)}, ${JSON.stringify(photos)},${JSON.stringify(favorites)});`) Скасувати
         div(class='expand ' id='search_people')
         div(id='filter_error' class='panel panel-danger mg-0 pd-0')
             div(class='panel-heading') За вашим запитом нічого не знайдено
         script.
             $("#filter_spinner").hide();
+            $("#cancel_search").hide();
             $("#filter_error").hide();
             setSlider();
             let cookies = !{JSON.stringify(cookies)};

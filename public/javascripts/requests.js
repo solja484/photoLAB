@@ -92,7 +92,6 @@ function regClient(users) {
 
 }
 
-
 function regPh(users,types) {
 
     $("#invalid_regph_un").text("Це поле не може бути пустим");
@@ -177,7 +176,6 @@ function regPh(users,types) {
 
 }
 
-
 function addToFavorites(ph_id, user_id) {
 
     let data = {
@@ -193,6 +191,7 @@ function addToFavorites(ph_id, user_id) {
         contentType: 'application/json',
         success: function (data2) {
 
+            if(data2.success=='yes')
             $("#fav" + ph_id).empty().append(`<i class=' text-40 material-icons '>&#xe8e6;</i>`).attr("onclick", "deleteFromFavorites(" + ph_id + "," + user_id + ")");
         },
         error: function (data2) {
@@ -353,6 +352,77 @@ function editFolder() {
 
 }
 
+function addPhotoLink() {
+    let folder_id = getCurrentFolder();
+    if (!validEmpty("add_photolink_link") || !validTags("add_photolink_tags"))
+        return;
+
+
+    let data = {
+        "folder_id": folder_id,
+        "title": $("#add_photolink_title").val(),
+        "descr": $("#add_photolink_descr").val(),
+        "tags": $("#add_photolink_tags").val().toLowerCase(),
+        "link": $("#add_photolink_link").val()
+    };
+
+
+    $.ajax({
+        url: 'http://localhost:2606/addphoto',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=='yes') {
+                removeValid("add_photolink_form");
+                clearForm("add_photolink_form");
+                data.photo_id = data2.photo_id;
+                let taglist = splitIntoTags(data.tags);
+                data.taglist = taglist;
+                $("#folder" + folder_id).prepend("<div class='card' id='photo" + data2.photo_id + "'>" +
+                    "<div class='img-container'><div class='circle-avatar' style='background-image:url(" + data.link + ")'></div></div>" +
+                    "<div class='card-body'>" +
+                    "<button class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle='modal' " +
+                    "data-target='#delete_photo_modal' onclick='fillDeletePhotoOnclick(" + photo_id + ")'>" +
+                    "<i class='fa text-20 fa-trash-o '></i></button>" +
+                    "<button class='link1 bg-transparent float-right text-20 border-none' data-toggle='modal'  data-target='#edit_photo_modal'" +
+                    " onclick='fillEditPhotoModal(" + JSON.stringify(data) + ")' id='editphotobutton" + data2.photo_id + "'>" +
+                    "<i class='fa text-20 fa-edit'></i></button>" +
+                    "<h5 class='card-title' id='photo_title" + data2.photo_id + "'>" + data.title + "</h5>" +
+                    "<p class='text-14 text-break' id='photo_descr" + data2.photo_id + "'>" + data.descr + "</p>" +
+                    " <p class='text-14 text-muted text-break' id='photo_tags" + data2.photo_id + "'></p>" +
+                    "</div></div><br>");
+
+                for (tag of taglist) {
+                    $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?value=" + tag + "'>#" + tag + "' '</a>");
+                }
+
+                $("#add_photo_modal .close").click();
+            }else {
+                $("#add_photo_modal").append("<div id='photo_fail' class='panel panel-danger'><div class='panel-heading'>" +
+                    "Виникла помилка при додавані фото, спробуйте ще раз</div></div>");
+                setTimeout(() => {
+                    $("#photo_fail").remove();
+                    $("#add_photo_modal .close").click();
+                }, 15000);
+            }
+        },
+        error: function (data2) {
+            console.log(data2.error);
+            $("#add_photo_modal").append("<div id='photo_fail' class='panel panel-danger'><div class='panel-heading'>" +
+                "Виникла помилка при додавані фото, спробуйте ще раз</div></div>");
+            setTimeout(() => {
+                $("#photo_fail").remove();
+                $("#add_photo_modal .close").click();
+            }, 15000);
+        }
+
+    });
+
+
+}
+
 function deletePhoto(photo_id) {
 
 
@@ -378,24 +448,6 @@ function deletePhoto(photo_id) {
         }
 
     });
-}
-
-function fillEditPhotoModal(photo) {
-
-
-    $("#edit_photo_button").attr("onclick", "editPhoto(" + photo.photo_id + ")");
-    if (photo.descr != null)
-        $("#edit_photo_descr").val(photo.descr);
-    if (photo.title != null)
-        $("#edit_photo_title").val(photo.title);
-    if (photo.tags != null)
-        $("#edit_photo_tags").val(photo.tags);
-
-
-}
-
-function fillDeletePhotoOnclick(photo_id) {
-    $('#delete_photo_button').attr('onclick', 'deletePhoto(' + photo_id + ')')
 }
 
 function editPhoto(photo_id) {
@@ -445,60 +497,22 @@ function editPhoto(photo_id) {
 
 }
 
-function addPhotoLink() {
-    let folder_id = getCurrentFolder();
-    if (!validEmpty("add_photolink_link") || !validTags("add_photolink_tags"))
-        return;
+function fillEditPhotoModal(photo) {
 
 
-    let data = {
-        "folder_id": folder_id,
-        "title": $("#add_photolink_title").val(),
-        "descr": $("#add_photolink_descr").val(),
-        "tags": $("#add_photolink_tags").val().toLowerCase(),
-        "link": $("#add_photolink_link").val()
-    };
+    $("#edit_photo_button").attr("onclick", "editPhoto(" + photo.photo_id + ")");
+    if (photo.descr != null)
+        $("#edit_photo_descr").val(photo.descr);
+    if (photo.title != null)
+        $("#edit_photo_title").val(photo.title);
+    if (photo.tags != null)
+        $("#edit_photo_tags").val(photo.tags);
 
 
-    $.ajax({
-        url: 'http://localhost:2606/addphoto',
-        type: 'post',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (data2) {
-            removeValid("add_photolink_form");
-            clearForm("add_photolink_form");
-            data.photo_id = data2.photo_id;
-            let taglist = splitIntoTags(data.tags);
-            data.taglist = taglist;
-            $("#folder" + folder_id).prepend("<div class='card' id='photo" + data2.photo_id + "'>" +
-                "<div class='img-container'><div class='circle-avatar' style='background-image:url(" + data.link + ")'></div></div>" +
-                "<div class='card-body'>" +
-                "<button class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle='modal' " +
-                "data-target='#delete_photo_modal' onclick='fillDeletePhotoOnclick(" + photo_id + ")'>" +
-                "<i class='fa text-20 fa-trash-o '></i></button>" +
-                "<button class='link1 bg-transparent float-right text-20 border-none' data-toggle='modal'  data-target='#edit_photo_modal'" +
-                " onclick='fillEditPhotoModal(" + JSON.stringify(data) + ")' id='editphotobutton" + data2.photo_id + "'>" +
-                "<i class='fa text-20 fa-edit'></i></button>" +
-                "<h5 class='card-title' id='photo_title" + data2.photo_id + "'>" + data.title + "</h5>" +
-                "<p class='text-14 text-break' id='photo_descr" + data2.photo_id + "'>" + data.descr + "</p>" +
-                " <p class='text-14 text-muted text-break' id='photo_tags" + data2.photo_id + "'></p>" +
-                "</div></div><br>");
+}
 
-            for (tag of taglist) {
-                $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?value=" + tag + "'>#" + tag + "' '</a>");
-            }
-
-            $("#add_photo_modal .close").click();
-        },
-        error: function (data2) {
-            console.log(data2.error);
-        }
-
-    });
-
-
+function fillDeletePhotoOnclick(photo_id) {
+    $('#delete_photo_button').attr('onclick', 'deletePhoto(' + photo_id + ')')
 }
 
 function splitIntoTags(str) {

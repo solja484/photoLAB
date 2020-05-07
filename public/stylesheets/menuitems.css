@@ -86,3 +86,22 @@
 
 }
 
+.search_link{
+    background: rgba(0, 0, 0, 0.5);
+    color:white;!important;
+    padding:5px 20px;
+}
+
+.search_link:hover,.search_link:focus{
+    cursor:pointer;
+}
+.selected:hover,.selected:focus{
+    cursor:default;!important;
+}
+.selected{
+    cursor:default;!important;
+    border-bottom: 2px dotted #ffc107;
+}
+.selected i{
+    color:#ffc107;
+}

@@ -1,4 +1,12 @@
+$(document).ready(function () {
+    let date=getCurrentDate();
+    localStorage.setItem("cur_month",date.month);
+    localStorage.setItem("cur_day",date.day);
+    localStorage.setItem("calendar_month",date.month);
+    localStorage.setItem("search","photo");
+});
 function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
+    $("#cancel_search").hide();
     fillCities();
     for (let ph of phinfo) {
         if ((cookies.auth == 'true' && ph.username !== cookies.username) || (cookies.auth == 'false')) {
@@ -189,13 +197,7 @@ function setSlider() {
     });
 }
 
-$(document).ready(function () {
-  let date=getCurrentDate();
-  localStorage.setItem("cur_month",date.month);
-    localStorage.setItem("cur_day",date.day);
-    localStorage.setItem("calendar_month",date.month);
 
-});
 const months={
     "1":{
         "name":"Січень",

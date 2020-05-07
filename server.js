@@ -42,7 +42,7 @@ server.get('/getcities', function (req, res) {
     });
 });
 
-server.get('/reg', function (req, res) {
+server.get('/registry', function (req, res) {
     let active = 'reg';
     res.cookies = req.cookies;
     connection.query(
@@ -63,11 +63,11 @@ server.get('/reg', function (req, res) {
 
 });
 
-server.get('/help', function (req, res) {
+server.get('/about', function (req, res) {
 
-    let active = 'help';
+    let active = 'about';
     res.cookies = req.cookies;
-    res.render(__dirname + "/views/help.pug", {
+    res.render(__dirname + "/views/about.pug", {
         active: active,
         config: config,
         cookies: req.cookies
@@ -244,70 +244,66 @@ server.get('/guest/:username', (req, res) => {
 
             if (info.ave == null)
                 info.ave = 0;
-            else info.ave=parseInt(info.ave,10);
+            else info.ave = parseInt(info.ave, 10);
 
-                    connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
-                        .then(([results2, fields2]) => {
-                            connection.query("SELECT account_link,site_name,icon FROM accounts " +
-                                "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
-                                .then(([results3, fields3]) => {
-                                    res.cookies = req.cookies;
-                                    if (req.cookies.auth == 'false') {
-                                        res.render(__dirname + "/views/profileph.pug",
-                                            {
-                                                mytypes: results2,
-                                                contacts: results3,
-                                                info: results[0],
-                                                active: active,
-                                                config: config,
-                                                guest: guest,
-                                                username: req.params.username,
-                                                auth: req.cookies.auth,
-                                                cookies: req.cookies
-                                            });
-                                    } else {
+            connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
+                .then(([results2, fields2]) => {
+                    connection.query("SELECT account_link,site_name,icon FROM accounts " +
+                        "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
+                        .then(([results3, fields3]) => {
+                            res.cookies = req.cookies;
+                            if (req.cookies.auth == 'false') {
+                                res.render(__dirname + "/views/profileph.pug",
+                                    {
+                                        mytypes: results2,
+                                        contacts: results3,
+                                        info: results[0],
+                                        active: active,
+                                        config: config,
+                                        guest: guest,
+                                        username: req.params.username,
+                                        auth: req.cookies.auth,
+                                        cookies: req.cookies
+                                    });
+                            } else {
 
-                                        connection.query("SELECT mark FROM ratings WHERE user_id=? AND ph_id=?  ", [req.cookies.user_id, ph_id])
-                                            .then(([results4, fields4]) => {
+                                connection.query("SELECT mark FROM ratings WHERE user_id=? AND ph_id=?  ", [req.cookies.user_id, ph_id])
+                                    .then(([results4, fields4]) => {
 
-                                                try {
-                                                    info.mark = results4[0].mark;
-                                                } catch (err) {
-                                                    info.mark = 0;
-                                                }
-                                                connection.query("SELECT * FROM favorites WHERE user_id=? AND ph_id=?", [req.cookies.user_id, ph_id])
-                                                    .then(([results5, fields5]) => {
+                                        try {
+                                            info.mark = results4[0].mark;
+                                        } catch (err) {
+                                            info.mark = 0;
+                                        }
+                                        connection.query("SELECT * FROM favorites WHERE user_id=? AND ph_id=?", [req.cookies.user_id, ph_id])
+                                            .then(([results5, fields5]) => {
 
-                                                        let favorite = true;
-                                                        if (results5 == [] || results5[0] == undefined)
-                                                            favorite = false;
+                                                let favorite = true;
+                                                if (results5 == [] || results5[0] == undefined)
+                                                    favorite = false;
 
-                                                        res.render(__dirname + "/views/profileph.pug",
-                                                            {
-                                                                mytypes: results2,
-                                                                contacts: results3,
-                                                                info: info,
-                                                                active: active,
-                                                                config: config,
-                                                                guest: guest,
-                                                                favorite: favorite,
-                                                                username: req.params.username,
-                                                                auth: req.cookies.auth,
-                                                                cookies: req.cookies
-                                                            });
-                                                    })
-                                                    .catch(err => {
-                                                        console.log(err);
+                                                res.render(__dirname + "/views/profileph.pug",
+                                                    {
+                                                        mytypes: results2,
+                                                        contacts: results3,
+                                                        info: info,
+                                                        active: active,
+                                                        config: config,
+                                                        guest: guest,
+                                                        favorite: favorite,
+                                                        username: req.params.username,
+                                                        auth: req.cookies.auth,
+                                                        cookies: req.cookies
                                                     });
                                             })
                                             .catch(err => {
                                                 console.log(err);
                                             });
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                });
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                    });
+                            }
                         })
                         .catch(err => {
                             console.log(err);
@@ -316,6 +312,10 @@ server.get('/guest/:username', (req, res) => {
                 .catch(err => {
                     console.log(err);
                 });
+        })
+        .catch(err => {
+            console.log(err);
+        });
 
 });
 
@@ -480,7 +480,7 @@ server.get('/profile/:username', function (req, res) {
                                         let info = results[0];
                                         if (info.ave == null)
                                             info.ave = 0;
-                                        else info.ave=parseInt(info.ave,10);
+                                        else info.ave = parseInt(info.ave, 10);
                                         res.cookies = req.cookies;
                                         res.cookie("user_id", results[0].user_id);
                                         res.render(__dirname + "/views/profileph.pug",
@@ -780,11 +780,9 @@ server.post('/edittypes', (req, res) => {
 
 server.post('/filter', (req, res) => {
     res.cookies = req.cookies;
-    //let sel_user = "SELECT * FROM photographers INNER JOIN users ON photographers.user_id=users.user_id ";
     let sel_user = "SELECT photographers.ph_id, photographers.user_id,username,city,avatar_link,price,exp,organization,ROUND(AVG(mark)) AS ave" +
         " FROM ( photographers INNER JOIN users ON photographers.user_id=users.user_id) " +
         " LEFT JOIN ratings ON photographers.ph_id=ratings.ph_id ";
-    console.log(req.body);
     sel_user += " WHERE price BETWEEN ? AND ? ";
     if (req.body.city != '0')
         sel_user += " AND city=? ";
@@ -800,7 +798,6 @@ server.post('/filter', (req, res) => {
     console.log(sel_user);
     connection.query(sel_user + " GROUP BY photographers.ph_id ORDER BY ave DESC ", [req.body.min_price, req.body.max_price, req.body.city, req.body.years, req.body.type])
         .then(([results, fields]) => {
-            console.log(results);
             let phs = [];
             for (let i in results)
                 phs.push(results[i].ph_id);
@@ -820,9 +817,7 @@ server.post('/filter', (req, res) => {
                             .catch(err => {
                                 console.log(err);
                                 res.send({'success': "no"});
-
                             });
-
                     }
                     else
                         res.send({
@@ -846,18 +841,65 @@ server.post('/filter', (req, res) => {
 
         });
 });
+server.post('/searchph', (req, res) => {
 
+    res.cookies = req.cookies;
+    let name = req.body.name;
+    console.log("SEARCH " + name);
+    connection.query(
+        "SELECT photographers.ph_id, photographers.user_id,username,city,avatar_link,price,exp,organization,ROUND(AVG(mark)) AS ave" +
+        " FROM ( photographers INNER JOIN users ON photographers.user_id=users.user_id) " +
+        " LEFT JOIN ratings ON photographers.ph_id=ratings.ph_id " +
+        " WHERE username = ? OR firstname=? OR lastname=? GROUP BY photographers.ph_id ORDER BY ave DESC ", [name, name, name])
+        .then(([results, fields]) => {
+            let phs = [];
+            for (let i in results)
+                phs.push(results[i].ph_id);
+            connection.query("SELECT ph_id,link FROM photos INNER JOIN folders ON photos.folder_id=folders.folder_id WHERE ph_id IN (?)", [phs])
+                .then(([results3, fields3]) => {
+                    if (req.cookies.auth) {
+                        connection.query("SELECT ph_id, user_id FROM favorites WHERE user_id=? AND ph_id IN (?)", [req.cookies.user_id, phs])
+                            .then(([results4, fields4]) => {
+                                res.send({
+                                    'success': "yes",
+                                    ph_info: results,
+                                    cookies: req.cookies,
+                                    photos: results3,
+                                    favorites: results4
+                                });
+                            })
+                            .catch(err => {
+                                res.send({'success': "no"});
+                            });
+                    }
+                    else
+                        res.send({
+                            'success': "yes",
+                            ph_info: results,
+                            cookies: req.cookies,
+                            photos: results3,
+                            favorites: []
+                        });
+                })
+                .catch(err => {
+                    res.send({'success': "no"});
+                });
+        })
+        .catch(err => {
+            res.send({'success': "no"});
+        });
+});
 server.post('/addfavorite', (req, res) => {
     res.cookies = req.cookies;
     connection.query("INSERT INTO favorites(user_id, ph_id) VALUES(?, ?)", [req.body.user_id, req.body.ph_id])
         .then(([results, fields]) => {
             console.log("Successfully add data");
 
-            res.send(results);
+            res.send({"success": "yes"});
         })
         .catch(err => {
             console.log(err);
-            res.send(err);
+            res.send({"success": "no", "error": err});
 
         });
 
@@ -934,11 +976,11 @@ server.post('/addphoto', (req, res) => {
                 console.log("Successfully add new photo");
                 console.log(results.insertId);
                 res.cookies = req.cookies;
-                res.send({'photo_id': results.insertId});
+                res.send({'success': 'yes', 'photo_id': results.insertId});
             })
             .catch(err => {
                 console.log(err);
-                res.send(err);
+                res.send({'success': 'no', 'err': err});
             });
 });
 server.post('/deletephoto', (req, res) => {
@@ -1025,17 +1067,6 @@ server.post('/hashpass', (req, res) => {
     res.send({"pass": hashing(req.body.pass)});
 });
 
-
-function getListOfFolders(array) {
-
-    let attributes = [];
-    array.map(({folder_id}) => {
-        if (folder_id) attributes.push(folder_id)
-    });
-
-    console.log(attributes);
-    return attributes;
-}
 
 function splitIntoTags(str) {
     let tags = [];

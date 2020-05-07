@@ -46,14 +46,14 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
                                 div(class="invalid-feedback text-14 mg-l-15") Це полене може бути пустим!
 
                             div(class="form-group")
-                                label(for="add_photolink_title") Назва:
+                                label(for="add_photolink_title" class="non-bold mg-0") Назва:
                                 input(id="add_photolink_title" class="form-control")
                             div(class="form-group")
-                                label(for="add_photolink_descr") Опис:
+                                label(for="add_photolink_descr" class="non-bold mg-0") Опис:
                                 textarea(id="add_photolink_descr" class="form-control" rows=2)
 
                             div(class="form-group")
-                                label(for="add_photolink_tags") Теги:
+                                label(for="add_photolink_tags" class="non-bold mg-0") Теги:
                                 textarea(id="add_photolink_tags" class="form-control" rows=2)
                                 small(class='text-14 text-muted') Одне слово-один тег
                                 div(class='invalid-feedback') Тільки букви та цифри, без # та інших символів
@@ -64,9 +64,9 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
                         form(id="download_photo_form", method="POST", class="mx-auto needs-validation", action="/downloadphoto")
                             div(class="form-group")
                                 label(for="photo_file" class="non-bold") Оберіть файл:
-                                input(type="file", id="photo_file", class="form-control", name='photo_file',accept="image/*")
+                                input(type="file", id="photo_file", class="form-control", name='photo_file', accept="image/*")
                                 div(class="invalid-feedback text-14 mg-l-15") Оберіть файл!
-                        input(type="submit" class="btn btn-info btn-block ", value="Додати фото!")
+                        button(type="button" class="btn btn-info btn-block ") Додати фото!
 
 
 div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="true")

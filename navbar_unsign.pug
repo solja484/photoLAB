@@ -16,19 +16,15 @@ html
                         a(class="nav-item nav-link menu-active" active style="color: #efefef" href="/") головна
                     else
                         a(class="nav-item nav-link" active style="color: #efefef" href="/") головна
-                    if(active == 'help')
-                        a(class="nav-item nav-link menu-active"  style="color: #efefef" href='/help') про нас
+                    if(active == 'about')
+                        a(class="nav-item nav-link menu-active"  style="color: #efefef" href='/about') про нас
                     else
-                        a(class="nav-item nav-link"  style="color: #efefef" href='/help') про нас
+                        a(class="nav-item nav-link"  style="color: #efefef" href='/about') про нас
                 if(active == 'reg')
-                    a(class="nav-item nav-link menu-active" style="color: #efefef" href='/reg') Реєстрація
+                    a(class="nav-item nav-link menu-active" style="color: #efefef" href='/registry') Реєстрація
                 else
-                    a(class="nav-item nav-link" style="color: #efefef" href='/reg') Реєстрація
+                    a(class="nav-item nav-link" style="color: #efefef" href='/registry') Реєстрація
                 button(class="btn btn-outline-warning float-rightt mg-l-15", type='button', data-toggle="modal", data-target='#entry_modal') Вхід
-
-
-
-
 
 
     include views/modals

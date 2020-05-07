@@ -26,10 +26,10 @@ html
                                 a(class="nav-item nav-link menu-active" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
                             else
                                 a(class="nav-item nav-link" style="color: #efefef" href="/photoalbum/"+cookies.username) фотоальбом
-                        if(active=='help')
-                            a(class="nav-item nav-link menu-active" style="color: #efefef" href='/help') про нас
+                        if(active=='about')
+                            a(class="nav-item nav-link menu-active" style="color: #efefef" href='/about') про нас
                         else
-                            a(class="nav-item nav-link" style="color: #efefef" href='/help') про нас
+                            a(class="nav-item nav-link" style="color: #efefef" href='/about') про нас
                 p(class='nav-text float-rightt mg-10 text-25 white')= '@'+cookies.username
                 button(class="btn btn-outline-warning m-l-15 float-rightt", type='button', data-toggle="modal", data-target='#exit_modal') Вихід
 
