@@ -56,17 +56,16 @@ else
                                 a(class='link1' href='/home/?subj='+t )= '#' + t.name+' '
             .col-md-12
                 ul(class='nav nav-tabs')
-                    if(!guest)
-                        li(class="active")
-                            a(data-toggle="tab" href="#favorites" class='link1') Збережено
-                    if(guest)
-                        li(class="active")
-                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
-                    else
-                        li
-                            a(data-toggle="tab" href="#contacts" class='link1') Контакти
-                    li
+
+                    li(class="active")
                         a(data-toggle="tab" href="#calendar" class='link1') Календар
+
+
+                    if(!guest)
+                        li
+                            a(data-toggle="tab" href="#favorites" class='link1') Збережено
+                    li
+                        a(data-toggle="tab" href="#contacts" class='link1') Контакти
                     li
                         if(guest)
                             a( class='link1' href='/guest/photoalbum/'+info.username) Фото
@@ -75,7 +74,7 @@ else
     .col-md-12
         div(class="tab-content minh")
             if(!guest)
-                div(id="favorites" class="tab-pane row fade " style='in active show')
+                div(id="favorites" class="tab-pane row fade " )
                     div(class="empty_div col-md-12")
                     .col-md-1
                     .col-md-10
@@ -105,39 +104,24 @@ else
                                             i(class="fa fa-trash red")
                             .col-md-1
 
-            if(guest)
-                div(id="contacts" class="tab-pane row fade in active show")
-                    .col-md-1
-                    .col-md-10
-                        .row
-                            each con in contacts
 
-                                .col-md-3
-                                    if(con.site_name=='Email'||con.site_name == 'Phone')
-                                        a(class='link1 btn ' href="#contacts")
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.account_link
-                                    else
-                                        a(class='link1 btn ' href=con.account_link)
-                                            span(class=`${con.icon}`)
-                                            = ' ' +con.site_name
-            else
-                div(id="contacts" class="tab-pane  row fade")
-                    .col-md-1
-                    .col-md-10
-                        .row
-                            each con in contacts
+            div(id="contacts" class="tab-pane row fade ")
+                .col-md-1
+                .col-md-10
+                    .row
+                        each con in contacts
 
-                                .col-md-3
-                                    if(con.site_name == 'gmail' || con.site_name == 'phone')
-                                        a(class='link1 btn ' href="#contacts")
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.account_link
-                                    else
-                                        a(class='link1 btn ' href=con.account_link)
-                                            span(class=`${con.icon}`)
-                                            = ' ' + con.site_name
-            div(id="calendar" class="tab-pane  row fade" )
+                            .col-md-3
+                                if(con.site_name=='Email'||con.site_name == 'Phone')
+                                    a(class='link1 btn ' href="#contacts")
+                                        span(class=`${con.icon}`)
+                                        = ' ' + con.account_link
+                                else
+                                    a(class='link1 btn ' href=con.account_link)
+                                        span(class=`${con.icon}`)
+                                        = ' ' +con.site_name
+
+            div(id="calendar" class="tab-pane row fade in show active" )
                 .col-md-1
                 div(id="calendar_carousel" class="carousel slide col-md-10" data-ride="false")
 
@@ -171,7 +155,59 @@ else
                         span(class="carousel-control-next-icon"  aria-hidden="true")
                         span(class="sr-only") Next
                 .col-md-1
-                div(class='minh col-md-12')
+                .col-md-12
+                    p(class='text-20 text-center mg-top-20') Замовлені зйомки
+                    .row
+                        .col-md-4(class='pd-15' id='approved_orders')
+                            p(class=' text-center') Підтверджені
+                            each order in orders
+                                if(order.status == 1)
+                                    .panel.panel-success(class='mg-b-20')
+                                        .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                            span(id=`date_order${order.order_id}` class='pd-r-25')
+                                            a(class="link1" href=`/guest/${order.username}`)= '@' + order.username
+                                            i(class='fa fa-check mg-5 float-right')
+                                        .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                            p= 'Тема: ' + order.topic
+                                            .row
+                                                .col-md-4
+                                                .col-md-8
+                                                    p(class='text-break')= order.message_cl
+                                                    p= "Контакт для зв'язку: " + order.contact_cl
+                                                .col-md-8
+                                                    p(class='text-break')= order.message_ph
+                                                    p= 'Контакт фотографа: ' + order.contact_ph
+                                                .col-md-4
+                        .col-md-4(class='pd-15' id='process_orders')
+                            p(class=' text-center') Нові
+                            each order in orders
+                                if(order.status == 2)
+                                    .panel.panel-warning(class='mg-b-20' id=`order${order.order_id}`)
+                                        .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                            span(id=`date_order${order.order_id}` class='pd-r-25')
+                                            a(class='link1' href=`/guest/${order.username}`)= '@' + order.username
+                                            i(class='fa fa-clock-o mg-5 float-right')
+                                        .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                            p= 'Тема: ' + order.topic
+                                            .row
+                                                .col-md-4
+                                                .col-md-8
+                                                    p(class='text-break')= order.message_cl
+                                                    p= "Контакт для зв'язку: " + order.contact_cl
+                                                .col-md-12
+                                                    button(class='btn-block text-left green border-none bg-transparent pd-5' data-toggle='modal' data-target='#approve_order_modal'
+                                                    onclick=`setApproveOrderOnclick(${JSON.stringify(order)})`)
+                                                        i(class='fa fa-arrow-left green')
+                                                        span Підтвердити замовлення
+                                                .col-md-12
+                                                    button(class='btn-block text-right red border-none bg-transparent pd-5' data-toggle='modal' data-target='#cancel_order_modal'
+                                                    onclick=`setCancelOrderOnclick(${JSON.stringify(order)})`) Скасувати замовлення
+                                                        i(class='fa fa-arrow-right red')
+
+                        .col-md-4(id='cancelled_orders' class='pd-15')
+                            p(class=' text-center') Скасовані
+                        .col-md-12(class='minh')
+                    script   setOrdersDate(!{JSON.stringify(orders)});
 
 
     .col-md-1

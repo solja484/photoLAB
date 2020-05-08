@@ -1,6 +1,7 @@
 
 
 
+//function for validation email with regex
 function validEmail(str) {
     const selector = $("#" + str);
     let name = selector.val();
@@ -22,7 +23,8 @@ function validEmail(str) {
     }
 }
 
-//кирилиця+латиниця+тире+апостроф не менше двох символів
+
+//function for validation names with regex which match only cyrillic latin - and '
 function validNames(str) {
     const selector = $("#" + str);
     let name = selector.val();
@@ -44,6 +46,7 @@ function validNames(str) {
     }
 }
 
+//function for validation names with regex which match only cyrillic latin - and ' and let empty value
 function validNamesF(str) {
     const selector = $("#" + str);
     let name = selector.val();
@@ -54,8 +57,7 @@ function validNamesF(str) {
     } else return validNames(str);
 }
 
-
-//кирилиця + латиниця + цифри + тире  + нижнє підкреслення, не менше 6 символів
+//function for validation password with regex which match only cyrillic latin - and _ and more than 5 symbols
 function validPassword(str) {
     const selector = $("#" + str);
     let pass = selector.val();
@@ -75,6 +77,7 @@ function validPassword(str) {
     return false;
 }
 
+//function for validation phone with regex - let digits and (123) 123 1234, 123-123-1234 
 function validPhone(str) {
     const selector = $("#" + str);
     let phone = selector.val();
@@ -95,6 +98,7 @@ function validPhone(str) {
     return false;
 }
 
+//function for validation empty fields with regex 
 function validEmpty(str) {
     const selector = $("#" + str);
     let val = selector.val();
@@ -109,6 +113,7 @@ function validEmpty(str) {
     return true;
 }
 
+//function for validation tags - let only letters and numbers
 function validTags(str) {
     const selector = $("#" + str);
     let name = selector.text();
@@ -130,6 +135,7 @@ function validTags(str) {
     }
 }
 
+//function which check if new username match any existed one
 function validExistedUsername(str,users) {
     for(let u of users)
         if(str==u.username)
@@ -138,6 +144,7 @@ function validExistedUsername(str,users) {
     return true;
 }
 
+//function which check if new email match any existed one
 function validExistedEmail(str,users) {
     for(let u of users)
         if(str==u.email)
@@ -145,13 +152,14 @@ function validExistedEmail(str,users) {
     return true;
 }
 
-//ці два методи забирають валідацію і стирають заповнені поля форми відповідно
+//function which remove valid and invalid bootstrap classes
 function removeValid(str) {
     $("form#" + str + " :input").each(function () {
         $(this).removeClass('is-valid');
     });
 }
 
+//function which clear all input values
 function clearForm(str) {
     $("form#" + str + " :input").each(function () {
         $(this).val('');

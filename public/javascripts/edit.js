@@ -1,3 +1,4 @@
+//function used when user want to check how the new avatar image would be looking
 function tryNewPhoto(){
     let new_link=$("#edit_avatar").val();
     if(new_link=="")
@@ -7,6 +8,7 @@ function tryNewPhoto(){
 
 }
 
+//return to old photo when new isn't look good
 function setOldPhoto(old_link){
     console.log("im in function");
 
@@ -15,6 +17,7 @@ function setOldPhoto(old_link){
     $("#edit_avatar").val(old_link);
 }
 
+//delete any avatar photo and set default picture
 function deleteAvatarPhoto(){
     let no_link="https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg";
     $("#edit_avatar_holder").empty().append(" <div class='circle-avatar pd-10' " +
@@ -22,6 +25,8 @@ function deleteAvatarPhoto(){
     $("#edit_avatar").val("");
 }
 
+
+//function which make ajax-request to server to update information in table "users" for either client and photographer roles 
 function editClientInfo(info, users) {
     $("#invalid_edit_un").text("Це поле не може бути пустим");
     $("#invalid_edit_email").text("Некоректно введена електронна пошта");
@@ -66,7 +71,6 @@ function editClientInfo(info, users) {
     console.log(data);
 
 
-
     $.ajax({
         url: 'http://localhost:2606/editclient',
         type: 'post',
@@ -96,6 +100,7 @@ function editClientInfo(info, users) {
     });
 }
 
+//function which make ajax-request to server check if the old password is correct when user want to set new one
 function changePassword(info){
 
     if(!validPassword("new_password")) return false;
@@ -137,6 +142,8 @@ function changePassword(info){
 
 }
 
+
+//function which make ajax-request to server to set new password in table "users" 
 function changePass(user_id,new_password){
     let data={
         "user_id":user_id,
@@ -176,6 +183,8 @@ function changePass(user_id,new_password){
 
 }
 
+
+//function which make ajax-request to server to update table "shoots" and set new types of shoots photographer do 
 function editPhTypes(info, types){
 
     let values=[];
@@ -220,6 +229,9 @@ function editPhTypes(info, types){
 
 }
 
+
+
+//function which make ajax-request to server to update table "accounts"
 function editPhAccounts(info, social) {
 
     let values=[];

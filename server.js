@@ -491,19 +491,28 @@ server.get('/profile/:username', function (req, res) {
                                                 if (info.ave == null)
                                                     info.ave = 0;
                                                 else info.ave = parseInt(info.ave, 10);
-                                                res.cookies = req.cookies;
-                                                res.cookie("user_id", results[0].user_id);
-                                                res.render(__dirname + "/views/profileph.pug",
-                                                    {
-                                                        mytypes: results2,
-                                                        contacts: results3,
-                                                        favorites: results4,
-                                                        info: info,
-                                                        active: active,
-                                                        config: config,
-                                                        guest: guest,
-                                                        cookies: req.cookies,
-                                                        dates:results1
+                                                connection.query("SELECT * FROM orders INNER JOIN users ON users.user_id=orders.client_id WHERE ph_id=? ORDER BY date", [ph_id])
+                                                    .then(([results5, fields5]) => {
+
+                                                        res.cookies = req.cookies;
+                                                        res.cookie("user_id", results[0].user_id);
+                                                        res.render(__dirname + "/views/profileph.pug",
+                                                            {
+                                                                mytypes: results2,
+                                                                contacts: results3,
+                                                                favorites: results4,
+                                                                info: info,
+                                                                active: active,
+                                                                config: config,
+                                                                guest: guest,
+                                                                cookies: req.cookies,
+                                                                dates:results1,
+                                                                orders:results5
+                                                            });
+
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(err);
                                                     });
 
                                             })
@@ -960,6 +969,46 @@ server.post('/cancel', (req, res) => {
         .catch(err => {
             console.log(err);
             res.send({"success":"no"});
+        });
+});
+server.post('/approve', (req, res) => {
+
+    connection.query("UPDATE orders SET status=1,message_ph=?, contact_ph=? WHERE order_id=?", [req.body.message_ph, req.body.contact_ph, req.body.order_id])
+        .then(([results, fields]) => {
+            console.log("Successfully updated data");
+            res.cookies = req.cookies;
+            res.send({"success":"yes"});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"error":err});
+
+        });
+
+});
+server.post('/removeactive', (req, res) => {
+    res.cookies = req.cookies;
+    connection.query("DELETE FROM freedates WHERE ph_id=? AND date=?", [req.body.ph_id, req.body.date])
+        .then(([results, fields]) => {
+            console.log("Successfully delete date");
+            res.send({"success":"yes"});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"error":err});
+        });
+});
+server.post('/setactive', (req, res) => {
+    res.cookies = req.cookies;
+    connection.query("INSERT INTO freedates(ph_id,date) VALUES(?,?)", [req.body.ph_id, req.body.date])
+        .then(([results, fields]) => {
+            console.log(results);
+            console.log("Successfully add date");
+            res.send({"success":"yes"});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"error":err});
         });
 });
 server.post('/addfavorite', (req, res) => {

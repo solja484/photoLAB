@@ -636,6 +636,8 @@ function makeOrder(ph_id, user_id, month, day, year) {
                     "<div class='panel-heading'><icon class='fa fa-check'></icon>Замовлення відправлено фотографу! Очікуйте відповіді </div></div>");
                 setTimeout(() => {
                     $("#order_success").remove();
+                    clearForm("make_order_form");
+                    removeValid("make_order_form");
                     $("#make_order_modal .close").click();
                 }, 15000);
             }else{
@@ -708,3 +710,185 @@ function cancelOrder(order_id,date,ph_id){
 
     });
 }
+
+
+function approve(order){
+    console.log("HERE!");
+    console.log(order);
+    order=JSON.stringify(order);
+    console.log(order);
+
+    let date_sql=order.date.split('T');
+
+    if(!validEmpty("approve_order_contact")) return false;
+
+    let order_id=order.order_id;
+    let data= {
+        "order_id": order_id,
+        "date": date_sql[0],
+        "ph_id":ph_id,
+        "message_ph":$("#approve_order_text").val(),
+        "contact_ph":$("#approve_order_contact").val()
+    };
+
+
+        let d = order.date.split(/[-T:]/);
+    let date=d[2] + ' ' + months[parseInt(d[1], 10)].genitive + " " + d[0] + " ";
+
+    $.ajax({
+        url: 'http://localhost:2606/approve',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes"){
+                order.message_cl=$("#approve_order_text").val();
+                order.contact_cl=$("#contact_order_text").val();
+                $("#order"+order_id).remove();
+                $("#approved_orders").append("<div class='panel panel-success mg-b-20'>" +
+                    "<div class='panel-heading pointer' data-toggle='collapse' href='#ordercard"+order_id+"' aria-expanded='true'>" +
+                    "<span class='pd-r-25' id='date_order"+order_id+"'>"+date+"</span>" +
+                    "<a class='link1' href='/guest/"+order.username+"'>@"+order.username+"</a>" +
+                    "<i class='fa fa-check mg-5 float-right'></i></div>" +
+                    "<div class='panel-body collapse show in' id='ordercard"+order_id+"' aria-expanded='true' >" +
+                    "<p>"+order.topic+"</p><div class='row'><div class='col-md-4'></div><div class='col-md-8'>" +
+                    "<p class='text-break'>"+order.message_cl+"</p><p>"+order.contact_cl+"</p></div>" +
+                    "<div class='col-md-8'><p class='text-break'>"+order.message_ph+"</p><p>"+order.contact_ph+"</p></div>" +
+                    "<div class='col-md-4'></div></div></div></div>");
+
+            }
+        },
+        error: function (data2) {
+            console.log(data2.error);
+        }
+
+    });
+}
+
+
+
+
+function cancel(order){
+
+    if(!validEmpty("cancel_order_reason")) return false;
+    let date_sql=order.date.split('T');
+    let order_id=order.order_id;
+    let data= {
+        "order_id": order_id,
+        "date": date_sql[0],
+        "ph_id":ph_id
+    };
+
+    let d = order.date.split(/[-T:]/);
+    let date=d[2] + ' ' + months[parseInt(d[1], 10)].genitive + " " + d[0] + " ";
+
+    $.ajax({
+        url: 'http://localhost:2606/cancel',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes"){
+                $("#order"+order_id).remove();
+               order.message_ph=$("#cancel_order_reason").val();
+                $("#cancelled_orders").append("<div class='panel panel-success mg-b-20'>" +
+                    "<div class='panel-heading pointer' data-toggle='collapse' href='#ordercard"+order_id+"' aria-expanded='true'>" +
+                    "<span class='pd-r-25' id='date_order"+order_id+"'>"+date+"</span>" +
+                    "<a class='link1' href='/guest/"+order.username+"'>@"+order.username+"</a>" +
+                    "<i class='fa fa-check mg-5 float-right'></i></div>" +
+                    "<div class='panel-body collapse show in' id='ordercard"+order_id+"' aria-expanded='true' >" +
+                    "<p>"+order.topic+"</p><div class='row'><div class='col-md-4'></div><div class='col-md-8'>" +
+                    "<p class='text-break'>"+order.message_cl+"</p><p>"+order.contact_cl+"</p></div>" +
+                    "<div class='col-md-8'><p class='text-break red'>"+order.message_ph+"</p></div>" +
+                    "<div class='col-md-4'></div></div></div></div>");
+
+            }
+        },
+        error: function (data2) {
+            console.log(data2.error);
+        }
+
+    });
+}
+
+
+
+
+
+
+
+
+
+function setSqlDate(month, day, year){
+    let date = year + "-";
+    if (month < 10)
+        date += "0" + month+"-";
+    else date += month+"-";
+    if (day < 10)
+        date += "0" + day;
+    else date += day;
+    return date;
+
+}
+
+function setBusy(ph_id, month, day, year) {
+
+
+    let data={
+        "ph_id":ph_id,
+        "date":setSqlDate(month, day, year)
+    };
+
+    $.ajax({
+        url: 'http://localhost:2606/removeactive',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes")
+
+                $("#day" + day + "-" + month).removeClass("active-date").addClass("inactive").attr("onclick", "setFree(" + ph_id + "," + month + "," + day + "," + year + ")");
+
+
+
+        },
+        error: function (data2) {
+        console.log(data2.error)
+        }
+
+    });
+
+}
+
+function setFree(ph_id, month, day, year) {
+
+
+    let data={
+        "ph_id":ph_id,
+        "date":setSqlDate(month, day, year)
+    };
+
+    $.ajax({
+        url: 'http://localhost:2606/setactive',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes")
+
+                $("#day" + day + "-" + month).removeClass("inactive").addClass("active-date").attr("onclick", "setBusy(" + ph_id + "," + month + "," + day + "," + year + ")");
+
+
+
+        },
+        error: function (data2) {
+            console.log(data2.error)
+        }
+
+    });
+
+  }

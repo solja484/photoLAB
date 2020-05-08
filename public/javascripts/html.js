@@ -1,10 +1,11 @@
 $(document).ready(function () {
-    let date=getCurrentDate();
-    localStorage.setItem("cur_month",date.month);
-    localStorage.setItem("cur_day",date.day);
-    localStorage.setItem("calendar_month",date.month);
-    localStorage.setItem("search","photo");
+    let date = getCurrentDate();
+    localStorage.setItem("cur_month", date.month);
+    localStorage.setItem("cur_day", date.day);
+    localStorage.setItem("calendar_month", date.month);
+    localStorage.setItem("search", "photo");
 });
+
 function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
     $("#cancel_search").hide();
     fillCities();
@@ -55,16 +56,16 @@ function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
             let stars = "";
             let have_stars = false;
 
-                if(ph.ave!=null) {
-                    have_stars = true;
-                    for (let st = 0; st < ph.ave; st++)
-                        stars += "<i class='fa fa-star yellow text-20'></i>";
-                    for (let i = ph.ave; i < 10; i++)
-                        stars += "<i class='fa fa-star-o yellow text-20'></i>";
+            if (ph.ave != null) {
+                have_stars = true;
+                for (let st = 0; st < ph.ave; st++)
+                    stars += "<i class='fa fa-star yellow text-20'></i>";
+                for (let i = ph.ave; i < 10; i++)
+                    stars += "<i class='fa fa-star-o yellow text-20'></i>";
 
-                    $("#favorites_button" + ph.ph_id).append("<br><br>" +
-                        "<p class='text-14 float-right'>" + stars + ph.ave + "/10</p>");
-                }
+                $("#favorites_button" + ph.ph_id).append("<br><br>" +
+                    "<p class='text-14 float-right'>" + stars + ph.ave + "/10</p>");
+            }
 
             if (!have_stars) {
                 for (let i = 0; i < 10; i++)
@@ -128,7 +129,7 @@ function setRatings(guest, info, cookies) {
             stars += "<i class='fa fa-star-o yellow text-24'></i>";
         stars += info.ave + "/10</p>";
         sel.append(stars);
-    } else if (cookies.auth&&guest) {
+    } else if (cookies.auth && guest) {
         if (info.mark != 0) {
             let stars = "<p class='text-14'>";
             for (let st = 0; st < info.ave; st++)
@@ -136,7 +137,7 @@ function setRatings(guest, info, cookies) {
             for (let i = info.ave; i < 10; i++)
                 stars += "<i class='fa fa-star-o yellow text-24'></i>";
             stars += info.ave + "/10</p>";
-            stars += "<p class='text-muted text-14'>Ви проголосували: " + info.mark +" ";
+            stars += "<p class='text-muted text-14'>Ви проголосували: " + info.mark + " ";
             stars += "<button class=' link1 border-none background-transparent text-14' onclick='unvote(" + cookies.user_id + "," + info.ph_id + ")'>Видалити голос</button></p>";
             sel.append(stars);
 
@@ -198,205 +199,204 @@ function setSlider() {
 }
 
 
-const months={
-    "1":{
-        "name":"Січень",
-        "days":31,
-        "genitive":"січня"
+const months = {
+    "1": {
+        "name": "Січень",
+        "days": 31,
+        "genitive": "січня"
     },
-    "2":{
-        "name":"Лютий",
-        "days":28,
-        "genitive":"лютого"
+    "2": {
+        "name": "Лютий",
+        "days": 28,
+        "genitive": "лютого"
     },
-    "3":{
-        "name":"Березень",
-        "days":31,
-        "genitive":"березня"
+    "3": {
+        "name": "Березень",
+        "days": 31,
+        "genitive": "березня"
     },
-    "4":{
-        "name":"Квітень",
-        "days":30,
-        "genitive":"квітня"
+    "4": {
+        "name": "Квітень",
+        "days": 30,
+        "genitive": "квітня"
     },
-    "5":{
-        "name":"Травень",
-        "days":31,
-        "genitive":"травня"
+    "5": {
+        "name": "Травень",
+        "days": 31,
+        "genitive": "травня"
     },
-    "6":{
-        "name":"Червень",
-        "days":30,
-        "genitive":"червня"
+    "6": {
+        "name": "Червень",
+        "days": 30,
+        "genitive": "червня"
     },
-    "7":{
-        "name":"Липень",
-        "days":31,
-        "genitive":"липня"
+    "7": {
+        "name": "Липень",
+        "days": 31,
+        "genitive": "липня"
     },
-    "8":{
-        "name":"Серпень",
-        "days":31,
-        "genitive":"серпня"
+    "8": {
+        "name": "Серпень",
+        "days": 31,
+        "genitive": "серпня"
     },
-    "9":{
-        "name":"Вересень",
-        "days":30,
-        "genitive":"вересня"
+    "9": {
+        "name": "Вересень",
+        "days": 30,
+        "genitive": "вересня"
     },
-    "10":{
-        "name":"Жовтень",
-        "days":31,
-        "genitive":"жовтня"
+    "10": {
+        "name": "Жовтень",
+        "days": 31,
+        "genitive": "жовтня"
     },
-    "11":{
-        "name":"Листопад",
-        "days":30,
-        "genitive":"листопада"
+    "11": {
+        "name": "Листопад",
+        "days": 30,
+        "genitive": "листопада"
     },
-    "12":{
-        "name":"Грудень",
-        "days":31,
-        "genitive":"грудня"
+    "12": {
+        "name": "Грудень",
+        "days": 31,
+        "genitive": "грудня"
     },
 };
 
-function setCalendar(dates,cookies,info,guest){
-    let today=getCurrentDate();
+function setCalendar(dates, cookies, info, guest) {
+    let today = getCurrentDate();
     $("#month_name").text(months[today.month].name);
     $("#year_number").text(today.year);
 
-    let str=fillTableCells(dates,today.month,today.year,cookies,info.ph_id,guest);
+    let str = fillTableCells(dates, today.month, today.year, cookies, info.ph_id, guest);
 
     $("#dates").append(str);
-    setNext5Months(dates,cookies,info.ph_id,guest)
+    setNext5Months(dates, cookies, info.ph_id, guest)
 }
 
 
-function setNext5Months(dates,cookies,ph_id,guest){
-    let today=getCurrentDate();
-    let current_month=today.month;
-    for(let i=current_month+1;i<current_month+6;i++){
-        let cur_year=today.year;
-        if(i==13) cur_year++;
-        if(i>12)
-            i=i%12;
+function setNext5Months(dates, cookies, ph_id, guest) {
+    let today = getCurrentDate();
+    let current_month = today.month;
+    for (let i = current_month + 1; i < current_month + 6; i++) {
+        let cur_year = today.year;
+        if (i == 13) cur_year++;
+        if (i > 12)
+            i = i % 12;
 
-        let str="";
-        str+="<div class='carousel-item row '><div class='col-md-1'></div>"+
+        let str = "";
+        str += "<div class='carousel-item row '><div class='col-md-1'></div>" +
             "<div class='mg-0 pd-0 col-md-10 expand'> <div class='month expand'>" +
-            "<ul class='no-marks pd-0 mg-0'><li><span class='text-20'>"+months[i].name+"</span><br><span>"+cur_year+
+            "<ul class='no-marks pd-0 mg-0'><li><span class='text-20'>" + months[i].name + "</span><br><span>" + cur_year +
             "</span></li></ul></div>";
-        str+="<table class='mg-0 pd-0 expand table-bordered'>" +
+        str += "<table class='mg-0 pd-0 expand table-bordered'>" +
             "<thead><tr class='weekdays'><td>Пн</td><td>Вт</td><td>Ср</td><td>Чт</td><td>Пт</td><td>Сб</td><td>Нд</td></tr>" +
-            "</thead><tbody id='dates"+i+"'>";
+            "</thead><tbody id='dates" + i + "'>";
 
 
-        str+=fillTableCells(dates,i,cur_year,cookies,ph_id,guest);
+        str += fillTableCells(dates, i, cur_year, cookies, ph_id, guest);
 
-        str+="<tbody></tbody></table></div><div class='col-md-1'></div></div>";
+        str += "<tbody></tbody></table></div><div class='col-md-1'></div></div>";
         $("#calendar-holder").append(str);
     }
 }
 
 
+function fillTableCells(dates, month, cur_year, cookies, ph_id, guest) {
 
-
-function fillTableCells(dates,month,cur_year,cookies,ph_id,guest){
-
-    let str="";
+    let str = "";
     let first = new Date();
-    first.setMonth(month-1,1);
+    first.setMonth(month - 1, 1);
     let when_first = first.getDay();
-    if(when_first==0)
-        when_first=7;
-    let cells=[];
+    if (when_first == 0)
+        when_first = 7;
+    let cells = [];
 
-    for(let i=1;i<=months[month].days;i++)
-        cells.push([i,0]);
+    for (let i = 1; i <= months[month].days; i++)
+        cells.push([i, 0]);
 
     //d=[ Y, M, D, h, m, s ]
-    for(let date of dates){
-        let d= date.date.split(/[-T:]/);
-        if(Number.parseInt(d[1],10)==month)
-            cells[Number.parseInt(d[2])][1]=1;
+    for (let date of dates) {
+        let d = date.date.split(/[-T:]/);
+        if (Number.parseInt(d[1], 10) == month)
+            cells[Number.parseInt(d[2])][1] = 1;
     }
 
-    let before=[];
-    for(let i=1;i<when_first;i++)
-        before.push([0,0]);
+    let before = [];
+    for (let i = 1; i < when_first; i++)
+        before.push([0, 0]);
 
-    cells=before.concat(cells);
+    cells = before.concat(cells);
 
-    while((cells.length%7)!=0)
-        cells.push([0,0]);
+    while ((cells.length % 7) != 0)
+        cells.push([0, 0]);
 
-    for(let i=0;i<cells.length;i++){
-        if(i==0)
-            str+="<tr>";
-        else if(i%7==0)
-            str+="</tr><tr>";
-        if(cells[i][1]==0&&cells[i][0]==0)
-            str+='<td class="day busy"></td>';
-        else if(cells[i][1]==0){
-            if (cookies.auth=='true'&&cookies.role=='photographer'&&!guest)
-                str+='<td class="day busy pointer" onclick="setFree('+ph_id+','+month+','+cells[i][0]+','+cur_year+')">'+cells[i][0]+'</td>';
+    for (let i = 0; i < cells.length; i++) {
+        if (i == 0)
+            str += "<tr>";
+        else if (i % 7 == 0)
+            str += "</tr><tr>";
+        if (cells[i][1] == 0 && cells[i][0] == 0)
+            str += '<td class="day busy"></td>';
+        else if (cells[i][1] == 0) {
+            if (cookies.auth == 'true' && cookies.role == 'photographer' && !guest)
+                str += "<td class='day pointer inactive' onclick='setFree(" + ph_id + "," + month + "," + cells[i][0] + "," + cur_year + ");' >" + cells[i][0] + "</td>";
             else
-            str+='<td class="day busy">'+cells[i][0]+'</td>';
+                str += '<td class="day busy">' + cells[i][0] + '</td>';
         }
 
-        else{
-            if(cookies.auth=='true'&&cookies.role=='client')
-                str+="<td class='day free' data-toggle='modal' data-target='#make_order_modal' id='day"+cells[i][0]+"-"+month+"' " +
-                    "onclick='setMakeOrderOnclick("+ph_id+","+user_id+","+month+","+cells[i][0]+","+cur_year+")' " +
-                    ">"+cells[i][0]+"</td>";
-            else if (cookies.auth=='true'&&cookies.role=='photographer'&&!guest)
-                str+="<td class='day active-date pointer' id='day"+cells[i][0]+"-"+month+"' " +
-                    "onclick='setBusy("+ph_id+","+month+","+cells[i][0]+","+cur_year+")' " +
-                    ">"+cells[i][0]+"</td>";
-                else
-                str+="<td class='day free'>"+cells[i][0]+"</td>";
+        else {
+            if (cookies.auth == 'true' && cookies.role == 'client')
+                str += "<td class='day free' data-toggle='modal' data-target='#make_order_modal' id='day" + cells[i][0] + "-" + month + "' " +
+                    "onclick='setMakeOrderOnclick(" + ph_id + "," + cookies.user_id + "," + month + "," + cells[i][0] + "," + cur_year + ")' " +
+                    ">" + cells[i][0] + "</td>";
+            else if (cookies.auth == 'true' && cookies.role == 'photographer' && !guest)
+                str += "<td class='day active-date pointer' id='day" + cells[i][0] + "-" + month + "' " +
+                    "onclick='setBusy(" + ph_id + "," + month + "," + cells[i][0] + "," + cur_year + ")' " +
+                    ">" + cells[i][0] + "</td>";
+            else
+                str += "<td class='day free'>" + cells[i][0] + "</td>";
         }
 
 
     }
     return str;
 }
-function setBusy(ph_id,month,day,year){
-   $("#day"+day).removeClass("active-date").addClass("busy");
-}
-
-function setFree(ph_id,month,day,year){
-    $("#day"+day).removeClass("busy").addClass("active-date");
-}
 
 
-
-function setMakeOrderOnclick(ph_id,user_id,month,day,year){
-    $("#make_order_button").attr("onclick","makeOrder("+ph_id+","+user_id+","+month+","+day+","+year+")");
-    console.log("set onclick on "+month+" "+day);
-    $("#make_order_date").text(" "+day+" "+months[month].genitive+" "+year);
+function setMakeOrderOnclick(ph_id, user_id, month, day, year) {
+    $("#make_order_button").attr("onclick", "makeOrder(" + ph_id + "," + user_id + "," + month + "," + day + "," + year + ")");
+    $("#make_order_date").text(" " + day + " " + months[month].genitive + " " + year);
 }
 
 
-
-function getCurrentDate(){
-    let today=new Date();
-    let day=today.getDay();
-    if(day==0)
-        day=7;
+function getCurrentDate() {
+    let today = new Date();
+    let day = today.getDay();
+    if (day == 0)
+        day = 7;
     return {
-        "day":today.getDate(),
-        "month":(today.getMonth() + 1),
-        "year":today.getFullYear(),
-        "weekday":day
+        "day": today.getDate(),
+        "month": (today.getMonth() + 1),
+        "year": today.getFullYear(),
+        "weekday": day
     };
 }
 
-function setOrdersDate(orders){
+function setOrdersDate(orders) {
 
-    for(let order of orders) {
+    for (let order of orders) {
         let d = order.date.split(/[-T:]/);
-        $("#date_order"+order.order_id).text(d[2]+' '+months[parseInt(d[1],10)].genitive+" "+d[0]+" ");
+        $("#date_order" + order.order_id).text(d[2] + ' ' + months[parseInt(d[1], 10)].genitive + " " + d[0] + " ");
     }
+}
+
+function setCancelOrderOnclick(order){
+    $("#cancel_order_button").attr("onclick","cancel(" + order + ")");
+
+}
+
+function setApproveOrderOnclick(order){
+
+    $("#approve_order_button").attr("onclick","approve(" + order+")");
+
 }

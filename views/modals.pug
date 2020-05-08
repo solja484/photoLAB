@@ -111,3 +111,45 @@ div(id="make_order_modal", class="modal fade font-17", role="dialog")
             div(class="modal-footer")
                 button(class="btn btn-info bg-green btn-block font-17"
                 id="make_order_button") Підтвердити замовлення
+
+div(id="approve_order_modal", class="modal fade font-17", role="dialog")
+    div(class="modal-dialog")
+        div(class="modal-content" )
+            div(class="modal-header")
+                h4(class="text-center text-20") Підтвердження замовлення
+                    span(id="approve_order_date" class='text-20')
+                button(type="button" class="close" data-dismiss="modal") &times;
+
+            div(class="modal-body")
+                form(class="mx-auto font-17 " id='approve_order_form')
+
+                    div(class="form-group")
+                        label(for='approve_order_contact' class='non-bold') Введіть контакт для зв'язку:
+                        input(type="text", class='form-control' id="approve_order_contact", placeholder="Телефон, пошта чи нікнейм у соцмережі")
+                        div(class="invalid-feedback text-14") Це поле не може бути пустим!
+                    div(class="form-group")
+                        label(for='approve_order_text' class='non-bold') Текст замовлення:
+                        textarea(class='form-control' id="approve_order_text", rows=4, placeholder="Детальна інформація про умови зйомки, час тощо")
+            div(class="modal-footer")
+                button(class="btn btn-info bg-green btn-block font-17" id="approve_order_button") Підтвердити замовлення
+
+div(id="cancel_order_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
+    div(class="modal-dialog")
+        div(class="modal-content" )
+            div(class="modal-body")
+                button(type="button" class="close" data-dismiss="modal") &times;
+                div(class="row")
+                    br
+                    p(class="text-24 text-center col-md-12") Ви впевнені, що хочете скасувати замовлення?
+                    div(class="form-group")
+                        label(for='cancel_order_reason' class='non-bold') Вкажіть причину скасування замовлення:
+                        input(type="text", class='form-control' id="cancel_order_reason")
+                        div(class="invalid-feedback text-14") Це поле не може бути пустим!
+                    .col-md-6
+                        .row
+                            .col-md-1
+                            button(class="btn btn-md btn-danger col-md-10" type="button" id='cancel_order_button') Скасувати!
+                    .col-md-6
+                        .row
+                            .col-md-1
+                            button(class="btn btn-md btn-default col-md-10" type="button" data-dismiss="modal") Повернутись

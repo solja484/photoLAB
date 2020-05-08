@@ -75,7 +75,7 @@ include ../navbar
                             .col-md-1
                             .col-md-10
                                 .row
-                                    .col-md-6
+                                    .col-md-4
                                         each order in orders
                                             if(order.status==1)
                                                 .panel.panel-success(class='mg-b-20')
@@ -96,7 +96,7 @@ include ../navbar
                                                             .col-md-4
 
 
-                                    .col-md-6
+                                    .col-md-4
                                         each order in orders
                                             if(order.status == 2)
                                                 .panel.panel-warning(class='mg-b-20' id=`order${order.order_id}`)
@@ -115,7 +115,27 @@ include ../navbar
                                                                 p(class='text-break') Поки немає відповіді від фотографа
                                                             .col-md-12
                                                                 button(class='btn-block border-none bg-transparent' onclick=`cancelOrder(${JSON.stringify(order.order_id)},${JSON.stringify(order.date)},${JSON.stringify(order.ph_id)})`) Скасувати замовлення
-
+                                    .col-md-4
+                                        each order in orders
+                                            if(order.status == 0)
+                                                .panel.panel-danger(class='mg-b-20')
+                                                    .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                                        span(id=`date_order${order.order_id}` class='pd-r-25')
+                                                        a(class="link1" href=`/guest/${order.username}`)= '@' + order.username
+                                                        i(class='fa fa-times mg-5 float-right')
+                                                    .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                                        p= 'Тема: ' + order.topic
+                                                        .row
+                                                            .col-md-4
+                                                            .col-md-8
+                                                                p(class='text-break')= order.message_cl
+                                                                p= "Контакт для зв'язку: " + order.contact_cl
+                                                            .col-md-8
+                                                                p= 'Причина відмови: '
+                                                                p(class='text-break')= order.message_ph
+                                                            .col-md-4
+                                                            .col-md-12
+                                                                button(class='btn-block border-none bg-transparent' onclick=`cancelOrder(${JSON.stringify(order.order_id)},${JSON.stringify(order.date)},${JSON.stringify(order.ph_id)})`) Підтвердити скасування
                                 script setOrdersDate(!{JSON.stringify(orders)});
                             .col-md-1
 
