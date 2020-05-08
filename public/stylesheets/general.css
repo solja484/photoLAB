@@ -7,6 +7,10 @@ body{
     background: #1e1e1e;!important;
 }
 
+.bg-darkk{
+    background: #1e1e1e;!important;
+}
+
 .bg-green{
     background: #34a99c !important;
 }
@@ -73,6 +77,10 @@ body{
 }
 .mg-top-20{
     margin-top: 20px!important;
+}
+
+.mg-b-20{
+    margin-bottom: 20px!important;
 }
 .pd-0{
     padding: 0!important;
@@ -152,7 +160,9 @@ body{
     height:25px!important;
 }
 
-
+.pointer{
+    cursor:pointer;
+}
 @media(max-height:765px){
     .float-rightt{
         float: left;!important;

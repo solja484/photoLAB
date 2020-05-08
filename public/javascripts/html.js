@@ -201,118 +201,126 @@ function setSlider() {
 const months={
     "1":{
         "name":"Січень",
-        "days":31
+        "days":31,
+        "genitive":"січня"
     },
     "2":{
         "name":"Лютий",
-        "days":28
+        "days":28,
+        "genitive":"лютого"
     },
     "3":{
         "name":"Березень",
-        "days":31
+        "days":31,
+        "genitive":"березня"
     },
     "4":{
         "name":"Квітень",
-        "days":30
+        "days":30,
+        "genitive":"квітня"
     },
     "5":{
         "name":"Травень",
-        "days":31
+        "days":31,
+        "genitive":"травня"
     },
     "6":{
         "name":"Червень",
-        "days":30
+        "days":30,
+        "genitive":"червня"
     },
     "7":{
         "name":"Липень",
-        "days":31
+        "days":31,
+        "genitive":"липня"
     },
     "8":{
         "name":"Серпень",
-        "days":31
+        "days":31,
+        "genitive":"серпня"
     },
     "9":{
         "name":"Вересень",
-        "days":30
+        "days":30,
+        "genitive":"вересня"
     },
     "10":{
         "name":"Жовтень",
-        "days":31
+        "days":31,
+        "genitive":"жовтня"
     },
     "11":{
         "name":"Листопад",
-        "days":30
+        "days":30,
+        "genitive":"листопада"
     },
     "12":{
         "name":"Грудень",
-        "days":31
+        "days":31,
+        "genitive":"грудня"
     },
 };
 
-function setCalendar(){
-    const calendar=$("#calendar_holder");
+function setCalendar(dates,cookies,info,guest){
     let today=getCurrentDate();
     $("#month_name").text(months[today.month].name);
     $("#year_number").text(today.year);
-    let first = new Date();
-    first.setMonth(today.month-1,1);
-    let when_first = first.getDay();
-    if(when_first==0)
-        when_first=7;
-    let cells=[];
 
+    let str=fillTableCells(dates,today.month,today.year,cookies,info.ph_id,guest);
 
-    for(let i=1;i<=months[today.month].days;i++)
-        cells.push([i,0]);
-
-    //get active from database and put them here
-    cells[today.day-1][1]=5;
-
-    let before=[];
-    for(let i=1;i<when_first;i++)
-        before.push([0,0]);
-
-    cells=before.concat(cells);
-
-    while((cells.length%7)!=0)
-    cells.push([0,0]);
-    console.log(cells);
-
-    let str="";
-    for(let i=0;i<cells.length;i++){
-        if(i==0)
-            str+="<tr>";
-        else if(i%7==0)
-            str+="</tr><tr>";
-        if(cells[i][1]==0&&cells[i][0]==0)
-            str+='<td class="day busy"></td>';
-        else if(cells[i][1]==0)
-            str+='<td class="day busy">'+cells[i][0]+'</td>';
-        else
-            str+='<td class="day free">'+cells[i][0]+'</td>';
-
-    }
     $("#dates").append(str);
+    setNext5Months(dates,cookies,info.ph_id,guest)
 }
 
-function setPhCalendar(){
-    const calendar=$("#calendar_holder");
+
+function setNext5Months(dates,cookies,ph_id,guest){
     let today=getCurrentDate();
-    $("#month_name").text(months[today.month].name);
-    $("#year_number").text(today.year);
+    let current_month=today.month;
+    for(let i=current_month+1;i<current_month+6;i++){
+        let cur_year=today.year;
+        if(i==13) cur_year++;
+        if(i>12)
+            i=i%12;
+
+        let str="";
+        str+="<div class='carousel-item row '><div class='col-md-1'></div>"+
+            "<div class='mg-0 pd-0 col-md-10 expand'> <div class='month expand'>" +
+            "<ul class='no-marks pd-0 mg-0'><li><span class='text-20'>"+months[i].name+"</span><br><span>"+cur_year+
+            "</span></li></ul></div>";
+        str+="<table class='mg-0 pd-0 expand table-bordered'>" +
+            "<thead><tr class='weekdays'><td>Пн</td><td>Вт</td><td>Ср</td><td>Чт</td><td>Пт</td><td>Сб</td><td>Нд</td></tr>" +
+            "</thead><tbody id='dates"+i+"'>";
+
+
+        str+=fillTableCells(dates,i,cur_year,cookies,ph_id,guest);
+
+        str+="<tbody></tbody></table></div><div class='col-md-1'></div></div>";
+        $("#calendar-holder").append(str);
+    }
+}
+
+
+
+
+function fillTableCells(dates,month,cur_year,cookies,ph_id,guest){
+
+    let str="";
     let first = new Date();
-    first.setMonth(today.month-1,1);
+    first.setMonth(month-1,1);
     let when_first = first.getDay();
     if(when_first==0)
         when_first=7;
     let cells=[];
 
-
-    for(let i=1;i<=months[today.month].days;i++)
+    for(let i=1;i<=months[month].days;i++)
         cells.push([i,0]);
 
-    //get active from database and put them here
-    cells[today.day-1][1]=5;
+    //d=[ Y, M, D, h, m, s ]
+    for(let date of dates){
+        let d= date.date.split(/[-T:]/);
+        if(Number.parseInt(d[1],10)==month)
+            cells[Number.parseInt(d[2])][1]=1;
+    }
 
     let before=[];
     for(let i=1;i<when_first;i++)
@@ -322,9 +330,7 @@ function setPhCalendar(){
 
     while((cells.length%7)!=0)
         cells.push([0,0]);
-    console.log(cells);
 
-    let str="";
     for(let i=0;i<cells.length;i++){
         if(i==0)
             str+="<tr>";
@@ -332,14 +338,46 @@ function setPhCalendar(){
             str+="</tr><tr>";
         if(cells[i][1]==0&&cells[i][0]==0)
             str+='<td class="day busy"></td>';
-        else if(cells[i][1]==0)
+        else if(cells[i][1]==0){
+            if (cookies.auth=='true'&&cookies.role=='photographer'&&!guest)
+                str+='<td class="day busy pointer" onclick="setFree('+ph_id+','+month+','+cells[i][0]+','+cur_year+')">'+cells[i][0]+'</td>';
+            else
             str+='<td class="day busy">'+cells[i][0]+'</td>';
-        else
-            str+='<td class="day free">'+cells[i][0]+'</td>';
+        }
+
+        else{
+            if(cookies.auth=='true'&&cookies.role=='client')
+                str+="<td class='day free' data-toggle='modal' data-target='#make_order_modal' id='day"+cells[i][0]+"-"+month+"' " +
+                    "onclick='setMakeOrderOnclick("+ph_id+","+user_id+","+month+","+cells[i][0]+","+cur_year+")' " +
+                    ">"+cells[i][0]+"</td>";
+            else if (cookies.auth=='true'&&cookies.role=='photographer'&&!guest)
+                str+="<td class='day active-date pointer' id='day"+cells[i][0]+"-"+month+"' " +
+                    "onclick='setBusy("+ph_id+","+month+","+cells[i][0]+","+cur_year+")' " +
+                    ">"+cells[i][0]+"</td>";
+                else
+                str+="<td class='day free'>"+cells[i][0]+"</td>";
+        }
+
 
     }
-    $("#dates").append(str);
+    return str;
 }
+function setBusy(ph_id,month,day,year){
+   $("#day"+day).removeClass("active-date").addClass("busy");
+}
+
+function setFree(ph_id,month,day,year){
+    $("#day"+day).removeClass("busy").addClass("active-date");
+}
+
+
+
+function setMakeOrderOnclick(ph_id,user_id,month,day,year){
+    $("#make_order_button").attr("onclick","makeOrder("+ph_id+","+user_id+","+month+","+day+","+year+")");
+    console.log("set onclick on "+month+" "+day);
+    $("#make_order_date").text(" "+day+" "+months[month].genitive+" "+year);
+}
+
 
 
 function getCurrentDate(){
@@ -353,4 +391,12 @@ function getCurrentDate(){
         "year":today.getFullYear(),
         "weekday":day
     };
+}
+
+function setOrdersDate(orders){
+
+    for(let order of orders) {
+        let d = order.date.split(/[-T:]/);
+        $("#date_order"+order.order_id).text(d[2]+' '+months[parseInt(d[1],10)].genitive+" "+d[0]+" ");
+    }
 }

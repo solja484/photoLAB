@@ -37,21 +37,21 @@ function regClient(users) {
     let b = validEmpty("reg_username");
     let c = validNamesF("reg_city");
 
-    if (!(a && b && c ))
+    if (!(a && b && c))
         return false;
 
-    if(!validExistedUsername($("#reg_username").val(),users)){
+    if (!validExistedUsername($("#reg_username").val(), users)) {
         $("#invalid_reg_un").text("Користувач з таким іменем уже існує!");
         $("#reg_username").removeClass("is-valid").addClass("is-invalid");
         return false;
     }
-    if(!validExistedEmail($("#reg_email").val(),users)){
+    if (!validExistedEmail($("#reg_email").val(), users)) {
         $("#invalid_reg_email").text("Користувач з такою поштою уже існує!");
         $("#reg_email").removeClass("is-valid").addClass("is-invalid");
         return false;
     }
 
-    if(!validPassword("reg_password"))
+    if (!validPassword("reg_password"))
         return false;
     let pass = $("#reg_password").val();
     let pass2 = $("#reg_password2").val();
@@ -59,11 +59,11 @@ function regClient(users) {
     if (pass != pass2)
         return false;
 
-    let data={
-        "password":pass,
-        "username":$("#reg_username").val(),
-        "email":$("#reg_email").val(),
-        "city":$("#reg_city").val()
+    let data = {
+        "password": pass,
+        "username": $("#reg_username").val(),
+        "email": $("#reg_email").val(),
+        "city": $("#reg_city").val()
     };
 
     $.ajax({
@@ -92,7 +92,7 @@ function regClient(users) {
 
 }
 
-function regPh(users,types) {
+function regPh(users, types) {
 
     $("#invalid_regph_un").text("Це поле не може бути пустим");
     $("#invalid_regph_email").text("Некоректно введена електронна пошта");
@@ -107,21 +107,21 @@ function regPh(users,types) {
     if (!(a && b && c && d && e && f))
         return false;
 
-    const emailSel=$("#ph_reg_email");
-    const userSel=$("#ph_reg_username");
-    if(!validExistedUsername(userSel.val(),users)){
+    const emailSel = $("#ph_reg_email");
+    const userSel = $("#ph_reg_username");
+    if (!validExistedUsername(userSel.val(), users)) {
         $("#invalid_regph_un").text("Користувач з таким іменем уже існує!");
         userSel.removeClass("is-valid").addClass("is-invalid");
         return false;
     }
-    if(!validExistedEmail(emailSel.val(),users)){
+    if (!validExistedEmail(emailSel.val(), users)) {
         $("#invalid_regph_email").text("Користувач з такою поштою уже існує!");
         emailSel.removeClass("is-valid").addClass("is-invalid");
         return false;
     }
 
 
-    if(!validPassword("ph_reg_password"))
+    if (!validPassword("ph_reg_password"))
         return false;
     let pass = $("#ph_reg_password").val();
     let pass2 = $("#ph_reg_password2").val();
@@ -129,23 +129,23 @@ function regPh(users,types) {
     if (pass != pass2)
         return false;
 
-    let values=[];
-    for(t of types)
-        if($('#set_type' + t.type_id).is(":checked"))
+    let values = [];
+    for (t of types)
+        if ($('#set_type' + t.type_id).is(":checked"))
             values.push([t.type_id]);
 
-    let data={
-        "password":pass,
-        "username":userSel.val(),
-        "email":emailSel.val(),
-        "city":$("#ph_reg_city").val(),
-        "lastname":$("#ph_reg_lastname").val(),
-        "firstname":$("#ph_reg_firstname").val(),
-        "fathername":$("#ph_reg_fathername").val(),
-        "price":$("#ph_reg_price").val(),
-        "experience":$("#ph_reg_experience").val(),
-        "organization":$("#ph_reg_org").val(),
-        "types":values
+    let data = {
+        "password": pass,
+        "username": userSel.val(),
+        "email": emailSel.val(),
+        "city": $("#ph_reg_city").val(),
+        "lastname": $("#ph_reg_lastname").val(),
+        "firstname": $("#ph_reg_firstname").val(),
+        "fathername": $("#ph_reg_fathername").val(),
+        "price": $("#ph_reg_price").val(),
+        "experience": $("#ph_reg_experience").val(),
+        "organization": $("#ph_reg_org").val(),
+        "types": values
     };
 
     $.ajax({
@@ -191,8 +191,8 @@ function addToFavorites(ph_id, user_id) {
         contentType: 'application/json',
         success: function (data2) {
 
-            if(data2.success=='yes')
-            $("#fav" + ph_id).empty().append(`<i class=' text-40 material-icons '>&#xe8e6;</i>`).attr("onclick", "deleteFromFavorites(" + ph_id + "," + user_id + ")");
+            if (data2.success == 'yes')
+                $("#fav" + ph_id).empty().append(`<i class=' text-40 material-icons '>&#xe8e6;</i>`).attr("onclick", "deleteFromFavorites(" + ph_id + "," + user_id + ")");
         },
         error: function (data2) {
             console.log(data2.error);
@@ -374,7 +374,7 @@ function addPhotoLink() {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (data2) {
-            if(data2.success=='yes') {
+            if (data2.success == 'yes') {
                 removeValid("add_photolink_form");
                 clearForm("add_photolink_form");
                 data.photo_id = data2.photo_id;
@@ -399,7 +399,7 @@ function addPhotoLink() {
                 }
 
                 $("#add_photo_modal .close").click();
-            }else {
+            } else {
                 $("#add_photo_modal").append("<div id='photo_fail' class='panel panel-danger'><div class='panel-heading'>" +
                     "Виникла помилка при додавані фото, спробуйте ще раз</div></div>");
                 setTimeout(() => {
@@ -529,8 +529,8 @@ function fillCities() {
         method: 'get',
         success: function (data) {
             for (let i of data)
-                if(i.city!=null&&i.city!="")
-                    $("#filter_city").append("<option value='"+ i.city + "'>" + i.city + "</option>");
+                if (i.city != null && i.city != "")
+                    $("#filter_city").append("<option value='" + i.city + "'>" + i.city + "</option>");
 
         }
     });
@@ -607,3 +607,104 @@ function unvote(user_id, ph_id) {
     });
 }
 
+function makeOrder(ph_id, user_id, month, day, year) {
+    let date_sql = year + '-' + month + '-' + day;
+    let a = validEmpty("make_order_topic");
+    let b = validEmpty("make_order_contact");
+
+    let topic=$("#make_order_topic").val();
+    let data = {
+        "ph_id": ph_id,
+        "user_id": user_id,
+        "date": date_sql,
+        "topic": topic,
+        "contact_cl": $("#make_order_contact").val(),
+        "message_cl": $("#make_order_text").val()
+    };
+
+    $.ajax({
+        url: 'http://localhost:2606/order',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes"){
+                $("#day"+day+"-"+month).attr("onclick","").removeClass("free").addClass("busy");
+
+                $("#make_order_form").prepend("<div class='panel panel-success' id='order_success'>" +
+                    "<div class='panel-heading'><icon class='fa fa-check'></icon>Замовлення відправлено фотографу! Очікуйте відповіді </div></div>");
+                setTimeout(() => {
+                    $("#order_success").remove();
+                    $("#make_order_modal .close").click();
+                }, 15000);
+            }else{
+                $("#make_order_form").prepend("<div class='panel panel-danger' id='order_failed'>" +
+                    "<div class='panel-heading'>Вибачте, виникла помилка </div></div>");
+                setTimeout(() => {
+                    $("#order_failed").remove();
+                    $("#make_order_modal .close").click();
+                }, 15000);
+            }
+
+        },
+        error: function (data2) {
+
+            $("#make_order_form").prepend("<div class='panel panel-danger' id='order_failed'>" +
+                "<div class='panel-heading'>Вибачте, виникла помилка</div></div>");
+            setTimeout(() => {
+                $("#order_failed").remove();
+                $("#make_order_form .close").click();
+            }, 15000);
+        }
+
+    });
+
+}
+
+function cancelOrder(order_id,date,ph_id){
+    let date_sql=date.split('T');
+
+    let data= {
+        "order_id": order_id,
+        "date": date_sql[0],
+        "ph_id":ph_id
+    };
+
+
+    $.ajax({
+        url: 'http://localhost:2606/cancel',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+            if(data2.success=="yes"){
+
+                $("#order"+order_id).prepend("<div class='panel panel-success' id='order_success'>" +
+                    "<div class='panel-heading'><icon class='fa fa-check'></icon>Замовлення успішно скасовано </div></div>");
+                setTimeout(() => {
+                    $("#order"+order_id).remove();
+                }, 15000);
+            }else{
+                $("#order"+order_id).prepend("<div class='panel panel-danger' id='order_failed'>" +
+                    "<div class='panel-heading'>Не вдалося скасувати замовлення, спробуйте ще раз пізніше</div></div>");
+                setTimeout(() => {
+                    $("#order_failed").remove();
+                    $("#make_order_modal .close").click();
+                }, 15000);
+            }
+
+        },
+        error: function (data2) {
+
+            $("#order"+order_id).prepend("<div class='panel panel-danger' id='order_failed'>" +
+                "<div class='panel-heading'>Не вдалося скасувати замовлення, спробуйте ще раз пізніше</div></div>");
+            setTimeout(() => {
+                $("#order_failed").remove();
+                $("#make_order_form .close").click();
+            }, 15000);
+        }
+
+    });
+}

@@ -75,12 +75,13 @@ else
                                     div(class='img-container')
                                         div(class="circle-avatar " style=`background-image:url(${photo.link})`)
                                     div(class='card-body')
-                                        button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
-                                        onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
-                                            i(class="fa text-20 fa-trash-o ")
-                                        button(class='link1 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#edit_photo_modal'
-                                        onclick=`fillEditPhotoModal(${JSON.stringify(photo)})` id=`editphotobutton${photo.photo_id}`)
-                                            i(class="fa text-20 fa-edit ")
+                                        if((!guest)&&cookies.auth==true)
+                                            button(class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#delete_photo_modal'
+                                            onclick=`$("#delete_photo_button").attr("onclick","deletePhoto(${photo.photo_id})")`)
+                                                i(class="fa text-20 fa-trash-o ")
+                                            button(class='link1 bg-transparent float-right text-20 border-none' data-toggle="modal", data-target='#edit_photo_modal'
+                                            onclick=`fillEditPhotoModal(${JSON.stringify(photo)})` id=`editphotobutton${photo.photo_id}`)
+                                                i(class="fa text-20 fa-edit ")
                                         h5(class='card-title' id=`photo_title${photo.photo_id}`)= photo.title
                                         p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
                                         p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)

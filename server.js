@@ -4,6 +4,7 @@ let bodyParser = require('body-parser');
 let config = require('./config.json');
 let cookieParser = require('cookie-parser');
 const mysql = require("mysql2");
+let crypto = require("crypto");
 let types = [];
 
 
@@ -240,70 +241,76 @@ server.get('/guest/:username', (req, res) => {
         .then(([results, fields]) => {
             let ph_id = results[0].ph_id;
             let info = results[0];
-
-
             if (info.ave == null)
                 info.ave = 0;
             else info.ave = parseInt(info.ave, 10);
+            connection.query("SELECT date FROM freedates WHERE ph_id=?", [ph_id])
+                .then(([results1, fields1]) => {
+                    connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
+                        .then(([results2, fields2]) => {
+                            connection.query("SELECT account_link,site_name,icon FROM accounts " +
+                                "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
+                                .then(([results3, fields3]) => {
+                                    res.cookies = req.cookies;
+                                    if (req.cookies.auth == 'false') {
 
-            connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
-                .then(([results2, fields2]) => {
-                    connection.query("SELECT account_link,site_name,icon FROM accounts " +
-                        "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
-                        .then(([results3, fields3]) => {
-                            res.cookies = req.cookies;
-                            if (req.cookies.auth == 'false') {
-                                res.render(__dirname + "/views/profileph.pug",
-                                    {
-                                        mytypes: results2,
-                                        contacts: results3,
-                                        info: results[0],
-                                        active: active,
-                                        config: config,
-                                        guest: guest,
-                                        username: req.params.username,
-                                        auth: req.cookies.auth,
-                                        cookies: req.cookies
-                                    });
-                            } else {
+                                        res.render(__dirname + "/views/profileph.pug",
+                                            {
+                                                mytypes: results2,
+                                                contacts: results3,
+                                                info: results[0],
+                                                active: active,
+                                                config: config,
+                                                guest: guest,
+                                                username: req.params.username,
+                                                auth: req.cookies.auth,
+                                                cookies: req.cookies,
+                                                dates: results1
+                                            });
+                                    } else {
 
-                                connection.query("SELECT mark FROM ratings WHERE user_id=? AND ph_id=?  ", [req.cookies.user_id, ph_id])
-                                    .then(([results4, fields4]) => {
+                                        connection.query("SELECT mark FROM ratings WHERE user_id=? AND ph_id=?  ", [req.cookies.user_id, ph_id])
+                                            .then(([results4, fields4]) => {
 
-                                        try {
-                                            info.mark = results4[0].mark;
-                                        } catch (err) {
-                                            info.mark = 0;
-                                        }
-                                        connection.query("SELECT * FROM favorites WHERE user_id=? AND ph_id=?", [req.cookies.user_id, ph_id])
-                                            .then(([results5, fields5]) => {
+                                                try {
+                                                    info.mark = results4[0].mark;
+                                                } catch (err) {
+                                                    info.mark = 0;
+                                                }
+                                                connection.query("SELECT * FROM favorites WHERE user_id=? AND ph_id=?", [req.cookies.user_id, ph_id])
+                                                    .then(([results5, fields5]) => {
 
-                                                let favorite = true;
-                                                if (results5 == [] || results5[0] == undefined)
-                                                    favorite = false;
+                                                        let favorite = true;
+                                                        if (results5 == [] || results5[0] == undefined)
+                                                            favorite = false;
 
-                                                res.render(__dirname + "/views/profileph.pug",
-                                                    {
-                                                        mytypes: results2,
-                                                        contacts: results3,
-                                                        info: info,
-                                                        active: active,
-                                                        config: config,
-                                                        guest: guest,
-                                                        favorite: favorite,
-                                                        username: req.params.username,
-                                                        auth: req.cookies.auth,
-                                                        cookies: req.cookies
+                                                        res.render(__dirname + "/views/profileph.pug",
+                                                            {
+                                                                mytypes: results2,
+                                                                contacts: results3,
+                                                                info: info,
+                                                                active: active,
+                                                                config: config,
+                                                                guest: guest,
+                                                                favorite: favorite,
+                                                                username: req.params.username,
+                                                                auth: req.cookies.auth,
+                                                                cookies: req.cookies,
+                                                                dates:results1
+                                                            });
+                                                    })
+                                                    .catch(err => {
+                                                        console.log(err);
                                                     });
                                             })
                                             .catch(err => {
                                                 console.log(err);
                                             });
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                    });
-                            }
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
                         })
                         .catch(err => {
                             console.log(err);
@@ -461,40 +468,48 @@ server.get('/profile/:username', function (req, res) {
 
                 console.log("username" + username);
                 console.log(results);
-                connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
-                    .then(([results2, fields2]) => {
-                        if (results2 == undefined)
-                            results2 = [];
-                        connection.query("SELECT account_link,site_name,icon FROM accounts " +
-                            "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
-                            .then(([results3, fields3]) => {
-                                if (results3[0] == undefined)
-                                    results3 = [];
-                                connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
-                                    "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [results[0].user_id])
-                                    .then(([results4, fields4]) => {
-                                        if (results4[0] == undefined)
-                                            results4 = [];
+
+                connection.query("SELECT date FROM freedates WHERE ph_id=?", [ph_id])
+                    .then(([results1, fields1]) => {
+                        connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
+                            .then(([results2, fields2]) => {
+                                if (results2 == undefined)
+                                    results2 = [];
+                                connection.query("SELECT account_link,site_name,icon FROM accounts " +
+                                    "INNER JOIN socialnetworks ON socialnetworks.social_id=accounts.social_id WHERE ph_id=? ORDER BY socialnetworks.social_id", [ph_id])
+                                    .then(([results3, fields3]) => {
+                                        if (results3[0] == undefined)
+                                            results3 = [];
+                                        connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
+                                            "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [results[0].user_id])
+                                            .then(([results4, fields4]) => {
+                                                if (results4[0] == undefined)
+                                                    results4 = [];
 
 
-                                        let info = results[0];
-                                        if (info.ave == null)
-                                            info.ave = 0;
-                                        else info.ave = parseInt(info.ave, 10);
-                                        res.cookies = req.cookies;
-                                        res.cookie("user_id", results[0].user_id);
-                                        res.render(__dirname + "/views/profileph.pug",
-                                            {
-                                                mytypes: results2,
-                                                contacts: results3,
-                                                favorites: results4,
-                                                info: info,
-                                                active: active,
-                                                config: config,
-                                                guest: guest,
-                                                cookies: req.cookies
+                                                let info = results[0];
+                                                if (info.ave == null)
+                                                    info.ave = 0;
+                                                else info.ave = parseInt(info.ave, 10);
+                                                res.cookies = req.cookies;
+                                                res.cookie("user_id", results[0].user_id);
+                                                res.render(__dirname + "/views/profileph.pug",
+                                                    {
+                                                        mytypes: results2,
+                                                        contacts: results3,
+                                                        favorites: results4,
+                                                        info: info,
+                                                        active: active,
+                                                        config: config,
+                                                        guest: guest,
+                                                        cookies: req.cookies,
+                                                        dates:results1
+                                                    });
+
+                                            })
+                                            .catch(err => {
+                                                console.log(err);
                                             });
-
                                     })
                                     .catch(err => {
                                         console.log(err);
@@ -519,15 +534,27 @@ server.get('/profile/:username', function (req, res) {
                 connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
                     "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [results[0].user_id])
                     .then(([results2, fields2]) => {
-                        res.cookies = req.cookies;
-                        res.render(__dirname + "/views/profile.pug", {
-                            types: types,
-                            info: results[0],
-                            favorites: results2,
-                            active: active,
-                            config: config,
-                            cookies: req.cookies
-                        });
+
+                        connection.query("SELECT order_id,orders.ph_id,client_id,username,date,topic, message_ph,message_cl, status, contact_ph,contact_cl" +
+                            " FROM orders INNER JOIN photographers ON photographers.ph_id=orders.ph_id INNER JOIN users ON photographers.user_id= users.user_id WHERE client_id=? ORDER BY date", [results[0].user_id])
+                            .then(([results3, fields3]) => {
+
+                                res.cookies = req.cookies;
+                                res.render(__dirname + "/views/profile.pug", {
+                                    types: types,
+                                    info: results[0],
+                                    favorites: results2,
+                                    active: active,
+                                    config: config,
+                                    cookies: req.cookies,
+                                    orders:results3
+                                });
+
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+
 
                     })
                     .catch(err => {
@@ -794,8 +821,8 @@ server.post('/filter', (req, res) => {
         sel_user += " AND exp<> ?";
 
     if (req.body.type != '0')
-        sel_user += " AND ph_id IN (SELECT ph_id FROM shoots WHERE type_id=?) ";
-    console.log(sel_user);
+        sel_user += " AND photographers.ph_id IN (SELECT ph_id FROM shoots WHERE type_id=?) ";
+
     connection.query(sel_user + " GROUP BY photographers.ph_id ORDER BY ave DESC ", [req.body.min_price, req.body.max_price, req.body.city, req.body.years, req.body.type])
         .then(([results, fields]) => {
             let phs = [];
@@ -815,7 +842,7 @@ server.post('/filter', (req, res) => {
                                 });
                             })
                             .catch(err => {
-                                console.log(err);
+
                                 res.send({'success': "no"});
                             });
                     }
@@ -887,6 +914,52 @@ server.post('/searchph', (req, res) => {
         })
         .catch(err => {
             res.send({'success': "no"});
+        });
+});
+
+
+server.post('/order', (req, res) =>{
+    res.cookies = req.cookies;
+    console.log(req.body);
+    connection.query("INSERT INTO orders(ph_id,client_id,date,topic,contact_cl,message_cl,status) VALUES(?,?,?,?,?,?,2) ",
+        [req.body.ph_id, req.body.user_id,req.body.date,req.body.topic,req.body.contact_cl,req.body.message_cl])
+        .then(([results, fields]) => {
+            connection.query("DELETE FROM freedates WHERE ph_id=? AND date=?", [req.body.ph_id, req.body.date])
+                .then(([results2, fields2]) => {
+                    console.log("Successfully add data");
+                    console.log(results);
+                    res.send({"success": "yes"});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send({"success": "no", "error": err});
+
+                });
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"success": "no", "error": err});
+
+        });
+
+});
+server.post('/cancel', (req, res) => {
+    res.cookies = req.cookies;
+    connection.query("DELETE FROM orders WHERE order_id=?", [req.body.order_id])
+        .then(([results, fields]) => {
+            connection.query("INSERT INTO freedates(ph_id,date) VALUES(?,?)", [req.body.ph_id,req.body.date])
+                .then(([results, fields]) => {
+                    console.log("Successfully add free date");
+                    res.send({"success":"yes"});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send({"success":"no"});
+                });
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"success":"no"});
         });
 });
 server.post('/addfavorite', (req, res) => {
@@ -1078,10 +1151,10 @@ function splitIntoTags(str) {
 
 
 function hashing(raw) {
-    let hash = require("crypto").createHmac("sha256", "password")
+    let hash = crypto.createHmac("sha256", "password")
         .update(config.salt + raw).digest("hex");
     for (let i = 0; i < 5; i++) {
-        hash = require("crypto").createHmac("sha256", "password")
+        hash = crypto.createHmac("sha256", "password")
             .update(config.salt + hash).digest("hex");
     }
     return hash;
