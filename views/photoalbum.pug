@@ -10,19 +10,19 @@ else
                 i(class='fa fa-arrow-left')
                 span= `до профілю @${ph_username}`
 
-        if(!guest)
-            button(class="btn btn-block col-md-10  btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
-            div
-                button(id='edit_folder', class="link2 bg-transparent border-none", data-toggle="modal",
-                data-target='#edit_folder_modal')
-                    span Перейменувати папку
-                    i(class="fa fa-edit ")
-                button(id='delete_folder', class="link-hover-red  bg-transparent border-none",  data-toggle="modal",
-                data-target='#delete_folder_modal')
-                    span Видалити папку
-                    i(class="fa fa-trash-o ")
-        div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
 
+        div(class="nav sticky-top flex-column nav-pills" id="folders_container" role="tablist" aria-orientation="vertical")
+            if(!guest)
+                button(class="btn btn-block col-md-10 btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_folder_modal') +додати папку
+                div
+                    button(id='edit_folder', class="link2 bg-transparent border-none", data-toggle="modal",
+                    data-target='#edit_folder_modal')
+                        span Перейменувати папку
+                        i(class="fa fa-edit ")
+                    button(id='delete_folder', class="link-hover-red  bg-transparent border-none",  data-toggle="modal",
+                    data-target='#delete_folder_modal')
+                        span Видалити папку
+                        i(class="fa fa-trash-o ")
             div(class="empty_div")
             each f in folders
                 if(f == folders[0])
@@ -39,10 +39,15 @@ else
     .col-md-5
         div(class="tab-content" id='photos_container')
             if(!guest)
-                button(class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
+                button(id='add_photo_button' class="btn btn-block btn-outline-light sharp-corners" type='button', data-toggle="modal", data-target='#add_photo_modal') +додати фото
             br
             script.
+
+
+
                 let folders0 = !{JSON.stringify(folders)};
+                if (folders0[0] == undefined)
+                    $('#add_photo_button').hide();
                 if (getCurrentFolder() == "")
                     setCurrentFolder(folders0[0].folder_id);
             each f in folders

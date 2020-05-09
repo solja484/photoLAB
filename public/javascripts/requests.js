@@ -262,7 +262,7 @@ function addFolder() {
             clearForm("add_folder_form");
 
 
-            $("#folders_container").append("<a class='link1 text-center folder-link' id='folder" + data2.folder_id + "-tab' " +
+            $("#folders_container").append("<a class='link1 text-center col-md-10 folder-link' id='folder" + data2.folder_id + "-tab' " +
                 "data-toggle='pill'  href='#folder" + data2.folder_id + "' role='tab' aria-controls='#folder" + data2.folder_id + "' " +
                 "aria-selected='false' onclick='setCurrentFolder(" + data2.folder_id + ")'>" + name + "</a>");
             $("#photos_container").append("<div class='tab-pane fade' id='folder" + data2.folder_id + "' role='tabpanel' " +
@@ -270,7 +270,7 @@ function addFolder() {
                 "<br>");
             $("#edit_folder_select").append("<option value=" + data2.folder_id + " id='editfolderoption" + data2.folder_id + "'>" + name + "</option>");
             $("#delete_folder_select").append("<option value=" + data2.folder_id + " id='delfolderoption" + data2.folder_id + "'>" + name + "</option>");
-
+            $('#add_photo_button').show();
 
             $("#add_folder_modal .close").click();
         },
@@ -354,8 +354,8 @@ function editFolder() {
 
 function addPhotoLink() {
     let folder_id = getCurrentFolder();
-    if (!validEmpty("add_photolink_link") || !validTags("add_photolink_tags"))
-        return;
+    if (!(validEmpty("add_photolink_link") &&validTags("add_photolink_tags")))
+        return false;
 
 
     let data = {
@@ -384,7 +384,7 @@ function addPhotoLink() {
                     "<div class='img-container'><div class='circle-avatar' style='background-image:url(" + data.link + ")'></div></div>" +
                     "<div class='card-body'>" +
                     "<button class='link-hover-red2 bg-transparent float-right text-20 border-none' data-toggle='modal' " +
-                    "data-target='#delete_photo_modal' onclick='fillDeletePhotoOnclick(" + photo_id + ")'>" +
+                    "data-target='#delete_photo_modal' onclick='fillDeletePhotoOnclick(" + data2.photo_id + ")'>" +
                     "<i class='fa text-20 fa-trash-o '></i></button>" +
                     "<button class='link1 bg-transparent float-right text-20 border-none' data-toggle='modal'  data-target='#edit_photo_modal'" +
                     " onclick='fillEditPhotoModal(" + JSON.stringify(data) + ")' id='editphotobutton" + data2.photo_id + "'>" +
@@ -394,11 +394,12 @@ function addPhotoLink() {
                     " <p class='text-14 text-muted text-break' id='photo_tags" + data2.photo_id + "'></p>" +
                     "</div></div><br>");
 
-                for (tag of taglist) {
-                    $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?value=" + tag + "'>#" + tag + "' '</a>");
-                }
-
                 $("#add_photo_modal .close").click();
+                    let pattern=[/\s/];
+                for (tag of taglist)
+                    if(!tag.match(pattern))
+                    $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?value=" + tag + "'>#" + tag + " "+"</a>");
+
             } else {
                 $("#add_photo_modal").append("<div id='photo_fail' class='panel panel-danger'><div class='panel-heading'>" +
                     "Виникла помилка при додавані фото, спробуйте ще раз</div></div>");
@@ -612,6 +613,7 @@ function makeOrder(ph_id, user_id, month, day, year) {
     let a = validEmpty("make_order_topic");
     let b = validEmpty("make_order_contact");
 
+    if(!(a&&b)) return false;
     let topic=$("#make_order_topic").val();
     let data = {
         "ph_id": ph_id,
@@ -630,7 +632,7 @@ function makeOrder(ph_id, user_id, month, day, year) {
         contentType: 'application/json',
         success: function (data2) {
             if(data2.success=="yes"){
-                $("#day"+day+"-"+month).attr("onclick","").removeClass("free").addClass("busy");
+                $("#day"+day+"-"+month).prop("onclick", null).off("click").removeClass("free").addClass("busy").removeAttr('data-target');
 
                 $("#make_order_form").prepend("<div class='panel panel-success' id='order_success'>" +
                     "<div class='panel-heading'><icon class='fa fa-check'></icon>Замовлення відправлено фотографу! Очікуйте відповіді </div></div>");
@@ -675,7 +677,7 @@ function cancelOrder(order_id,date,ph_id){
 
 
     $.ajax({
-        url: 'http://localhost:2606/cancel',
+        url: 'http://localhost:2606/deleteorder',
         type: 'post',
         dataType: 'json',
         data: JSON.stringify(data),
@@ -713,20 +715,13 @@ function cancelOrder(order_id,date,ph_id){
 
 
 function approve(order){
-    console.log("HERE!");
-    console.log(order);
-    order=JSON.stringify(order);
-    console.log(order);
 
-    let date_sql=order.date.split('T');
 
     if(!validEmpty("approve_order_contact")) return false;
 
     let order_id=order.order_id;
     let data= {
         "order_id": order_id,
-        "date": date_sql[0],
-        "ph_id":ph_id,
         "message_ph":$("#approve_order_text").val(),
         "contact_ph":$("#approve_order_contact").val()
     };
@@ -743,20 +738,31 @@ function approve(order){
         contentType: 'application/json',
         success: function (data2) {
             if(data2.success=="yes"){
-                order.message_cl=$("#approve_order_text").val();
-                order.contact_cl=$("#contact_order_text").val();
+                order.message_ph=$("#approve_order_text").val();
+                order.contact_ph=$("#approve_order_contact").val();
                 $("#order"+order_id).remove();
-                $("#approved_orders").append("<div class='panel panel-success mg-b-20'>" +
+                $("#approved_orders").append("<div class='panel panel-success mg-b-20'  id='order"+order_id+"'>" +
                     "<div class='panel-heading pointer' data-toggle='collapse' href='#ordercard"+order_id+"' aria-expanded='true'>" +
                     "<span class='pd-r-25' id='date_order"+order_id+"'>"+date+"</span>" +
                     "<a class='link1' href='/guest/"+order.username+"'>@"+order.username+"</a>" +
-                    "<i class='fa fa-check mg-5 float-right'></i></div>" +
+                    "<i class='fa fa-check mg-5 float-right'></i>" +
+                    "</div>" +
                     "<div class='panel-body collapse show in' id='ordercard"+order_id+"' aria-expanded='true' >" +
-                    "<p>"+order.topic+"</p><div class='row'><div class='col-md-4'></div><div class='col-md-8'>" +
-                    "<p class='text-break'>"+order.message_cl+"</p><p>"+order.contact_cl+"</p></div>" +
-                    "<div class='col-md-8'><p class='text-break'>"+order.message_ph+"</p><p>"+order.contact_ph+"</p></div>" +
-                    "<div class='col-md-4'></div></div></div></div>");
+                    "<p>Тема: "+order.topic+"</p>" +
+                    "<div class='row'>" +
+                    "<div class='col-md-8'>" +
+                    "<p class='text-break'>"+order.message_cl+"</p><p>Контакт клієнта:"+order.contact_cl+"</p></div>" +
+                    "<div class='col-md-4'></div><div class='col-md-4'></div>" +
+                    "<div class='col-md-8'><p class='text-break'>"+order.message_ph+"</p><p>Ваш контакт:"+order.contact_ph+"</p></div>" +
+                    "<div class='col-md-12'><button class='border-none btn-block bg-transparent red pointer' data-toggle='modal'" +
+                    " onclick='setCancelOrderOnclick("+JSON.stringify(order)+") ' data-target='#cancel_order_modal'>Скасувати замовлення</button></div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>");
 
+                $("#approve_order_modal .close").click();
+                removeValid("approve_order_form");
+                clearForm("approve_order_form");
             }
         },
         error: function (data2) {
@@ -771,13 +777,12 @@ function approve(order){
 
 function cancel(order){
 
+    console.log("I'm in canceling");
     if(!validEmpty("cancel_order_reason")) return false;
-    let date_sql=order.date.split('T');
     let order_id=order.order_id;
     let data= {
         "order_id": order_id,
-        "date": date_sql[0],
-        "ph_id":ph_id
+        "message_ph":$("#cancel_order_reason").val()
     };
 
     let d = order.date.split(/[-T:]/);
@@ -793,16 +798,25 @@ function cancel(order){
             if(data2.success=="yes"){
                 $("#order"+order_id).remove();
                order.message_ph=$("#cancel_order_reason").val();
-                $("#cancelled_orders").append("<div class='panel panel-success mg-b-20'>" +
+                $("#cancelled_orders").append("<div class='panel panel-danger mg-b-20' id='order"+order_id+"'>" +
                     "<div class='panel-heading pointer' data-toggle='collapse' href='#ordercard"+order_id+"' aria-expanded='true'>" +
                     "<span class='pd-r-25' id='date_order"+order_id+"'>"+date+"</span>" +
                     "<a class='link1' href='/guest/"+order.username+"'>@"+order.username+"</a>" +
-                    "<i class='fa fa-check mg-5 float-right'></i></div>" +
+                    "<i class='fa fa-times mg-5 float-right'></i>" +
+                    "</div>" +
                     "<div class='panel-body collapse show in' id='ordercard"+order_id+"' aria-expanded='true' >" +
-                    "<p>"+order.topic+"</p><div class='row'><div class='col-md-4'></div><div class='col-md-8'>" +
-                    "<p class='text-break'>"+order.message_cl+"</p><p>"+order.contact_cl+"</p></div>" +
-                    "<div class='col-md-8'><p class='text-break red'>"+order.message_ph+"</p></div>" +
-                    "<div class='col-md-4'></div></div></div></div>");
+                    "<p>Тема: "+order.topic+"</p>" +
+                    "<div class='row'>" +
+                    "<div class='col-md-8'>" +
+                    "<p class='text-break'>"+order.message_cl+"</p><p>Контакт клієнта:"+order.contact_cl+"</p></div>" +
+                    "<div class='col-md-4'></div><div class='col-md-4'></div>" +
+                    "<div class='col-md-8'><p class='text-break'> Причина відмови: <br>"+order.message_ph+"</p></div>" +
+                    "<div class='col-md-12'><button class='border-none btn-block bg-transparent light-green pointer' data-toggle='modal'" +
+                    " onclick='setApproveOrderOnclick("+JSON.stringify(order)+") ' data-target='#approve_order_modal'>Підтвердити замовлення</button></div>" +
+                    "</div></div></div>");
+                $("#cancel_order_modal .close").click();
+                removeValid("cancel_order_form");
+                clearForm("cancel_order_form");
 
             }
         },
@@ -849,8 +863,7 @@ function setBusy(ph_id, month, day, year) {
         contentType: 'application/json',
         success: function (data2) {
             if(data2.success=="yes")
-
-                $("#day" + day + "-" + month).removeClass("active-date").addClass("inactive").attr("onclick", "setFree(" + ph_id + "," + month + "," + day + "," + year + ")");
+                $("#day" + day + "-" + month).addClass("inactive").removeClass("active-date").attr("onclick", "setFree(" + ph_id + "," + month + "," + day + "," + year + ")");
 
 
 
@@ -880,9 +893,7 @@ function setFree(ph_id, month, day, year) {
         success: function (data2) {
             if(data2.success=="yes")
 
-                $("#day" + day + "-" + month).removeClass("inactive").addClass("active-date").attr("onclick", "setBusy(" + ph_id + "," + month + "," + day + "," + year + ")");
-
-
+                $("#day" + day + "-" + month).addClass("active-date").removeClass("inactive").attr("onclick", "setBusy(" + ph_id + "," + month + "," + day + "," + year + ")");
 
         },
         error: function (data2) {

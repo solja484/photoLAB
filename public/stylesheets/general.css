@@ -49,7 +49,9 @@ body{
 .red{
     color: #dc3545;
 }
-
+.light-green{
+    color: #7ea454;
+}
 .mg-0{
     margin:0!important;
 }
@@ -97,6 +99,7 @@ body{
 .pd-r-25{
     padding-right: 25px!important;
 }
+
 .pd-5{
     padding:5px;
 }
@@ -158,7 +161,7 @@ body{
 
 }
 .minh{
-    min-height:100px;
+    min-height:75px;
 }
 
 .empty_div{

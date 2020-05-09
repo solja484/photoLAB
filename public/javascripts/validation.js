@@ -116,7 +116,7 @@ function validEmpty(str) {
 //function for validation tags - let only letters and numbers
 function validTags(str) {
     const selector = $("#" + str);
-    let name = selector.text();
+    let name = selector.val();
 
     if (name==="") {
         selector.removeClass('is-invalid');

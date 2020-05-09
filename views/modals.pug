@@ -57,7 +57,7 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
                                 textarea(id="add_photolink_tags" class="form-control" rows=2)
                                 small(class='text-14 text-muted') Одне слово-один тег
                                 div(class='invalid-feedback') Тільки букви та цифри, без # та інших символів
-                        button( class="btn btn-info btn-block" onclick='addPhotoLink()') Додати фото!
+                        button( class="btn btn-info bg-green btn-block" onclick='addPhotoLink()') Додати фото!
 
 
                     div(class="tab-pane fade" id="download_photo" role="tabpanel" aria-labelledby="download_photo_tab")
@@ -66,7 +66,7 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
                                 label(for="photo_file" class="non-bold") Оберіть файл:
                                 input(type="file", id="photo_file", class="form-control", name='photo_file', accept="image/*")
                                 div(class="invalid-feedback text-14 mg-l-15") Оберіть файл!
-                        button(type="button" class="btn btn-info btn-block ") Додати фото!
+                        button(type="button" class="btn btn-info bg-green btn-block ") Додати фото!
 
 
 div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
@@ -138,18 +138,19 @@ div(id="cancel_order_modal", class="modal fade font-17", role="dialog", aria-hid
         div(class="modal-content" )
             div(class="modal-body")
                 button(type="button" class="close" data-dismiss="modal") &times;
-                div(class="row")
+                form(id='cancel_order_form')
                     br
                     p(class="text-24 text-center col-md-12") Ви впевнені, що хочете скасувати замовлення?
                     div(class="form-group")
                         label(for='cancel_order_reason' class='non-bold') Вкажіть причину скасування замовлення:
                         input(type="text", class='form-control' id="cancel_order_reason")
                         div(class="invalid-feedback text-14") Це поле не може бути пустим!
-                    .col-md-6
-                        .row
-                            .col-md-1
-                            button(class="btn btn-md btn-danger col-md-10" type="button" id='cancel_order_button') Скасувати!
-                    .col-md-6
-                        .row
-                            .col-md-1
-                            button(class="btn btn-md btn-default col-md-10" type="button" data-dismiss="modal") Повернутись
+            .row
+                .col-md-6
+                    .row(class='pd-0 mg-0 row')
+                        .col-md-1
+                        button(class="btn btn-md btn-danger mg-10 col-md-10" type="button" id='cancel_order_button') Скасувати!
+                .col-md-6
+                    .row
+                        .col-md-1
+                        button(class="btn btn-md btn-default mg-10 col-md-10" type="button" data-dismiss="modal") Повернутись

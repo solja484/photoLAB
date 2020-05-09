@@ -50,6 +50,7 @@ function editClientInfo(info, users) {
         if(!(t&&s&&u)) return false;
     }
 
+
     let data={
         "user_id":info.user_id,
         "username":$("#edit_username").val(),
@@ -84,6 +85,8 @@ function editClientInfo(info, users) {
                     "<div class='panel-heading'>Дані оновлено</div></div>");
                 setTimeout(() => {
                     $("#edit_success").remove();
+                    if(info.username!=data.username)
+                        window.location.replace('/edit/'+data.username);
                 }, 15000);
             }else{
                 $("#edituser").append("<div class='panel panel-danger' id='edit_failed'>" +

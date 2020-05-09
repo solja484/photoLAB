@@ -49,7 +49,6 @@ server.get('/registry', function (req, res) {
     connection.query(
         "SELECT * FROM users"
     ).then(([results, fields]) => {
-        console.log(res.cookies);
         res.render(__dirname + "/views/registration.pug", {
             types: types,
             active: active,
@@ -65,7 +64,6 @@ server.get('/registry', function (req, res) {
 });
 
 server.get('/about', function (req, res) {
-
     let active = 'about';
     res.cookies = req.cookies;
     res.render(__dirname + "/views/about.pug", {
@@ -77,8 +75,8 @@ server.get('/about', function (req, res) {
 
 server.get('/', function (req, res) {
     let active = 'home';
-    console.log(req.cookies);
 
+    console.log(req.cookies);
     if (req.cookies.auth == 'true') {
 
         res.cookies = req.cookies;
@@ -98,7 +96,6 @@ server.get('/', function (req, res) {
             connection.query(
                 "SELECT ph_id,link FROM photos INNER JOIN folders ON photos.folder_id=folders.folder_id ")
                 .then(([results2, fields2]) => {
-
                     res.cookies = req.cookies;
                     res.render(__dirname + '/views/home.pug',
                         {
@@ -126,7 +123,7 @@ server.get('/home/:username', (req, res) => {
     res.cookies = req.cookies;
 
     let username = req.params.username;
-    console.log("user: " + req.cookies.username + " " + username);
+    console.log("user: " + req.cookies.username);
 
     if ((req.cookies.auth == 'false') && username == req.cookies.username)
         res.redirect('/');
@@ -149,7 +146,6 @@ server.get('/home/:username', (req, res) => {
                 "SELECT link, ph_id FROM photos INNER JOIN folders ON folders.folder_id=photos.folder_id ORDER BY ph_id ASC, photo_id DESC"
             ).then(([results4, fields4]) => {
 
-                console.log(res.cookies);
                 res.render(__dirname + '/views/home.pug',
                     {
                         types: types,
@@ -195,8 +191,6 @@ server.get('/guest/photoalbum/:username', (req, res) => {
                             results2[p].taglist = splitIntoTags(results2[p].tags);
                     connection.query("SELECT folder_id,name FROM folders WHERE ph_id =? GROUP BY folder_id ORDER BY folder_id", [ph_id])
                         .then(([results3, fields3]) => {
-
-
                             res.render(__dirname + "/views/photoalbum.pug", {
                                 config: config,
                                 guest: guest,
@@ -224,7 +218,6 @@ server.get('/guest/photoalbum/:username', (req, res) => {
 server.get('/guest/:username', (req, res) => {
     let guest_username = req.params.username;
     res.cookies = req.cookies;
-    console.log(req.cookies);
     console.log("guest " + guest_username);
     let active = '';
     let guest = true;
@@ -444,7 +437,6 @@ server.get('/photoalbum/:username', function (req, res) {
 server.get('/profile/:username', function (req, res) {
     let username = req.params.username;
     res.cookies = req.cookies;
-    console.log("HERE1");
     if (req.cookies.auth == 'false') {
         if (username == req.cookies.username)
             res.redirect('/');
@@ -453,22 +445,15 @@ server.get('/profile/:username', function (req, res) {
     if (username != req.cookies.username)
         res.redirect('/guest/' + req.cookies.username);
 
-    console.log(req.cookies);
     let active = 'profile';
     let guest = false;
-
     if (req.cookies.role == 'photographer') {
         connection.query(" SELECT photographers.ph_id AS ph_id,photographers.user_id AS user_id,email,avatar_link,city," +
             "organization,username,lastname,firstname,fathername,price,exp,organization,about,ROUND(AVG(mark)) AS ave " +
             " FROM ( photographers INNER JOIN users ON photographers.user_id=users.user_id ) LEFT JOIN ratings " +
             " ON photographers.ph_id=ratings.ph_id WHERE username = ? GROUP BY ph_id ", [username])
             .then(([results, fields]) => {
-
                 let ph_id = results[0].ph_id;
-
-                console.log("username" + username);
-                console.log(results);
-
                 connection.query("SELECT date FROM freedates WHERE ph_id=?", [ph_id])
                     .then(([results1, fields1]) => {
                         connection.query("SELECT name FROM types INNER JOIN shoots ON types.type_id=shoots.type_id WHERE ph_id=?", [ph_id])
@@ -543,11 +528,9 @@ server.get('/profile/:username', function (req, res) {
                 connection.query("SELECT photographers.ph_id, username, avatar_link, price, city FROM favorites " +
                     "INNER JOIN photographers ON photographers.ph_id=favorites.ph_id INNER JOIN users ON users.user_id = photographers.user_id WHERE favorites.user_id=? ORDER BY username", [results[0].user_id])
                     .then(([results2, fields2]) => {
-
                         connection.query("SELECT order_id,orders.ph_id,client_id,username,date,topic, message_ph,message_cl, status, contact_ph,contact_cl" +
                             " FROM orders INNER JOIN photographers ON photographers.ph_id=orders.ph_id INNER JOIN users ON photographers.user_id= users.user_id WHERE client_id=? ORDER BY date", [results[0].user_id])
                             .then(([results3, fields3]) => {
-
                                 res.cookies = req.cookies;
                                 res.render(__dirname + "/views/profile.pug", {
                                     types: types,
@@ -563,13 +546,10 @@ server.get('/profile/:username', function (req, res) {
                             .catch(err => {
                                 console.log(err);
                             });
-
-
                     })
                     .catch(err => {
                         console.log(err);
                     });
-
             })
             .catch(err => {
                 console.log(err);
@@ -612,7 +592,6 @@ server.post('/register', (req, res) => {
     connection.query("INSERT INTO users(username,email,user_pass,city,role_id) VALUES(?,?,?,?,1)", [username, req.body.email, pass, req.body.city])
         .then(([results, fields]) => {
             console.log("successfully add user");
-            console.log(results.insertId);
             res.cookie('role', "client");
             res.cookie('auth', 'true');
             res.cookie('user_id', results.insertId);
@@ -628,13 +607,11 @@ server.post('/register', (req, res) => {
 });
 
 server.post('/registerph', (req, res) => {
-    console.log("i'm in registration");
     let pass = hashing(req.body.password);
     let username = req.body.username;
     connection.query("INSERT INTO users(username,email,user_pass,city,role_id) VALUES(?,?,?,?,2)", [username, req.body.email, pass, req.body.city])
         .then(([results, fields]) => {
             let user_id = results.insertId;
-            console.log(user_id);
             connection.query("INSERT INTO photographers(user_id,lastname,firstname,fathername,price,exp,organization) " +
                 "VALUES(?,?,?,?,?,?,?)", [user_id, req.body.lastname, req.body.firstname, req.body.fathername, req.body.price,
                 req.body.experience, req.body.organization])
@@ -645,7 +622,6 @@ server.post('/registerph', (req, res) => {
                     if (types != []) {
                         for (let i in types)
                             types[i].push(ph_id)
-                        console.log(types);
                         connection.query("INSERT INTO shoots(type_id,ph_id) VALUES ?", [types])
                             .then(([results3, fields3]) => {
                                 console.log("successfully add types");
@@ -681,7 +657,6 @@ server.post('/registerph', (req, res) => {
 
 
 });
-
 
 server.post('/login', (req, res) => {
 
@@ -740,12 +715,12 @@ server.post('/editclient', (req, res) => {
         .then(([results, fields]) => {
 
             res.cookies = req.cookies;
+            res.cookie("username",req.body.username);
             if (req.body.role == 'photographer')
                 connection.query("UPDATE photographers SET user_id=?, firstname=?, lastname=?,fathername=?,price=?,exp=?,organization=? WHERE ph_id=?",
                     [req.body.user_id, req.body.firstname, req.body.lastname, req.body.fathername, req.body.price, req.body.experience, req.body.organization, req.body.ph_id])
                     .then(([results, fields]) => {
                         console.log("Successfully updated photographer");
-                        res.cookies = req.cookies;
                         res.cookie('username', req.body.username);
                         res.send({'success': 'yes'});
                     })
@@ -952,7 +927,7 @@ server.post('/order', (req, res) =>{
         });
 
 });
-server.post('/cancel', (req, res) => {
+server.post('/deleteorder', (req, res) => {
     res.cookies = req.cookies;
     connection.query("DELETE FROM orders WHERE order_id=?", [req.body.order_id])
         .then(([results, fields]) => {
@@ -971,6 +946,24 @@ server.post('/cancel', (req, res) => {
             res.send({"success":"no"});
         });
 });
+
+
+server.post('/cancel', (req, res) => {
+
+    connection.query("UPDATE orders SET status=0,message_ph=? WHERE order_id=?", [req.body.message_ph,  req.body.order_id])
+        .then(([results, fields]) => {
+            console.log("Successfully updated data");
+            res.cookies = req.cookies;
+            res.send({"success":"yes"});
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({"error":err});
+
+        });
+
+});
+
 server.post('/approve', (req, res) => {
 
     connection.query("UPDATE orders SET status=1,message_ph=?, contact_ph=? WHERE order_id=?", [req.body.message_ph, req.body.contact_ph, req.body.order_id])

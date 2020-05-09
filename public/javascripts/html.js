@@ -12,10 +12,10 @@ function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
     for (let ph of phinfo) {
         if ((cookies.auth == 'true' && ph.username !== cookies.username) || (cookies.auth == 'false')) {
             let avatar_link = ph.avatar_link;
-            if (ph.avatar_link == undefined || ph.avatar_link == null)
+            if (ph.avatar_link == undefined || ph.avatar_link == null|| ph.avatar_link == "")
                 avatar_link = "https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg";
             let organization = ph.organization;
-            if (ph.organization == undefined || ph.organization == null)
+            if (ph.organization == undefined || ph.organization == null || ph.organization == "")
                 organization = " ";
             $("#search_people").append("<div class='panel panel-primary' id='searchph" + ph.ph_id + "'><div class='row mg-0 pd-10'>" +
                 "<div class='col-md-3'>" +
@@ -386,17 +386,19 @@ function setOrdersDate(orders) {
 
     for (let order of orders) {
         let d = order.date.split(/[-T:]/);
+        console.log(order.date+" "+d[2]+"-"+d[1]);
+        d[2]++;
         $("#date_order" + order.order_id).text(d[2] + ' ' + months[parseInt(d[1], 10)].genitive + " " + d[0] + " ");
     }
 }
 
 function setCancelOrderOnclick(order){
-    $("#cancel_order_button").attr("onclick","cancel(" + order + ")");
+    $("#cancel_order_button").attr("onclick","cancel(" + JSON.stringify(order) + ")");
 
 }
 
 function setApproveOrderOnclick(order){
 
-    $("#approve_order_button").attr("onclick","approve(" + order+")");
+    $("#approve_order_button").attr("onclick","approve(" + JSON.stringify(order)+")");
 
 }

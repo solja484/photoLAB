@@ -155,61 +155,91 @@ else
                         span(class="carousel-control-next-icon"  aria-hidden="true")
                         span(class="sr-only") Next
                 .col-md-1
-                .col-md-12
-                    p(class='text-20 text-center mg-top-20') Замовлені зйомки
-                    .row
-                        .col-md-4(class='pd-15' id='approved_orders')
-                            p(class=' text-center') Підтверджені
-                            each order in orders
-                                if(order.status == 1)
-                                    .panel.panel-success(class='mg-b-20')
-                                        .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
-                                            span(id=`date_order${order.order_id}` class='pd-r-25')
-                                            a(class="link1" href=`/guest/${order.username}`)= '@' + order.username
-                                            i(class='fa fa-check mg-5 float-right')
-                                        .panel-body(class="collapse" id=`ordercard${order.order_id}`)
-                                            p= 'Тема: ' + order.topic
-                                            .row
-                                                .col-md-4
-                                                .col-md-8
-                                                    p(class='text-break')= order.message_cl
-                                                    p= "Контакт для зв'язку: " + order.contact_cl
-                                                .col-md-8
-                                                    p(class='text-break')= order.message_ph
-                                                    p= 'Контакт фотографа: ' + order.contact_ph
-                                                .col-md-4
-                        .col-md-4(class='pd-15' id='process_orders')
-                            p(class=' text-center') Нові
-                            each order in orders
-                                if(order.status == 2)
-                                    .panel.panel-warning(class='mg-b-20' id=`order${order.order_id}`)
-                                        .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
-                                            span(id=`date_order${order.order_id}` class='pd-r-25')
-                                            a(class='link1' href=`/guest/${order.username}`)= '@' + order.username
-                                            i(class='fa fa-clock-o mg-5 float-right')
-                                        .panel-body(class="collapse" id=`ordercard${order.order_id}`)
-                                            p= 'Тема: ' + order.topic
-                                            .row
-                                                .col-md-4
-                                                .col-md-8
-                                                    p(class='text-break')= order.message_cl
-                                                    p= "Контакт для зв'язку: " + order.contact_cl
-                                                .col-md-12
-                                                    button(class='btn-block text-left green border-none bg-transparent pd-5' data-toggle='modal' data-target='#approve_order_modal'
-                                                    onclick=`setApproveOrderOnclick(${JSON.stringify(order)})`)
-                                                        i(class='fa fa-arrow-left green')
-                                                        span Підтвердити замовлення
-                                                .col-md-12
-                                                    button(class='btn-block text-right red border-none bg-transparent pd-5' data-toggle='modal' data-target='#cancel_order_modal'
-                                                    onclick=`setCancelOrderOnclick(${JSON.stringify(order)})`) Скасувати замовлення
-                                                        i(class='fa fa-arrow-right red')
+                .col-md-2
+                if(guest)
+                    .col-md-12(class='minh')
+                if(!guest)
+                    .col-md-10
+                        p(class='text-muted text-14 ') Встановлюйте дати активними та неактивними просто натискаючи на клітинки календаря
+                    .col-md-12
+                        p(class='text-20 text-center mg-top-20') Замовлені зйомки
+                        .row
+                            .col-md-4(class='pd-15' id='approved_orders')
+                                p(class=' text-center') Підтверджені
+                                each order in orders
+                                    if(order.status == 1)
+                                        .panel.panel-success(class='mg-b-20' id=`order${order.order_id}`)
+                                            .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                                span(id=`date_order${order.order_id}` class='pd-r-25')
+                                                a(class="link1" href=`/guest/${order.username}`)= '@' + order.username
+                                                i(class='fa fa-check mg-5 float-right')
+                                            .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                                p= 'Тема: ' + order.topic
+                                                .row
+                                                    .col-md-8
+                                                        p(class='text-break')= order.message_cl
+                                                        p= "Контакт клієнта: " + order.contact_cl
+                                                    .col-md-4
+                                                    .col-md-4
+                                                    .col-md-8
+                                                        p(class='text-break')= order.message_ph
+                                                        p= 'Ваш контакт: ' + order.contact_ph
+                                                    .col-md-12
+                                                        button(class='border-none btn-block bg-transparent red pointer' data-toggle='modal' data-target='#cancel_order_modal'
+                                                        onclick=`setCancelOrderOnclick(${JSON.stringify(order)})`) Скасувати замовлення
+                            .col-md-4(class='pd-15' id='process_orders')
+                                p(class=' text-center') Нові
+                                each order in orders
+                                    if(order.status == 2)
+                                        .panel.panel-warning(class='mg-b-20' id=`order${order.order_id}`)
+                                            .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                                span(id=`date_order${order.order_id}` class='pd-r-25')
+                                                a(class='link1' href=`/guest/${order.username}`)= '@' + order.username
+                                                i(class='fa fa-clock-o mg-5 float-right')
+                                            .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                                p= 'Тема: ' + order.topic
+                                                .row
 
-                        .col-md-4(id='cancelled_orders' class='pd-15')
-                            p(class=' text-center') Скасовані
-                        .col-md-12(class='minh')
-                    script   setOrdersDate(!{JSON.stringify(orders)});
+                                                    .col-md-8
+                                                        p(class='text-break')= order.message_cl
+                                                        p= "Контакт клієнта: " + order.contact_cl
+                                                    .col-md-4
+                                                    .col-md-12
+                                                        button(class='btn-block text-left light-green border-none bg-transparent pd-5' data-toggle='modal' data-target='#approve_order_modal'
+                                                        onclick=`setApproveOrderOnclick(${JSON.stringify(order)})`)
+                                                            i(class='fa fa-arrow-left light-green')
+                                                            span Підтвердити замовлення
+                                                    .col-md-12
+                                                        button(class='btn-block text-right red border-none bg-transparent pd-5' data-toggle='modal' data-target='#cancel_order_modal'
+                                                        onclick=`setCancelOrderOnclick(${JSON.stringify(order)})`) Скасувати замовлення
+                                                            i(class='fa fa-arrow-right red')
+
+                            .col-md-4(id='cancelled_orders' class='pd-15')
+                                p(class=' text-center') Скасовані
+                                each order in orders
+                                    if(order.status == 0)
+                                        .panel.panel-danger(class='mg-b-20' id=`order${order.order_id}`)
+                                            .panel-heading(data-toggle="collapse" href=`#ordercard${order.order_id}` aria-expanded="false" class='pointer')
+                                                span(id=`date_order${order.order_id}` class='pd-r-25')
+                                                a(class="link1" href=`/guest/${order.username}`)= '@' + order.username
+                                                i(class='fa fa-times mg-5 float-right')
+                                            .panel-body(class="collapse" id=`ordercard${order.order_id}`)
+                                                p= 'Тема: ' + order.topic
+                                                .row
+                                                    .col-md-8
+                                                        p(class='text-break')= order.message_cl
+                                                        p= "Контакт клієнта: " + order.contact_cl
+                                                    .col-md-4
+                                                    .col-md-4
+                                                    .col-md-8
+                                                        p(class='text-break')= order.message_ph
+                                                    .col-md-12
+                                                        button(class='border-none btn-block bg-transparent light-green pointer' data-toggle='modal' data-target='#approve_order_modal'
+                                                        onclick=`setApproveOrderOnclick(${JSON.stringify(order)})`) Підтвердити замовлення
+                            .col-md-12(class='minh')
+                        script   setOrdersDate(!{JSON.stringify(orders)});
 
 
     .col-md-1
-
+div(class='expand minh darkk')
 
