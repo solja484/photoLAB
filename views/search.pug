@@ -1,0 +1,34 @@
+if(cookies.auth == 'true')
+    include ../navbar
+else if(cookies.auth == 'false')
+    include ../navbar_unsign
+
+.row(class='mg-0 pd-0')
+    .col-md-12(class='mg-b-20 minh')
+        form(class="search-form" method='get' action='/search' id='search_form')
+            div(class="input-group mb-3")
+                input(type="search" class="form-control" name='q' id="search_input" placeholder="Моя ідеальна фотосесія" value=`${request}`)
+                div(class="input-group-append")
+                    button(class="btn btn-warning " type='submit' )
+                        i(class='fa fa-search mg-h-5')
+                        i(class='fa fa-image')
+
+    each photo in photos
+        div(class='col-md-4' id=`photo${photo.photo_id}`)
+            div(class='card mg-top-10')
+                div(class='empty-div')
+                    br
+                div(class='img-container')
+                    div(class="circle-avatar " style=`background-image:url(${photo.link})`)
+                div(class='card-body')
+                    if(photo.name!=null&&photo.name!=undefined)
+                        p= photo.name
+                    if(photo.descr!= null && photo.descr != undefined)
+                        p(class='text-muted text-break')= photo.descr
+                    if(photo.taglist!=[])
+                        each tag in photo.taglist
+                            a(class='link1' href=`/search?q=${tag}`)= '#' + tag + ' '
+
+
+
+

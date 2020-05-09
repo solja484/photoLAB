@@ -66,16 +66,16 @@ function search() {
     console.log(localStorage.getItem("search"));
     if (localStorage.getItem("search") == 'person')
         searchPh(words[0]);
-    else searchPhoto(words);
+    else $("#search_form").submit();
 
 }
 
 function searchPh(name) {
-    $("#cancel_search").hide();
-    $("#filter_error").hide();
+
     let sel = $("#search_people");
     $("#filter_spinner").show().focus();
-
+    $("#cancel_search").hide();
+    $("#filter_error").hide();
     let data = {
         "name": name
     };
@@ -93,6 +93,9 @@ function searchPh(name) {
                 fillSearchPhotographers(data2.ph_info, data2.cookies, data2.photos, data2.favorites, data2.ratings);
                 $("#filter_spinner").hide();
                 $("#filter_error").hide();
+                $("#cancel_search").show();
+                clearForm("search_form");
+                removeValid("search_form");
             }
             else searchFailed();
         },
@@ -106,6 +109,27 @@ function searchPh(name) {
 
 function searchPhoto(words){
 
+    let values=[
+        [2],[1]
+    ];
+
+
+    let data={
+        "values":values
+    };
+    $.ajax({
+        url: 'http://localhost:2606/searchphoto',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data2) {
+
+        },
+        error: searchFailed()
+
+
+    });
 }
 
 function searchFailed() {
@@ -113,6 +137,8 @@ function searchFailed() {
     $("#filter_error").show();
     $("#cancel_search").show();
     $("#search_people").empty();
+    clearForm("search_form");
+    removeValid("search_form");
 }
 
 function filterFailed() {

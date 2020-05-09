@@ -575,6 +575,8 @@ server.get('/admin', function (req, res) {
         });
 });
 
+
+
 server.post('/logout', function (req, res) {
 
     res.cookie("auth", 'false');
@@ -900,7 +902,27 @@ server.post('/searchph', (req, res) => {
             res.send({'success': "no"});
         });
 });
+server.get('/search', function (req, res) {
 
+let request=req.query.q;
+    connection.query(" SELECT photo_id, username, link,title,tags, descr, photos.folder_id " +
+        "FROM ((photos INNER JOIN folders ON folders.folder_id=photos.folder_id )" +
+        " INNER JOIN photographers ON folders.ph_id=photographers.ph_id) INNER JOIN users ON photographers.user_id=users.user_id ")
+        .then(([results2, fields2]) => {
+            for (p in results2)
+                results2[p].taglist = splitIntoTags(results2[p].tags);
+            //console.log(results);
+            res.render(__dirname + "/views/search.pug", {
+                photos: results2,
+                config: config,
+                cookies: req.cookies,
+                request:request
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
 
 server.post('/order', (req, res) =>{
     res.cookies = req.cookies;
@@ -1184,11 +1206,13 @@ server.post('/hashpass', (req, res) => {
 
 
 function splitIntoTags(str) {
-    let tags = [];
-    let stringArray = str.split(/\s/);
-    for (s of stringArray)
-        tags.push(s);
-    return tags;
+    if(str==null||str==""||str==undefined)
+        return [];
+    let tagList = [];
+    let tags = str.split(/\s/);
+    for (let tag of tags)
+        tagList.push(tag);
+    return tagList;
 }
 
 

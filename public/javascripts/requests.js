@@ -398,7 +398,7 @@ function addPhotoLink() {
                     let pattern=[/\s/];
                 for (tag of taglist)
                     if(!tag.match(pattern))
-                    $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?value=" + tag + "'>#" + tag + " "+"</a>");
+                    $("#photo_tags" + data2.photo_id).append("<a class='link1' href='/search?q=" + tag + "'>#" + tag + " "+"</a>");
 
             } else {
                 $("#add_photo_modal").append("<div id='photo_fail' class='panel panel-danger'><div class='panel-heading'>" +
@@ -480,7 +480,7 @@ function editPhoto(photo_id) {
             $("#photo_descr" + photo_id).text(data.descr);
             $("#photo_tags" + photo_id).empty();
             for (tag of data2)
-                $("#photo_tags" + photo_id).append("<a class='link1' href='search?value=" + tag + "'> #" + tag + "</a>");
+                $("#photo_tags" + photo_id).append("<a class='link1' href='search?q=" + tag + "'> #" + tag + "</a>");
 
 
             data.taglist = data2;

@@ -82,7 +82,11 @@ body{
 }
 
 .mg-b-20{
-    margin-bottom: 20px!important;
+     margin-bottom: 20px;
+ }
+
+.mg-b-40{
+    margin-bottom: 40px;
 }
 .pd-0{
     padding: 0!important;
@@ -163,6 +167,9 @@ body{
 .minh{
     min-height:75px;
 }
+
+
+
 
 .empty_div{
     height:25px!important;
