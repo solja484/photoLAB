@@ -86,6 +86,19 @@
 
 }
 
+.green-link {
+    color: #34a99c;!important;
+    font-size: 18px;
+    font-style: italic;
+}
+.green-link:hover,.green-link:focus,.green-link:active{
+
+    color: #27776a;
+    text-decoration: none;
+}
+
+
+
 .search_link{
     background: rgba(0, 0, 0, 0.5);
     color:white;!important;

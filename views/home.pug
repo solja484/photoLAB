@@ -12,7 +12,7 @@ else if(cookies.auth=='false')
                 img(class="d-block w-100", src="/public/images/slider2.jpg", alt="Second slide")
             div(class="carousel-item mg-0")
                 img(class="d-block w-100 mg-0", src="/public/images/slider7.jpg", alt="Third slide")
-        form(class="search-form" id='search_form' action='/search' method="GET")
+        form(class="search-form" id='search_form' action='/search' method="GET" onsubmit='return localStorage.getItem("search")=="photo"')
             div(class="input-group mb-3")
                 input(type="search" class="form-control" name='q'  id="search_input" placeholder="Моя ідеальна фотосесія" )
                 div(class="input-group-append")
@@ -70,9 +70,9 @@ else if(cookies.auth=='false')
         div(id='filter_error' class='panel panel-danger mg-0 pd-0')
             div(class='panel-heading') За вашим запитом нічого не знайдено
         script.
+            $("#filter_error").hide();
             $("#filter_spinner").hide();
             $("#cancel_search").hide();
-            $("#filter_error").hide();
             setSlider();
             let cookies = !{JSON.stringify(cookies)};
             fillSearchPhotographers(!{JSON.stringify(phinfo)}, !{JSON.stringify(cookies)},

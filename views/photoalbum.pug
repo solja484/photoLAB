@@ -91,7 +91,7 @@ else
                                         p(class='text-14 text-break' id=`photo_descr${photo.photo_id}`)= photo.descr
                                         p(class="text-14 text-muted text-break" id=`photo_tags${photo.photo_id}`)
                                             each tag in photo.taglist
-                                                a(class='link1' href=`/search?value=${tag}`)= '#' + tag + ' '
+                                                a(class='link1' href=`/search?q=${tag}`)= '#' + tag + ' '
                                 br
 
     .col-md-1

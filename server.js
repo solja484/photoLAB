@@ -5,6 +5,7 @@ let config = require('./config.json');
 let cookieParser = require('cookie-parser');
 const mysql = require("mysql2");
 let crypto = require("crypto");
+let custom = require('./public/javascripts/custom_modules.js');
 let types = [];
 
 
@@ -27,10 +28,25 @@ const connection = mysql.createConnection({
     password: config.password
 }).promise();
 
+function createInvertedList() {
+    connection.query(
+        "SELECT tags,photo_id as id FROM photos"
+    ).then(([results, fields]) => {
+        for (let r in results)
+            results[r].taglist = custom.splitIntoTags(results[r].tags);
+        custom.setInvertedList(results);
+    })
+        .catch(err => {
+            console.log(err);
+        });
+}
 
 connection.query("SELECT name,type_id FROM types", function (err, results, fields) {
     types = results;
 });
+
+createInvertedList();
+
 
 server.get('/getcities', function (req, res) {
     connection.query("SELECT city FROM users GROUP BY city", function (err, results, fields) {
@@ -188,7 +204,7 @@ server.get('/guest/photoalbum/:username', (req, res) => {
                         if (results2[p].tags == null)
                             results2[p].taglist = [];
                         else
-                            results2[p].taglist = splitIntoTags(results2[p].tags);
+                            results2[p].taglist = custom.splitIntoTags(results2[p].tags);
                     connection.query("SELECT folder_id,name FROM folders WHERE ph_id =? GROUP BY folder_id ORDER BY folder_id", [ph_id])
                         .then(([results3, fields3]) => {
                             res.render(__dirname + "/views/photoalbum.pug", {
@@ -289,7 +305,7 @@ server.get('/guest/:username', (req, res) => {
                                                                 username: req.params.username,
                                                                 auth: req.cookies.auth,
                                                                 cookies: req.cookies,
-                                                                dates:results1
+                                                                dates: results1
                                                             });
                                                     })
                                                     .catch(err => {
@@ -411,7 +427,7 @@ server.get('/photoalbum/:username', function (req, res) {
                     connection.query("SELECT folder_id,name FROM folders WHERE ph_id =? GROUP BY folder_id ORDER BY folder_id", [ph_id])
                         .then(([results3, fields3]) => {
                             for (p in results2)
-                                results2[p].taglist = splitIntoTags(results2[p].tags);
+                                results2[p].taglist = custom.splitIntoTags(results2[p].tags);
                             res.render(__dirname + "/views/photoalbum.pug", {
                                 config: config,
                                 guest: guest,
@@ -491,8 +507,8 @@ server.get('/profile/:username', function (req, res) {
                                                                 config: config,
                                                                 guest: guest,
                                                                 cookies: req.cookies,
-                                                                dates:results1,
-                                                                orders:results5
+                                                                dates: results1,
+                                                                orders: results5
                                                             });
 
                                                     })
@@ -539,7 +555,7 @@ server.get('/profile/:username', function (req, res) {
                                     active: active,
                                     config: config,
                                     cookies: req.cookies,
-                                    orders:results3
+                                    orders: results3
                                 });
 
                             })
@@ -574,7 +590,6 @@ server.get('/admin', function (req, res) {
             console.log(err);
         });
 });
-
 
 
 server.post('/logout', function (req, res) {
@@ -717,7 +732,7 @@ server.post('/editclient', (req, res) => {
         .then(([results, fields]) => {
 
             res.cookies = req.cookies;
-            res.cookie("username",req.body.username);
+            res.cookie("username", req.body.username);
             if (req.body.role == 'photographer')
                 connection.query("UPDATE photographers SET user_id=?, firstname=?, lastname=?,fathername=?,price=?,exp=?,organization=? WHERE ph_id=?",
                     [req.body.user_id, req.body.firstname, req.body.lastname, req.body.fathername, req.body.price, req.body.experience, req.body.organization, req.body.ph_id])
@@ -904,31 +919,47 @@ server.post('/searchph', (req, res) => {
 });
 server.get('/search', function (req, res) {
 
-let request=req.query.q;
-    connection.query(" SELECT photo_id, username, link,title,tags, descr, photos.folder_id " +
-        "FROM ((photos INNER JOIN folders ON folders.folder_id=photos.folder_id )" +
-        " INNER JOIN photographers ON folders.ph_id=photographers.ph_id) INNER JOIN users ON photographers.user_id=users.user_id ")
-        .then(([results2, fields2]) => {
-            for (p in results2)
-                results2[p].taglist = splitIntoTags(results2[p].tags);
-            //console.log(results);
-            res.render(__dirname + "/views/search.pug", {
-                photos: results2,
-                config: config,
-                cookies: req.cookies,
-                request:request
-            });
-        })
-        .catch(err => {
-            console.log(err);
+    console.log(req);
+    let request = custom.splitIntoTags(req.query.q);
+
+    let photos = custom.search(request);
+
+    if (photos[0] === undefined)
+        res.render(__dirname + "/views/search.pug", {
+            photos: photos,
+            config: config,
+            cookies: req.cookies,
+            request: req.query.q
         });
+    else {
+        connection.query(" SELECT photo_id, username, link,title,tags, descr, photos.folder_id " +
+            "FROM ((photos INNER JOIN folders ON folders.folder_id=photos.folder_id )" +
+            " INNER JOIN photographers ON folders.ph_id=photographers.ph_id) INNER JOIN users ON photographers.user_id=users.user_id " +
+            " WHERE photo_id IN (?) ", [photos])
+            .then(([results2, fields2]) => {
+
+                for (p in results2)
+                    results2[p].taglist = custom.splitIntoTags(results2[p].tags);
+                console.log(results2);
+
+                res.render(__dirname + "/views/search.pug", {
+                    photos: results2,
+                    config: config,
+                    cookies: req.cookies,
+                    request: req.query.q
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 });
 
-server.post('/order', (req, res) =>{
+server.post('/order', (req, res) => {
     res.cookies = req.cookies;
     console.log(req.body);
     connection.query("INSERT INTO orders(ph_id,client_id,date,topic,contact_cl,message_cl,status) VALUES(?,?,?,?,?,?,2) ",
-        [req.body.ph_id, req.body.user_id,req.body.date,req.body.topic,req.body.contact_cl,req.body.message_cl])
+        [req.body.ph_id, req.body.user_id, req.body.date, req.body.topic, req.body.contact_cl, req.body.message_cl])
         .then(([results, fields]) => {
             connection.query("DELETE FROM freedates WHERE ph_id=? AND date=?", [req.body.ph_id, req.body.date])
                 .then(([results2, fields2]) => {
@@ -953,34 +984,34 @@ server.post('/deleteorder', (req, res) => {
     res.cookies = req.cookies;
     connection.query("DELETE FROM orders WHERE order_id=?", [req.body.order_id])
         .then(([results, fields]) => {
-            connection.query("INSERT INTO freedates(ph_id,date) VALUES(?,?)", [req.body.ph_id,req.body.date])
+            connection.query("INSERT INTO freedates(ph_id,date) VALUES(?,?)", [req.body.ph_id, req.body.date])
                 .then(([results, fields]) => {
                     console.log("Successfully add free date");
-                    res.send({"success":"yes"});
+                    res.send({"success": "yes"});
                 })
                 .catch(err => {
                     console.log(err);
-                    res.send({"success":"no"});
+                    res.send({"success": "no"});
                 });
         })
         .catch(err => {
             console.log(err);
-            res.send({"success":"no"});
+            res.send({"success": "no"});
         });
 });
 
 
 server.post('/cancel', (req, res) => {
 
-    connection.query("UPDATE orders SET status=0,message_ph=? WHERE order_id=?", [req.body.message_ph,  req.body.order_id])
+    connection.query("UPDATE orders SET status=0,message_ph=? WHERE order_id=?", [req.body.message_ph, req.body.order_id])
         .then(([results, fields]) => {
             console.log("Successfully updated data");
             res.cookies = req.cookies;
-            res.send({"success":"yes"});
+            res.send({"success": "yes"});
         })
         .catch(err => {
             console.log(err);
-            res.send({"error":err});
+            res.send({"error": err});
 
         });
 
@@ -992,11 +1023,11 @@ server.post('/approve', (req, res) => {
         .then(([results, fields]) => {
             console.log("Successfully updated data");
             res.cookies = req.cookies;
-            res.send({"success":"yes"});
+            res.send({"success": "yes"});
         })
         .catch(err => {
             console.log(err);
-            res.send({"error":err});
+            res.send({"error": err});
 
         });
 
@@ -1006,11 +1037,11 @@ server.post('/removeactive', (req, res) => {
     connection.query("DELETE FROM freedates WHERE ph_id=? AND date=?", [req.body.ph_id, req.body.date])
         .then(([results, fields]) => {
             console.log("Successfully delete date");
-            res.send({"success":"yes"});
+            res.send({"success": "yes"});
         })
         .catch(err => {
             console.log(err);
-            res.send({"error":err});
+            res.send({"error": err});
         });
 });
 server.post('/setactive', (req, res) => {
@@ -1019,11 +1050,11 @@ server.post('/setactive', (req, res) => {
         .then(([results, fields]) => {
             console.log(results);
             console.log("Successfully add date");
-            res.send({"success":"yes"});
+            res.send({"success": "yes"});
         })
         .catch(err => {
             console.log(err);
-            res.send({"error":err});
+            res.send({"error": err});
         });
 });
 server.post('/addfavorite', (req, res) => {
@@ -1094,11 +1125,19 @@ server.post('/editfolder', (req, res) => {
 
 });
 server.post('/deletefolder', (req, res) => {
-    connection.query("DELETE FROM folders WHERE folder_id=?", [req.body.folder_id])
+    connection.query("SELECT photo_id as id FROM photos WHERE folder_id=?", [req.body.folder_id])
         .then(([results, fields]) => {
-            console.log("Successfully delete folder");
-            res.cookies = req.cookies;
-            res.send(results);
+            custom.deleteFromInvertedList(results);
+            connection.query("DELETE FROM folders WHERE folder_id=?", [req.body.folder_id])
+                .then(([results1, fields1]) => {
+                    console.log("Successfully delete folder");
+                    res.cookies = req.cookies;
+                    res.send(results1);
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.send(err);
+                });
         })
         .catch(err => {
             console.log(err);
@@ -1111,7 +1150,7 @@ server.post('/addphoto', (req, res) => {
         connection.query("INSERT INTO photos(folder_id,link,title,descr,tags) VALUES(?, ?, ?, ?, ?)", [req.body.folder_id, req.body.link, req.body.title, req.body.descr, req.body.tags])
             .then(([results, fields]) => {
                 console.log("Successfully add new photo");
-                console.log(results.insertId);
+                custom.updateInvertedList([{"id": results.insertId, "taglist": custom.splitIntoTags(req.body.tags)}]);
                 res.cookies = req.cookies;
                 res.send({'success': 'yes', 'photo_id': results.insertId});
             })
@@ -1124,6 +1163,7 @@ server.post('/deletephoto', (req, res) => {
     connection.query("DELETE FROM photos WHERE photo_id=?", [req.body.photo_id])
         .then(([results, fields]) => {
             console.log("Successfully deleted photo");
+            custom.deleteFromInvertedList([{"id": req.body.photo_id}]);
             res.cookies = req.cookies;
             res.send(results);
         })
@@ -1138,7 +1178,12 @@ server.post('/editphoto', (req, res) => {
         .then(([results2, fields2]) => {
             console.log("Successfully updated data");
             res.cookies = req.cookies;
-            let taglist = splitIntoTags(req.body.tags);
+            let taglist = custom.splitIntoTags(req.body.tags);
+            custom.deleteFromInvertedList([{"id": req.body.photo_id}]).updateInvertedList([{
+                "id": req.body.photo_id,
+                "taglist": taglist
+            }]);
+
             res.send(taglist);
         })
         .catch(err => {
@@ -1148,6 +1193,7 @@ server.post('/editphoto', (req, res) => {
 
 });
 
+//set and delete mark for ph profile
 server.post('/unvote', (req, res) => {
     res.cookies = req.cookies;
     connection.query("DELETE FROM ratings WHERE user_id=? AND ph_id=?", [req.body.user_id, req.body.ph_id])
@@ -1199,23 +1245,13 @@ server.post('/vote', (req, res) => {
         });
 });
 
+//get raw password and return hashed
 server.post('/hashpass', (req, res) => {
     res.cookies = req.cookies;
     res.send({"pass": hashing(req.body.pass)});
 });
 
-
-function splitIntoTags(str) {
-    if(str==null||str==""||str==undefined)
-        return [];
-    let tagList = [];
-    let tags = str.split(/\s/);
-    for (let tag of tags)
-        tagList.push(tag);
-    return tagList;
-}
-
-
+//function used to hash password
 function hashing(raw) {
     let hash = crypto.createHmac("sha256", "password")
         .update(config.salt + raw).digest("hex");
@@ -1225,4 +1261,3 @@ function hashing(raw) {
     }
     return hash;
 }
-

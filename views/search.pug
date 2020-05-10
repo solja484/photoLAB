@@ -13,6 +13,9 @@ else if(cookies.auth == 'false')
                         i(class='fa fa-search mg-h-5')
                         i(class='fa fa-image')
 
+    if(photos==null||photos[0]==undefined)
+        div(class='minh col-md-12 text-center')
+            p(class='text-center  white') За вашим запитом нічого не знайдено
     each photo in photos
         div(class='col-md-4' id=`photo${photo.photo_id}`)
             div(class='card mg-top-10')
@@ -21,6 +24,8 @@ else if(cookies.auth == 'false')
                 div(class='img-container')
                     div(class="circle-avatar " style=`background-image:url(${photo.link})`)
                 div(class='card-body')
+                    a(class='green-link' href=`/guest/${photo.username}`)= '@'+photo.username
+                    br
                     if(photo.name!=null&&photo.name!=undefined)
                         p= photo.name
                     if(photo.descr!= null && photo.descr != undefined)

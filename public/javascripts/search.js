@@ -107,15 +107,16 @@ function searchPh(name) {
 }
 
 
-function searchPhoto(words){
 
-    let values=[
-        [2],[1]
+function searchPhoto(words) {
+
+    let values = [
+        [2], [1]
     ];
 
 
-    let data={
-        "values":values
+    let data = {
+        "values": values
     };
     $.ajax({
         url: 'http://localhost:2606/searchphoto',
@@ -147,3 +148,6 @@ function filterFailed() {
     $("#cancel_search").show();
     $("#search_people").empty();
 }
+
+
+

@@ -6,6 +6,8 @@ $(document).ready(function () {
     localStorage.setItem("search", "photo");
 });
 
+//function form cards with all photographer information and preview of last 8 photos
+//and show them on the home page
 function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
     $("#cancel_search").hide();
     fillCities();
@@ -115,10 +117,10 @@ function fillSearchPhotographers(phinfo, cookies, photos, favorites) {
     }
 }
 
+//function set rating stars in photographer profile
 function setRatings(guest, info, cookies) {
     const sel = $("#rating_container");
     sel.empty();
-
 
     if ((cookies.auth == 'false') || (!guest)) {
 
@@ -155,6 +157,7 @@ function setRatings(guest, info, cookies) {
 
 }
 
+//function fill stars dut to rating mark
 function changingStars(user_id, ph_id) {
     for (let i = 0; i < 10; i++) {
         $("#rating_star" + i).attr("onclick", "vote(" + (i + 1) + "," + user_id + "," + ph_id + ")")
@@ -171,17 +174,8 @@ function changingStars(user_id, ph_id) {
     }
 }
 
-function getListOfFolders(array) {
 
-    let attributes = [];
-    array.map(({folder_id}) => {
-        if (folder_id) attributes.push(folder_id)
-    });
-
-    console.log(attributes);
-    return attributes;
-}
-
+// function set slider for filter price with double ranging
 function setSlider() {
     $(function () {
         $("#slider-range").slider({
@@ -198,7 +192,7 @@ function setSlider() {
     });
 }
 
-
+//months info needed for calendar
 const months = {
     "1": {
         "name": "Січень",
@@ -262,6 +256,7 @@ const months = {
     },
 };
 
+//function fill rows of calendar table for current month
 function setCalendar(dates, cookies, info, guest) {
     let today = getCurrentDate();
     $("#month_name").text(months[today.month].name);
@@ -273,7 +268,7 @@ function setCalendar(dates, cookies, info, guest) {
     setNext5Months(dates, cookies, info.ph_id, guest)
 }
 
-
+//function which add to slider calendar tables for next 5 months
 function setNext5Months(dates, cookies, ph_id, guest) {
     let today = getCurrentDate();
     let current_month = today.month;
@@ -300,7 +295,7 @@ function setNext5Months(dates, cookies, ph_id, guest) {
     }
 }
 
-
+//function which check type of user and month and fill table cell with appropriate values and classes
 function fillTableCells(dates, month, cur_year, cookies, ph_id, guest) {
 
     let str = "";
@@ -362,13 +357,13 @@ function fillTableCells(dates, month, cur_year, cookies, ph_id, guest) {
     return str;
 }
 
-
+//set onclick function to modal button
 function setMakeOrderOnclick(ph_id, user_id, month, day, year) {
     $("#make_order_button").attr("onclick", "makeOrder(" + ph_id + "," + user_id + "," + month + "," + day + "," + year + ")");
     $("#make_order_date").text(" " + day + " " + months[month].genitive + " " + year);
 }
 
-
+//return current date
 function getCurrentDate() {
     let today = new Date();
     let day = today.getDay();
@@ -382,8 +377,8 @@ function getCurrentDate() {
     };
 }
 
+//transform date from mysql type to good-looking string value
 function setOrdersDate(orders) {
-
     for (let order of orders) {
         let d = order.date.split(/[-T:]/);
         console.log(order.date+" "+d[2]+"-"+d[1]);
@@ -392,13 +387,14 @@ function setOrdersDate(orders) {
     }
 }
 
+//set onclick to cancel order modal
 function setCancelOrderOnclick(order){
     $("#cancel_order_button").attr("onclick","cancel(" + JSON.stringify(order) + ")");
 
 }
 
+//set onclick to approve order modal
 function setApproveOrderOnclick(order){
-
     $("#approve_order_button").attr("onclick","approve(" + JSON.stringify(order)+")");
 
 }
