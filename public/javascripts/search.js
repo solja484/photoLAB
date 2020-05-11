@@ -1,3 +1,4 @@
+//ajax request to server, return filtered information
 function filter() {
     $("#filter_error").hide();
     let sel = $("#search_people");
@@ -36,12 +37,15 @@ function filter() {
 
 }
 
+//return to no filtered string
 function nofilter(phinfo, cookies, photos, favorites) {
+    $("#search_people").empty();
     $("#filter_spinner").hide();
     $("#filter_error").hide();
     fillSearchPhotographers(phinfo, cookies, photos, favorites);
 }
 
+//change type of search and swap colors of selected and unselected button
 function changeSearchType(type) {
     if (type == 0) {
         $("#searchByPhoto").addClass("selected");
@@ -49,15 +53,14 @@ function changeSearchType(type) {
         $("#searchByPerson").removeClass("selected");
         $("#search_input").attr("placeholder", "Моя ідеальна фотосесія");
     } else {
-
         $("#searchByPerson").addClass("selected");
         localStorage.setItem("search", "person");
         $("#searchByPhoto").removeClass("selected");
         $("#search_input").attr("placeholder", "Мій ідеальний фотограф");
     }
-
 }
 
+//function is called when click on search button
 function search() {
     const sel = $("#search_input");
     if (!validEmpty("search_input")) return false;
@@ -70,8 +73,8 @@ function search() {
 
 }
 
+//ajax request to database return searched photographers
 function searchPh(name) {
-
     let sel = $("#search_people");
     $("#filter_spinner").show().focus();
     $("#cancel_search").hide();
@@ -79,7 +82,6 @@ function searchPh(name) {
     let data = {
         "name": name
     };
-
     $.ajax({
         url: 'http://localhost:2606/searchph',
         type: 'post',
@@ -100,39 +102,11 @@ function searchPh(name) {
             else searchFailed();
         },
         error: searchFailed()
-
-
-    });
-
-}
-
-
-
-function searchPhoto(words) {
-
-    let values = [
-        [2], [1]
-    ];
-
-
-    let data = {
-        "values": values
-    };
-    $.ajax({
-        url: 'http://localhost:2606/searchphoto',
-        type: 'post',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (data2) {
-
-        },
-        error: searchFailed()
-
-
     });
 }
 
+
+//display message when search response is empty
 function searchFailed() {
     $("#filter_spinner").hide();
     $("#filter_error").show();
@@ -142,6 +116,7 @@ function searchFailed() {
     removeValid("search_form");
 }
 
+//display message when filter response is empty
 function filterFailed() {
     $("#filter_spinner").hide();
     $("#filter_error").show();

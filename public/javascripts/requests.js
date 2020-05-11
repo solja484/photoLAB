@@ -1,3 +1,4 @@
+//all files here are ajax-requests to server to manipulate with data
 function login() {
     $("#login_failed").remove();
 
@@ -231,10 +232,10 @@ function deleteFromFavorites(ph_id, user_id, profile = false) {
 
 }
 
+//set & get current folder to local storage
 function setCurrentFolder(folder_id) {
     localStorage.setItem("folder", folder_id);
 }
-
 function getCurrentFolder() {
     return localStorage.getItem("folder");
 }
@@ -422,6 +423,16 @@ function addPhotoLink() {
     });
 
 
+}
+
+function addPhotoFile() {
+    let folder_id = getCurrentFolder();
+    if (!(validEmpty("add_photofile_file") &&validTags("add_photofile_tags")))
+        return false;
+    event.preventDefault();
+
+    // Get the files from input, create new FormData.
+    let files = $('#add_photofile_file').get(0).files;
 }
 
 function deletePhoto(photo_id) {

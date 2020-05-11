@@ -27,7 +27,6 @@ div(id="add_folder_modal", class="modal fade font-17", role="dialog")
                 button(class="btn btn-info bg-green btn-block font-17"
                 onclick='addFolder()' type='button') Створити папку
 
-
 div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
     div(class="modal-dialog")
         div(class="modal-content" )
@@ -61,13 +60,24 @@ div(id="add_photo_modal", class="modal fade font-17", role="dialog", aria-hidden
 
 
                     div(class="tab-pane fade" id="download_photo" role="tabpanel" aria-labelledby="download_photo_tab")
-                        form(id="download_photo_form", method="POST", class="mx-auto needs-validation", action="/downloadphoto")
+                        form(id="download_photo_form",  class="mx-auto needs-validation")
                             div(class="form-group")
-                                label(for="photo_file" class="non-bold") Оберіть файл:
-                                input(type="file", id="photo_file", class="form-control", name='photo_file', accept="image/*")
+                                label(for="add_photofile_file" class="non-bold") Оберіть файл:
+                                input(type="file", id="add_photofile_file", class="form-control", name='photo_file', accept="image/*")
                                 div(class="invalid-feedback text-14 mg-l-15") Оберіть файл!
-                        button(type="button" class="btn btn-info bg-green btn-block ") Додати фото!
+                            div(class="form-group")
+                                label(for="add_photofile_title" class="non-bold mg-0") Назва:
+                                input(id="add_photofile_title" class="form-control")
+                            div(class="form-group")
+                                label(for="add_photofile_descr" class="non-bold mg-0") Опис:
+                                textarea(id="add_photofile_descr" class="form-control" rows=2)
 
+                            div(class="form-group")
+                                label(for="add_photofile_tags" class="non-bold mg-0") Теги:
+                                textarea(id="add_photofile_tags" class="form-control" rows=2)
+                                small(class='text-14 text-muted') Одне слово-один тег
+                                div(class='invalid-feedback') Тільки букви та цифри, без # та інших символів
+                        button(type="button" class="btn btn-info bg-green btn-block " onclick='addPhotoFile()') Додати фото!
 
 div(id="exit_modal", class="modal fade font-17", role="dialog", aria-hidden="true")
     div(class="modal-dialog")

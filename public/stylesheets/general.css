@@ -23,7 +23,7 @@ body{
     background: white;
 }
 .green{
-    color: #34a99c;
+    color: rgba(52, 169, 156, 0.99);
 }
 .yellow{
     color: #ffc107;
